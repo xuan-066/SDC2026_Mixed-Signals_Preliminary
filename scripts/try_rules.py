@@ -4,6 +4,7 @@ from datetime import date, timedelta
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+sys.stdout.reconfigure(encoding="utf-8")      # Windows consoles choke on → and °
 
 from app.coldchain.rules import (IncidentContext, StockLine, UnitSpace, VendorOffer,  # noqa: E402
                                  classify_severity, decide)
