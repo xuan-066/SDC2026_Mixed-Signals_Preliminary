@@ -59,7 +59,7 @@ def test_reset_is_idempotent(app, client):
     for _ in range(2):
         r = client.post("/v1/sim/reset")
         assert r.status_code == 200
-        assert r.json()["now"] == "2026-11-12T13:00:00+00:00"
+        assert r.json() == {"status": "reset", "now": "2026-11-12T13:00:00Z"}
 
     assert _counts(app.state.engine) == before    # the added Reading is gone too
     assert app.state.clock.now() == DEMO_START
