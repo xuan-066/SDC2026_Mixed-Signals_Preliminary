@@ -1,0 +1,31 @@
+text,asset_name,symptom
+Freezer 2 tak sejuk langsung,Freezer 2,not_cooling
+fz1 pintu tak rapat la boss,Freezer 1,door_issue
+kitchen chiller ada air menitis kat lantai,Kitchen Chiller,leaking
+Display chiller lampu mati semua,Display Chiller,power_off
+boss peti beku 2 bunyi pelik,Freezer 2,noise
+chiller depan terlalu sejuk kek jadi keras,Display Chiller,too_cold
+the freezer near the back door is warm,,not_cooling
+Freezer 1 trip again after rain,Freezer 1,power_off
+chiller dapur getah pintu dah koyak,Kitchen Chiller,door_issue
+ais krim dalam fz2 dah lembik,Freezer 2,not_cooling
+kitchen chiller making clicking noise all night,Kitchen Chiller,noise
+display chiller not cooling the cakes,Display Chiller,not_cooling
+Freezer 2 leaking water from bottom,Freezer 2,leaking
+peti beku 1 sejuk sangat ayam keras macam batu,Freezer 1,too_cold
+semua fridge tak hidup lepas blackout,,power_off
+Kitchen chiller suhu naik 9 darjah,Kitchen Chiller,not_cooling
+fz2 door cannot close properly,Freezer 2,door_issue
+Display chiller compressor bising,Display Chiller,noise
+susu dalam chiller dapur dah beku,Kitchen Chiller,too_cold
+freezer 1 ok tapi freezer 2 panas,Freezer 2,not_cooling
+chiller bocor,,leaking
+fz1 ada bunyi berdengung,Freezer 1,noise
+display chiller kaca berwap air banyak,Display Chiller,leaking
+Freezer 2 suis off sendiri,Freezer 2,power_off
+kitchen chiller tak sejuk macam biasa,Kitchen Chiller,not_cooling
+peti beku 2 seal pintu longgar,Freezer 2,door_issue
+something wrong with the fridge,,other
+Freezer 1 frost banyak sangat,Freezer 1,too_cold
+chiller depan menitis dari atas,Display Chiller,leaking
+freezer 2 not freezing anymore stock soft,Freezer 2,not_cooling

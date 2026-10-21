@@ -3,4 +3,4 @@ uvicorn[standard]==0.54.0
 sqlmodel==0.0.48
 httpx==0.28.1
 pytest==9.1.1
-# anthropic        # only if T13 [C] happens
+anthropic==1.17.0  # T13 LLM parser; only called when LLM_ENABLED=true

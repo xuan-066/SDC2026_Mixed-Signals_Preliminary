@@ -6,7 +6,7 @@ from dataclasses import dataclass, replace
 from datetime import date, datetime, timedelta
 
 from app.coldchain import policy
-from app.enums import Role, Severity
+from app.enums import Role, Severity, Symptom
 from app.money import rm_label
 
 _EPS = 1e-9     # float tolerance for ≥ comparisons on °C
@@ -44,7 +44,7 @@ class IncidentContext:
     asset_id: str
     asset_name: str
     asset_type: str
-    latest_temp_c: float
+    latest_temp_c: float | None     # None when there are no recent readings
     min_c: float
     max_c: float
     warranty_until: date | None
@@ -53,6 +53,7 @@ class IncidentContext:
     units: list[UnitSpace]          # the other units of the business
     vendors: list[VendorOffer]
     supervisor_limit_sen: int
+    report_symptom: str | None = None   # set when staff reported it in a message [S]
 
 
 @dataclass
@@ -86,6 +87,13 @@ def deviation_c(temp_c: float, min_c: float, max_c: float) -> float:
 
 def _out_of_range(temp_c: float, min_c: float, max_c: float) -> bool:
     return temp_c < min_c or temp_c > max_c
+
+
+def severity_from_symptom(symptom: Symptom) -> Severity:
+    """[S] For staff messages: no cooling or no power puts the stock at risk now."""
+    if symptom in (Symptom.NOT_COOLING, Symptom.POWER_OFF):
+        return Severity.CRITICAL
+    return Severity.WARNING
 
 
 def classify_severity(min_c: float, max_c: float,
@@ -166,7 +174,20 @@ def _l(litres: float) -> str:
     return f"{litres:g} L"
 
 
+_SYMPTOM_TEXT = {
+    "not_cooling": "is not cooling", "power_off": "has no power", "too_cold": "is too cold",
+    "leaking": "is leaking", "noise": "is making noise", "door_issue": "has a door problem",
+    "other": "has a problem",
+}
+
+
 def _severity_reason(ctx: IncidentContext, severity: Severity) -> str:
+    if ctx.report_symptom is not None:
+        now = f" (now {_c(ctx.latest_temp_c)})" if ctx.latest_temp_c is not None else ""
+        return (f"Staff report: {ctx.asset_name} {_SYMPTOM_TEXT[ctx.report_symptom]}{now} "
+                f"→ {severity}")
+    if ctx.latest_temp_c is None:
+        return f"{ctx.asset_name}: no recent reading → {severity}"
     dev = deviation_c(ctx.latest_temp_c, ctx.min_c, ctx.max_c)
     if dev == 0:
         return f"{ctx.asset_name} is at {_c(ctx.latest_temp_c)} (within range) → {severity}"
