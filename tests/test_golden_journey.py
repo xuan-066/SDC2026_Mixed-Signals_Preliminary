@@ -103,3 +103,38 @@ def test_golden_journey_freezer_failure(client, as_user):
     assert story == ["INCIDENT_OPENED", "APPROVAL_REQUESTED", "APPROVAL_FORBIDDEN", "APPROVED",
                      "JOB_CREATED", "VENDOR_CHASED", "VENDOR_CONFIRMED", "JOB_DONE",
                      "INCIDENT_RESOLVED"]
+
+
+def test_golden_journey_staff_message(client, as_user):
+    """[S] The same journey, triggered by a staff message instead of a reading (plan T12)."""
+    assert client.post("/v1/sim/reset").status_code == 200
+
+    r = client.post("/v1/reports", headers=as_user("u_aina"),
+                    json={"text": "Freezer 2 tak sejuk, ais dah cair"})
+    assert r.status_code == 200, r.text
+    incident = r.json()["incident"]
+    assert (incident["severity"], incident["status"]) == ("CRITICAL", "PENDING_APPROVAL")
+    inc_id = incident["id"]
+    approval_id = client.get(f"/v1/incidents/{inc_id}", headers=as_user("u_rina")
+                             ).json()["approval"]["id"]
+
+    assert client.post(f"/v1/approvals/{approval_id}/approve", headers=as_user("u_daniel"),
+                       json={}).status_code == 403
+    job_id = client.post(f"/v1/approvals/{approval_id}/approve", headers=as_user("u_rina"),
+                         json={}).json()["incident"]["job"]["id"]
+    actions = client.post("/v1/sim/advance", json={"minutes": 60}).json()["actions"]
+    assert any("Chased CoolTech Refrigeration" in a for a in actions)
+    client.post(f"/v1/jobs/{job_id}/confirm", headers=as_user("u_daniel"), json={})
+    client.post("/v1/readings", headers=as_user("u_aina"),
+                json={"asset_id": "a_fz2", "temp_c": -17.5})
+    r = client.post(f"/v1/jobs/{job_id}/complete", headers=as_user("u_daniel"))
+    assert r.json()["incident"]["status"] == "RESOLVED"
+
+    metrics = client.get("/v1/metrics", headers=as_user("u_rina")).json()
+    assert (metrics["incidents_resolved"], metrics["stock_protected_rm"]) == (1, "1850.00")
+    story = [e["action"] for e in client.get(f"/v1/audit?entity_id={inc_id}",
+                                             headers=as_user("u_rina")).json()
+             if e["action"] != "MESSAGE_SENT"]
+    assert story == ["INCIDENT_OPENED", "APPROVAL_REQUESTED", "APPROVAL_FORBIDDEN", "APPROVED",
+                     "JOB_CREATED", "VENDOR_CHASED", "VENDOR_CONFIRMED", "JOB_DONE",
+                     "INCIDENT_RESOLVED"]

@@ -7,8 +7,9 @@ from typing import Literal
 
 from pydantic import BaseModel, Field
 
+from app.coldchain.parser import ParsedReport
 from app.core.rbac import Perm
-from app.enums import ApprovalStatus, IncidentStatus, JobStatus, Role, Severity
+from app.enums import ApprovalStatus, IncidentStatus, JobStatus, Role, Severity, Symptom
 
 
 class ResetOut(BaseModel):
@@ -174,6 +175,23 @@ class IncidentOut(BaseModel):
     timeline: list[TimelineEventOut]   # oldest first
     created_at: datetime
     resolved_at: datetime | None
+    reporter_id: str | None = None     # [S] staff reports only
+    report_text: str | None = None     # phone numbers / emails already redacted
+    symptom: Symptom | None = None
+
+
+class ReportIn(BaseModel):
+    text: str = Field(min_length=1, max_length=1000, examples=["Freezer 2 tak sejuk, ais dah cair"])
+
+
+class ReportResult(BaseModel):
+    incident: IncidentOut
+    parsed: ParsedReport
+    parser_source: Literal["rules", "llm", "rules_fallback"]
+
+
+class ClarifyIn(BaseModel):
+    asset_id: str = Field(examples=["a_fz2"])
 
 
 class ReadingResult(BaseModel):

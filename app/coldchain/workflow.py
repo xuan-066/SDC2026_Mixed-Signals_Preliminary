@@ -1,5 +1,6 @@
 """Readings → incident → approval (plan §6 steps 1–4). Functions here don't commit;
 the API layer commits once, so data and audit log are saved together."""
+from dataclasses import replace
 from datetime import datetime, timedelta, timezone
 
 from sqlmodel import Session, select
@@ -67,7 +68,7 @@ def gather_context(session: Session, asset: Asset, now: datetime) -> rules.Incid
 
     return rules.IncidentContext(
         asset_id=asset.id, asset_name=asset.name, asset_type=asset.type,
-        latest_temp_c=recent[-1][1] if recent else float("nan"),
+        latest_temp_c=recent[-1][1] if recent else None,
         min_c=asset.min_c, max_c=asset.max_c,
         warranty_until=asset.warranty_until, warranty_vendor_id=asset.warranty_vendor_id,
         stock=[rules.StockLine(s.name, s.qty, s.unit_cost_sen, s.volume_l)
@@ -101,20 +102,30 @@ def open_incident(session: Session, *, asset: Asset, severity: Severity, trigger
                   now: datetime, reporter_id: str | None = None, report_text: str | None = None,
                   symptom=None) -> Incident:
     """PUBLIC — T12 reuses it. Decide, save, instruct staff, then ask for approval."""
-    ctx = gather_context(session, asset, now)
-    decision = rules.decide(ctx, severity, now.astimezone(MYT).date())
-    data = _decision_json(decision, ctx)
-
     incident = Incident(business_id=asset.business_id, asset_id=asset.id, trigger=trigger,
                         reporter_id=reporter_id, report_text=report_text, symptom=symptom,
                         severity=severity, status=IncidentStatus.PENDING_APPROVAL,
-                        decision=data, stock_at_risk_sen=decision.stock_at_risk_sen,
                         created_at=now)
     session.add(incident)
     audit.record(session, business_id=asset.business_id, actor_id="system",
                  action="INCIDENT_OPENED", entity_type="incident", entity_id=incident.id, at=now,
-                 details={"asset_id": asset.id, "severity": severity.value, "trigger": trigger,
-                          "stock_at_risk_sen": decision.stock_at_risk_sen})
+                 details={"asset_id": asset.id, "severity": severity.value, "trigger": trigger})
+    return decide_and_act(session, incident, asset, now)
+
+
+def decide_and_act(session: Session, incident: Incident, asset: Asset, now: datetime) -> Incident:
+    """Steps 3–4 for an incident whose unit is known: decide, instruct staff, ask for approval.
+    Also used when staff answer "which unit?" for a NEEDS_INFO report."""
+    severity = incident.severity
+    ctx = gather_context(session, asset, now)
+    if incident.trigger == "report" and incident.symptom is not None:
+        ctx = replace(ctx, report_symptom=incident.symptom.value)
+    decision = rules.decide(ctx, severity, now.astimezone(MYT).date())
+    data = _decision_json(decision, ctx)
+    incident.status = IncidentStatus.PENDING_APPROVAL
+    incident.decision = data
+    incident.stock_at_risk_sen = decision.stock_at_risk_sen
+    session.add(incident)
 
     # Moving stock is an instruction, not a spend: staff are told straight away.
     if data["backup_unit"]:

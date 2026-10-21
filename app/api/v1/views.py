@@ -142,6 +142,8 @@ def incident_out(session: Session, incident: Incident, viewer: User) -> Incident
         timeline=[TimelineEventOut(at=e.at, actor=e.actor_id, action=e.action,
                                    details=e.details if see_money else {}) for e in events],
         created_at=incident.created_at, resolved_at=incident.resolved_at,
+        reporter_id=incident.reporter_id, report_text=incident.report_text,
+        symptom=incident.symptom,
     )
 
 
