@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from sqlmodel import Session
 
-from app.api.v1 import me, sim
+from app.api.v1 import me, readings, sim
 from app.config import Settings
 from app.core.clock import DEMO_START, Clock
 from app.db import init_db, make_engine
@@ -43,6 +43,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         return {"status": "ok"}
 
     app.include_router(me.router)
+    app.include_router(readings.router)
     if settings.demo_mode:
         app.include_router(sim.router)
 
