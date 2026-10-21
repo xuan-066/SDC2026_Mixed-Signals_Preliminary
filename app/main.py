@@ -2,6 +2,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import HTMLResponse
 from sqlmodel import Session
 
 from app.api.v1 import activity, approvals, assets, incidents, jobs, me, readings, sim
@@ -41,6 +42,14 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     @app.get("/health", tags=["meta"])
     def health() -> dict:
         return {"status": "ok"}
+
+    @app.get("/", include_in_schema=False, response_class=HTMLResponse)
+    def home() -> str:
+        # Hosting previews (Replit) wait for "/" to answer 200; people land on the API docs.
+        return ('<!doctype html><meta charset="utf-8"><title>SejukGuard API</title>'
+                '<meta http-equiv="refresh" content="0; url=/docs">'
+                '<p>SejukGuard API is running. <a href="/docs">Open the API docs</a> · '
+                '<a href="/health">health</a></p>')
 
     for module in (me, readings, assets, incidents, approvals, jobs, activity):
         app.include_router(module.router)

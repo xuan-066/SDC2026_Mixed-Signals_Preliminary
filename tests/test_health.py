@@ -19,6 +19,12 @@ def test_error_shape(app):
     assert r.json() == {"error": {"code": "NOT_FOUND", "message": "Incident inc_x not found"}}
 
 
+def test_home_page_answers_for_hosting_previews(client):
+    r = client.get("/")
+    assert r.status_code == 200
+    assert 'url=/docs' in r.text and "/" not in client.app.openapi()["paths"]
+
+
 def test_unknown_route_uses_error_shape(client):
     r = client.get("/nope")
     assert r.status_code == 404
