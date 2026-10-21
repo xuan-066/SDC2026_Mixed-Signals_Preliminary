@@ -339,7 +339,7 @@ A reading outside **−40.0 to +50.0 °C** is rejected with 422 and never stored
 - **Backup unit** (`pick_backup_unit`): another unit of the **same type**, currently in range, with `free_l ≥ volume needed`. Choose the one with the **most** free space. If there is none, add the reason "No backup space — move stock to an ice box / another outlet" (the human decides).
 - **Vendor** (`choose_vendor`):
   1. If `warranty_until ≥ today` and `warranty_vendor_id` is set → use the warranty vendor with a **cost of 0**.
-  2. Otherwise, consider vendors whose `services` include the unit type. `CRITICAL` → sort by `(sla_hours, callout_fee_sen)`. `WARNING` → sort by `(callout_fee_sen, sla_hours)`. Take the first.
+  2. Otherwise, consider vendors whose `services` include the unit type **and that are not `warranty_only`** (a warranty centre doesn't do paid call-outs; without this, RM0 BrandCare would win every WARNING "cheapest" pick). `CRITICAL` → sort by `(sla_hours, callout_fee_sen)`. `WARNING` → sort by `(callout_fee_sen, sla_hours)`. Take the first.
   3. If no vendor is found, set `needs_human = "No vendor services <type> units — assign one"`. No approval is created, and the owner is messaged.
 - **Approver** (`required_approver_role`): `cost_sen ≤ business.supervisor_limit_sen` (15000 = RM150.00) → `supervisor`. Above that → `owner`.
   - **Every vendor dispatch needs an approval**, even RM0, because it commits someone's time.
@@ -497,7 +497,7 @@ All of this lives in `app/seed.py` and is **fictional**.
 |---|---|---|---|---|
 | `v_cooltech` | CoolTech Refrigeration | freezer, chiller | RM180 (18000 sen) | 4 h |
 | `v_sejukjaya` | Sejuk Jaya Services | freezer, chiller | RM120 (12000 sen) | 8 h |
-| `v_brandcare` | BrandCare Warranty Centre | freezer | RM0 | 24 h |
+| `v_brandcare` | BrandCare Warranty Centre | freezer | RM0 | 24 h · `warranty_only` |
 
 #### Business `b_bekumaju` — "Beku Maju Frozen Foods"
 

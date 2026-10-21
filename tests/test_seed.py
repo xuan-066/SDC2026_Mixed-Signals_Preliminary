@@ -37,6 +37,10 @@ def test_freezer1_free_capacity(session):
     assert fz1.capacity_l - used == 180
 
 
+def test_only_brandcare_is_warranty_only(session):
+    assert [v.id for v in session.exec(select(Vendor).where(Vendor.warranty_only))] == ["v_brandcare"]
+
+
 def test_stock_volume_matches_plan_for_every_unit(session):
     expected = {"a_fz1": 220, "a_fz2": 120, "a_ch1": 90, "a_ch2": 140}
     for asset_id, volume in expected.items():
