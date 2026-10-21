@@ -3,13 +3,14 @@ from fastapi import APIRouter, Request
 from sqlmodel import Session
 
 from app.db import reset_db
+from app.schemas import ResetOut
 from app.seed import seed
 
 router = APIRouter(prefix="/v1/sim", tags=["demo"])
 
 
-@router.post("/reset")
-def reset(request: Request) -> dict:
+@router.post("/reset", response_model=ResetOut)
+def reset(request: Request) -> ResetOut:
     """Wipe everything, reseed the demo world and put the clock back to 21:00 MYT."""
     engine = request.app.state.engine
     reset_db(engine)
@@ -17,4 +18,4 @@ def reset(request: Request) -> dict:
         seed(session)
     clock = request.app.state.clock
     clock.reset()
-    return {"status": "reset", "now": clock.now().isoformat()}
+    return ResetOut(status="reset", now=clock.now())
