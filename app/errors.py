@@ -32,6 +32,11 @@ class Conflict(AppError):
         super().__init__("CONFLICT", message, 409)
 
 
+class InvalidInput(AppError):
+    def __init__(self, message: str):
+        super().__init__("VALIDATION_ERROR", message, 422)
+
+
 def error_body(code: str, message: str) -> dict:
     return {"error": {"code": code, "message": message}}
 
