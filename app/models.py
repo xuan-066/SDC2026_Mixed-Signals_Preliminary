@@ -2,7 +2,7 @@
 import uuid
 from datetime import UTC, date, datetime
 
-from sqlalchemy import JSON, Column, DateTime, TypeDecorator
+from sqlalchemy import JSON, Column, DateTime, TypeDecorator, literal_column
 from sqlmodel import Field, SQLModel
 
 from app.enums import (ApprovalStatus, IncidentStatus, JobStatus, Role,
@@ -94,6 +94,11 @@ class Reading(SQLModel, table=True):
     temp_c: float
     recorded_at: datetime = _ts()
     source: str                                 # "staff" | "sensor" | "sim"
+
+
+# Tie-break for readings with the same timestamp (common while the demo clock stands still):
+# SQLite's rowid follows insertion order, so the reading posted last counts as the latest.
+READING_SEQ = literal_column("reading.rowid")
 
 
 class Incident(SQLModel, table=True):

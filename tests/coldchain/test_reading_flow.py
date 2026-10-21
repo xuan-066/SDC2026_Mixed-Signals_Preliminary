@@ -62,8 +62,8 @@ def test_critical_reading_opens_incident(post, session):
     inc = _golden(post).json()["incident"]
     assert inc["severity"] == "CRITICAL"
     assert inc["status"] == "PENDING_APPROVAL"
-    assert inc["required_role"] == "owner"
-    assert len(inc["reasons"]) == 6
+    assert inc["decision"]["required_role"] == "owner"
+    assert len(inc["decision"]["reasons"]) == 6
     stored = session.get(Incident, inc["id"])
     assert stored.stock_at_risk_sen == 185000
     assert stored.decision["backup_unit"]["id"] == "a_fz1"
@@ -99,7 +99,7 @@ def test_repeated_readings_do_not_duplicate_incident(post, session):
 def test_severity_rise_logged_once(post, session):
     post(-14.0)
     inc = post(-13.5).json()["incident"]
-    assert inc["severity"] == "WARNING" and inc["required_role"] == "supervisor"
+    assert inc["severity"] == "WARNING" and inc["decision"]["required_role"] == "supervisor"
     assert len(_messages_to(session, "u_daniel")) == 1      # Sejuk Jaya RM120 → Daniel
 
     assert post(-11.0).json()["incident"]["severity"] == "CRITICAL"
@@ -156,7 +156,7 @@ def test_no_vendor_needs_human_messages_owner(post, session):
         session.delete(v)
     session.commit()
     inc = _golden(post).json()["incident"]
-    assert inc["needs_human"] == "No vendor services freezer units — assign one"
+    assert inc["decision"]["needs_human"] == "No vendor services freezer units — assign one"
     assert _count(session, ApprovalRequest) == 0
     assert any("assign one" in b for b in _messages_to(session, "u_rina"))
 

@@ -7,9 +7,10 @@ from sqlmodel import Session, select
 from app.coldchain import policy, rules
 from app.core import approvals, audit, notifier
 from app.core.rbac import get_owned
-from app.enums import IncidentStatus, Role, Severity
-from app.errors import InvalidInput
-from app.models import Asset, Business, Incident, Reading, StockItem, User, Vendor
+from app.enums import ApprovalStatus, IncidentStatus, JobStatus, Role, Severity
+from app.errors import Conflict, InvalidInput
+from app.models import (READING_SEQ, ApprovalRequest, Asset, Business, Incident, Reading,
+                        ServiceJob, StockItem, User, Vendor)
 from app.money import rm_label
 
 MYT = timezone(timedelta(hours=8))      # warranty dates are local dates
@@ -19,12 +20,12 @@ _RANK = {Severity.NORMAL: 0, Severity.WATCH: 1, Severity.WARNING: 2, Severity.CR
 
 # ---------- queries ----------
 
-def _recent_readings(session: Session, asset_id: str, now: datetime) -> list[tuple[datetime, float]]:
+def recent_readings(session: Session, asset_id: str, now: datetime) -> list[tuple[datetime, float]]:
     since = now - timedelta(hours=policy.READING_WINDOW_H)
     rows = session.exec(select(Reading).where(Reading.asset_id == asset_id,
                                               Reading.recorded_at >= since,
                                               Reading.recorded_at <= now)
-                        .order_by(Reading.recorded_at, Reading.id))
+                        .order_by(Reading.recorded_at, READING_SEQ))
     return [(r.recorded_at, r.temp_c) for r in rows]
 
 
@@ -46,13 +47,13 @@ def _users(session: Session, business_id: str, role: Role) -> list[User]:
 
 def gather_context(session: Session, asset: Asset, now: datetime) -> rules.IncidentContext:
     business = session.get(Business, asset.business_id)
-    recent = _recent_readings(session, asset.id, now)
+    recent = recent_readings(session, asset.id, now)
 
     units = []
     for other in session.exec(select(Asset).where(Asset.business_id == asset.business_id,
                                                   Asset.id != asset.id)):
         used = sum(s.volume_l for s in _stock(session, other.id))
-        other_recent = _recent_readings(session, other.id, now)
+        other_recent = recent_readings(session, other.id, now)
         # No recent readings: assume it is working (nothing says otherwise).
         in_range = (not other_recent
                     or rules.deviation_c(other_recent[-1][1], other.min_c, other.max_c) == 0)
@@ -186,7 +187,7 @@ def process_reading(session: Session, *, asset_id: str, temp_c: float, source: s
         low, high = policy.VALID_TEMP_RANGE
         raise InvalidInput(f"{temp_c}°C is outside {low}…{high}°C: sensor glitch, not stored")
 
-    previous = _recent_readings(session, asset.id, now)
+    previous = recent_readings(session, asset.id, now)
     reading = Reading(asset_id=asset.id, temp_c=temp_c, recorded_at=now, source=source)
     session.add(reading)
     recent = previous + [(now, temp_c)]
@@ -202,6 +203,13 @@ def process_reading(session: Session, *, asset_id: str, temp_c: float, source: s
             _raise_severity(session, incident, asset, severity, temp_c, now)
         return reading, incident
 
+    if severity == Severity.NORMAL and incident is not None:
+        job = job_for(session, incident.id)
+        if job is not None and job.status == JobStatus.DONE:
+            # Repaired earlier but was still warm then; now it's back in range (§8.4).
+            _resolve(session, incident, asset, temp_c, actor.id, now)
+        return reading, incident
+
     if severity == Severity.NORMAL and incident is None and previous:
         before = rules.classify_severity(asset.min_c, asset.max_c, previous, previous[-1][0])
         if before == Severity.WATCH:
@@ -210,3 +218,122 @@ def process_reading(session: Session, *, asset_id: str, temp_c: float, source: s
                          action="WATCH_CLEARED", entity_type="asset", entity_id=asset.id, at=now,
                          details={"temp_c": temp_c, "watch_temp_c": previous[-1][1]})
     return reading, incident
+
+
+# ---------- step 5: approval → dispatch → resolution (T7) ----------
+
+def job_for(session: Session, incident_id: str) -> ServiceJob | None:
+    return session.exec(select(ServiceJob).where(ServiceJob.incident_id == incident_id)
+                        .order_by(ServiceJob.requested_at.desc())).first()
+
+
+def _local(dt: datetime) -> str:
+    return dt.astimezone(MYT).strftime("%H:%M")
+
+
+def on_approval_decided(session: Session, approval: ApprovalRequest, user: User,
+                        now: datetime) -> None:
+    """Registered for subject_type "incident": runs inside approvals.decide()."""
+    incident = session.get(Incident, approval.subject_id)
+    asset = session.get(Asset, incident.asset_id)
+    vendor = session.get(Vendor, incident.decision["vendor"]["id"])
+
+    if approval.status == ApprovalStatus.REJECTED:
+        incident.status = IncidentStatus.DECLINED
+        session.add(incident)
+        backup = incident.decision.get("backup_unit")
+        keep = f"Keep the stock in {backup['name']}" if backup else "Keep the stock cold"
+        for staff in _users(session, incident.business_id, Role.STAFF):
+            notifier.send(session, business_id=incident.business_id, to_type="user",
+                          to_id=staff.id, at=now, incident_id=incident.id,
+                          body=f"{user.name} declined the {vendor.name} call-out for {asset.name}: "
+                               f"{approval.note or 'no reason given'}. {keep} for now.")
+        return
+
+    job = ServiceJob(business_id=incident.business_id, incident_id=incident.id,
+                     vendor_id=vendor.id, requested_at=now)
+    session.add(job)
+    incident.status = IncidentStatus.DISPATCHED
+    session.add(incident)
+    audit.record(session, business_id=incident.business_id, actor_id="system",
+                 action="JOB_CREATED", entity_type="job", entity_id=job.id, at=now,
+                 details={"incident_id": incident.id, "vendor_id": vendor.id,
+                          "approval_id": approval.id})
+    business = session.get(Business, incident.business_id)
+    notifier.send(session, business_id=incident.business_id, to_type="vendor", to_id=vendor.id,
+                  at=now, incident_id=incident.id,
+                  body=f"Job request from {business.name}: {asset.name} ({asset.type}) is "
+                       f"{incident.severity.value}. Please confirm your arrival time. Job {job.id}.")
+
+
+approvals.register_handler("incident", on_approval_decided)
+
+
+def _job_and_incident(session: Session, job_id: str, user: User) -> tuple[ServiceJob, Incident]:
+    job = get_owned(session, ServiceJob, job_id, user)
+    return job, session.get(Incident, job.incident_id)
+
+
+def confirm_job(session: Session, *, job_id: str, eta: datetime | None, user: User,
+                now: datetime) -> ServiceJob:
+    """The vendor's reply, entered on their behalf in the demo."""
+    job, incident = _job_and_incident(session, job_id, user)
+    if job.status != JobStatus.REQUESTED:
+        raise Conflict(f"Job {job_id} is already {job.status.value}")
+    vendor = session.get(Vendor, job.vendor_id)
+    job.status = JobStatus.CONFIRMED
+    job.confirmed_at = now
+    job.eta = eta or now + timedelta(hours=vendor.sla_hours)
+    session.add(job)
+    audit.record(session, business_id=job.business_id, actor_id=user.id,
+                 action="VENDOR_CONFIRMED", entity_type="job", entity_id=job.id, at=now,
+                 details={"incident_id": incident.id, "eta": job.eta.isoformat()})
+    asset = session.get(Asset, incident.asset_id)
+    for staff in _users(session, job.business_id, Role.STAFF):
+        notifier.send(session, business_id=job.business_id, to_type="user", to_id=staff.id,
+                      at=now, incident_id=incident.id,
+                      body=f"{vendor.name} confirmed: technician for {asset.name} "
+                           f"by {_local(job.eta)}.")
+    return job
+
+
+def _resolve(session: Session, incident: Incident, asset: Asset, temp_c: float | None,
+             actor_id: str, now: datetime) -> None:
+    incident.status = IncidentStatus.RESOLVED
+    incident.resolved_at = now
+    session.add(incident)
+    audit.record(session, business_id=incident.business_id, actor_id=actor_id,
+                 action="INCIDENT_RESOLVED", entity_type="incident", entity_id=incident.id,
+                 at=now, details={"temp_c": temp_c})
+    at = f" and back at {temp_c:.1f}°C" if temp_c is not None else ""
+    for staff in _users(session, incident.business_id, Role.STAFF):
+        notifier.send(session, business_id=incident.business_id, to_type="user", to_id=staff.id,
+                      at=now, incident_id=incident.id,
+                      body=f"{asset.name} is fixed{at}. You can move the stock back.")
+
+
+def complete_job(session: Session, *, job_id: str, user: User, now: datetime) -> ServiceJob:
+    """Technician finished. Resolves the incident unless the unit is still warm (§8.4)."""
+    job, incident = _job_and_incident(session, job_id, user)
+    if job.status == JobStatus.DONE:
+        raise Conflict(f"Job {job_id} is already DONE")
+    job.status = JobStatus.DONE
+    job.done_at = now
+    session.add(job)
+    audit.record(session, business_id=job.business_id, actor_id=user.id, action="JOB_DONE",
+                 entity_type="job", entity_id=job.id, at=now,
+                 details={"incident_id": incident.id})
+
+    asset = session.get(Asset, incident.asset_id)
+    last_hour = [r for r in recent_readings(session, asset.id, now)
+                 if r[0] >= now - timedelta(minutes=60)]
+    latest = last_hour[-1][1] if last_hour else None
+    if latest is not None and rules.deviation_c(latest, asset.min_c, asset.max_c) > 0:
+        for owner in _users(session, job.business_id, Role.OWNER):
+            notifier.send(session, business_id=job.business_id, to_type="user", to_id=owner.id,
+                          at=now, incident_id=incident.id,
+                          body=f"{asset.name} is still out of range after repair "
+                               f"({latest:.1f}°C). Please check with the technician.")
+    else:
+        _resolve(session, incident, asset, latest, user.id, now)
+    return job
