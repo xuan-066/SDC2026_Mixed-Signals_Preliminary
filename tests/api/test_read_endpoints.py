@@ -11,9 +11,8 @@ MUST_ROUTES = [
     ("post", "/v1/approvals/{approval_id}/reject"),
     ("post", "/v1/jobs/{job_id}/confirm"), ("post", "/v1/jobs/{job_id}/complete"),
     ("get", "/v1/messages"), ("get", "/v1/audit"), ("get", "/v1/metrics"),
-    ("post", "/v1/sim/reset"),
+    ("post", "/v1/sim/reset"), ("post", "/v1/sim/advance"), ("post", "/v1/sim/sensor"),
 ]
-# T9 adds ("post", "/v1/sim/advance") and ("post", "/v1/sim/sensor") to MUST_ROUTES.
 
 
 @pytest.fixture

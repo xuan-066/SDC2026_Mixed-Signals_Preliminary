@@ -16,6 +16,15 @@ class ResetOut(BaseModel):
     now: datetime
 
 
+class AdvanceIn(BaseModel):
+    minutes: int = Field(ge=0, le=24 * 60, examples=[60])
+
+
+class AdvanceOut(BaseModel):
+    now: datetime
+    actions: list[str]                 # what happened because time passed, e.g. vendor chased
+
+
 class MeOut(BaseModel):
     id: str
     name: str
@@ -170,6 +179,17 @@ class IncidentOut(BaseModel):
 class ReadingResult(BaseModel):
     reading: ReadingOut
     incident: IncidentOut | None
+
+
+class SensorIn(BaseModel):
+    asset_id: str = Field(examples=["a_fz2"])
+    pattern: Literal["compressor_fail", "door_open", "recover"]
+
+
+class SensorOut(BaseModel):
+    now: datetime
+    readings: list[ReadingOut]
+    incident: IncidentOut | None       # the unit's active incident afterwards (owner view)
 
 
 # ---------- approvals and jobs ----------
