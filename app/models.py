@@ -85,6 +85,7 @@ class Vendor(SQLModel, table=True):
     callout_fee_sen: int
     sla_hours: int
     phone: str
+    warranty_only: bool = False                 # only used for units under its warranty
 
 
 class Reading(SQLModel, table=True):

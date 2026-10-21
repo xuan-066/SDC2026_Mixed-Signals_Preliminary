@@ -70,7 +70,8 @@ def seed(session: Session) -> None:
         Vendor(id="v_sejukjaya", business_id=SERI_PAGI, name="Sejuk Jaya Services",
                services=["freezer", "chiller"], callout_fee_sen=12000, sla_hours=8, phone="demo-0202"),
         Vendor(id="v_brandcare", business_id=SERI_PAGI, name="BrandCare Warranty Centre",
-               services=["freezer"], callout_fee_sen=0, sla_hours=24, phone="demo-0203"),
+               services=["freezer"], callout_fee_sen=0, sla_hours=24, phone="demo-0203",
+               warranty_only=True),
     ])
     session.flush()
 
