@@ -1,1 +1,2 @@
 - [Python HTTPS trust](python-https-trust.md) — use the system trust store for external HTTPS; bundled certificate roots can reject valid connections in this environment.
+- [Role hierarchy](role-hierarchy.md) — owner has maximum privileges, manager medium privileges, and worker limited privileges.
