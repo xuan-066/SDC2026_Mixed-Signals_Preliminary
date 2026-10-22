@@ -1,43 +1,23 @@
-modules = ["python-3.12"]
-run = "pip install -q -r requirements.txt && uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"
+modules = ["nodejs-24", "python-3.12"]
 
 [deployment]
-build = ["sh", "-c", "pip install -q -r requirements.txt"]
-# Disposable SQLite on purpose: the demo reseeds itself, and Replit's injected DATABASE_URL
-# (PostgreSQL) isn't provisioned. Publish as ONE instance: the demo clock lives in memory.
-run = ["sh", "-c", "DATABASE_URL=sqlite:////tmp/sejukguard.db uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
+router = "application"
+deploymentTarget = "autoscale"
 
-[[ports]]
-localPort = 5000
-externalPort = 5000
-
-[[ports]]
-localPort = 8000
-externalPort = 80
-
-[nix]
-channel = "stable-25_05"
+[deployment.postBuild]
+args = ["pnpm", "store", "prune"]
+env = { "CI" = "true" }
 
 [workflows]
 runButton = "Project"
 
-[[workflows.workflow]]
-name = "Project"
-mode = "parallel"
-author = "agent"
+[agent]
+stack = "PNPM_WORKSPACE"
+expertMode = true
 
-[[workflows.workflow.tasks]]
-task = "workflow.run"
-args = "Start application"
+[postMerge]
+path = "scripts/post-merge.sh"
+timeoutMs = 180000
 
-[[workflows.workflow]]
-name = "Start application"
-author = "agent"
-
-[workflows.workflow.metadata]
-outputType = "webview"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "DATABASE_URL=sqlite:///./sejukguard.db uvicorn app.main:app --host 0.0.0.0 --port 5000"
-waitForPort = 5000
+[nix]
+channel = "stable-25_05"

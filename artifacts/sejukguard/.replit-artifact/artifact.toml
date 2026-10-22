@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "SejukGuard"
+description = "Web workspace for SejukGuard, preserving the existing FastAPI documentation and cold-chain operations API. This foundation retains the Python service and simulated demo behavior for the forthcoming customer application."
+version = "1.0.0"
+id = "artifacts/sejukguard"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 18810
+
+[services.development]
+run = "pnpm --filter @workspace/sejukguard run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/sejukguard", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/sejukguard/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "18810"
+BASE_PATH = "/"
