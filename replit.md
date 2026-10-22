@@ -12,7 +12,9 @@ this foundation deliberately retains the existing API-documentation landing.
 ## Run & routing
 
 - Install workspace dependencies with `pnpm install --frozen-lockfile` and Python
-  dependencies with `uv sync --frozen` (Replit uses `.pythonlibs`).
+  dependencies with `bash scripts/install-python.sh`. This exports the frozen
+  `uv.lock` and installs explicitly into Replit's writable `.pythonlibs` user site;
+  do not use `uv sync`, which can resolve to the read-only Nix system prefix here.
 - Start the managed `artifacts/api-server: API Server` workflow. It runs the
   original Python app using `artifacts/api-server/start-python.sh`, not Express.
 - Start `artifacts/sejukguard: web` for the registered React/TypeScript frontend.

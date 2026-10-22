@@ -1,5 +1,6 @@
 #!/bin/bash
-set -e
+set -euo pipefail
+cd "$(dirname "${BASH_SOURCE[0]}")/.."
 pnpm install --frozen-lockfile
-uv sync --frozen
+bash scripts/install-python.sh
 # SejukGuard retains SQLite. Never push the unused scaffold Postgres schema.

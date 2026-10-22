@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "bash ./start-python.sh",
-    "build": "uv sync --frozen",
+    "build": "bash ../../scripts/install-python.sh",
     "start": "bash ./start-python.sh",
     "test": "bash ./test-python.sh",
     "typecheck": "tsc -p tsconfig.json --noEmit"
