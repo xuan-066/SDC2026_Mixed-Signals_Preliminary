@@ -21,6 +21,11 @@ MATRIX = [
     (Perm.MANAGE_JOBS,     {V, O}),
     (Perm.VIEW_AUDIT,      {O}),
     (Perm.VIEW_METRICS,    {O}),
+    (Perm.MANAGE_EQUIPMENT, {O}),
+    (Perm.MANAGE_STOCK, {V, O}),
+    (Perm.MANAGE_VENDORS, {O}),
+    (Perm.MANAGE_TEAM, {O}),
+    (Perm.MANAGE_SETTINGS, {O}),
 ]
 
 

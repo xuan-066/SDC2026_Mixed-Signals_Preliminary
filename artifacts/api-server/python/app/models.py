@@ -64,6 +64,7 @@ class Asset(SQLModel, table=True):
     capacity_l: float
     warranty_until: date | None = None
     warranty_vendor_id: str | None = None
+    archived: bool = False
 
 
 class StockItem(SQLModel, table=True):
@@ -86,6 +87,7 @@ class Vendor(SQLModel, table=True):
     sla_hours: int
     phone: str
     warranty_only: bool = False                 # only used for units under its warranty
+    archived: bool = False
 
 
 class Reading(SQLModel, table=True):
@@ -166,3 +168,39 @@ class AuditEvent(SQLModel, table=True):
     entity_type: str
     entity_id: str = Field(index=True)
     details: dict = _json(dict)
+
+
+class Identity(SQLModel, table=True):
+    """Provider identity mapping. Roles remain exclusively in User."""
+    subject: str = Field(primary_key=True)
+    user_id: str = Field(foreign_key="user.id", unique=True)
+    email: str
+    active: bool = True
+
+
+class Invitation(SQLModel, table=True):
+    id: str = Field(default_factory=lambda: new_id("invite"), primary_key=True)
+    business_id: str = Field(foreign_key="business.id", index=True)
+    email: str
+    role: Role
+    token_hash: str = Field(unique=True, index=True)
+    status: str = "pending"
+    created_at: datetime = _ts()
+    expires_at: datetime = _ts()
+    accepted_by: str | None = None
+
+
+class Notification(SQLModel, table=True):
+    id: str = Field(default_factory=lambda: new_id("notification"), primary_key=True)
+    business_id: str = Field(foreign_key="business.id", index=True)
+    user_id: str = Field(foreign_key="user.id", index=True)
+    body: str
+    incident_id: str | None = None
+    created_at: datetime = _ts()
+    read_at: datetime | None = _ts(nullable=True)
+
+
+class TransferReceipt(SQLModel, table=True):
+    key: str = Field(primary_key=True)
+    fingerprint: str
+    transfer_id: str

@@ -1,38 +1,58 @@
-# SejukGuard workspace
+# SejukGuard
 
-The existing Python 3.12 FastAPI/SQLModel service is retained under
-[`artifacts/api-server/python`](artifacts/api-server/python). Its requirements,
-tests, demo scripts, SQLite engine and `/v1` API are unchanged.
+A responsive cold-chain response application for small Malaysian food businesses.
+React/TypeScript is the frontend; the retained Python FastAPI/SQLModel service and
+SQLite database own identity mapping, business permissions and operational rules.
 
-## Run on Replit
+## Run in this workspace
 
-1. Install dependencies: `pnpm install --frozen-lockfile` and `uv sync --frozen`.
-2. Start **artifacts/api-server: API Server** and **artifacts/sejukguard: web**
-   using the managed workflows.
-3. Open the web preview. `/` opens the original Swagger documentation at `/docs`.
-   `/health` returns `{"status":"ok"}`.
+```sh
+pnpm install --frozen-lockfile
+bash scripts/install-python.sh
+```
 
-The shared proxy forwards `/v1/*`, `/health`, `/docs`, `/openapi.json` and `/redoc`
-to the Python service. The separate React/TypeScript artifact owns `/`; it is
-only a frontend foundation at this stage, not a new customer application.
-Python receives its port from the managed workflow and runs from the workspace
-root, preserving the default SQLite location `./sejukguard.db`.
+Start the managed **artifacts/api-server: API Server** and
+**artifacts/sejukguard: web** workflows, then open the web preview at `/`.
+The shared proxy routes `/v1`, `/api/__clerk`, `/health`, `/docs`, `/openapi.json`
+and `/redoc` to Python. `/docs` is the authoritative API contract, not the scaffold
+Express client. Do not run scaffold database-push commands or replace SQLite.
+
+Clerk is configured for development. Create and verify an account through the
+app, then explicitly create an empty business or open an owner's invitation link.
+Signing up never grants access to a demo business. Each account has one membership.
+Account email, password recovery and identity security belong to Clerk; business
+roles and operational profile details belong to SejukGuard.
+
+Normal mode is the default: real clock, no automatic synthetic records, no demo
+identity headers or simulation/reset routes. SQLite defaults to `./sejukguard.db`.
+`SEJUKGUARD_DATABASE_URL` overrides the managed scaffold database address.
 
 ## Verify
 
-```bash
+```sh
 pnpm --filter @workspace/api-server test
+pnpm --filter @workspace/sejukguard typecheck
+pnpm --filter @workspace/sejukguard test
+pnpm --filter @workspace/sejukguard build
 ```
 
-This runs the existing regression suite with isolated in-memory SQLite databases.
-For HTTP checks, use the shared preview origin (or `http://localhost:80` in the
-workspace), not a service port.
+The backend suite includes the original 200 regressions and new accounts,
+permissions, isolation, invitation, CRUD, transfer/concurrency, signature, worker
+and persistence checks. See [operations](docs/operations.md) for **authenticated
+browser tests**, prerequisites, role matrix, reminders, backups and the legacy demo.
 
-Environment behavior is unchanged: `DEMO_MODE=true`, `LLM_ENABLED=false` by default;
-`DATABASE_URL`, `LLM_MODEL` and the optional Anthropic credential remain supported.
-See [run and data notes](replit.md) and the
-[original product documentation](artifacts/api-server/python/README.md).
-Do not run the scaffold database push commands: the product still uses SQLite.
-The launch adapter warns and ignores the scaffold's automatic Postgres address.
-Existing SQLite `DATABASE_URL` settings still work; `SEJUKGUARD_DATABASE_URL` can
-override the workspace-managed address without changing the Python application.
+## Readiness and honest boundaries
+
+- In-app notifications and copy-link invitations work. WhatsApp/Telegram/SMS and
+  business-invitation email are **not connected**; the external outbox is mock.
+- Clerk handles identity verification/recovery email, not operational delivery.
+- Transfers record actual item quantities and volume, atomically. A recommendation
+  or resolved incident is **not proof that stock moved or was saved**.
+- Missing/stale readings are explicit; temperature history uses real readings and
+  breaks gaps over an hour. No sensor installation or automatic food-safety
+  certification is claimed.
+- Data survives application-process restarts on the same SQLite storage. **The
+  app is not production-ready on Replit's ephemeral deployment filesystem.**
+  Publishing is blocked for SQLite on Replit. A durable-storage/hosting decision
+  and configuration need the owner's explicit approval; no provider replacement
+  or publishing has been performed.

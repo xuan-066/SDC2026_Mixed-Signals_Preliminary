@@ -2,13 +2,14 @@
 from enum import StrEnum
 from typing import TypeVar
 
-from fastapi import Depends, Header
+from fastapi import Depends, Header, Request
 from sqlmodel import Session, SQLModel
 
 from app.db import get_session
 from app.enums import Role
 from app.errors import Forbidden, NotFound, Unauthorized
-from app.models import User
+from app.models import User, Identity
+from app.core.identity import verified_principal
 
 ROLE_RANK = {Role.STAFF: 1, Role.SUPERVISOR: 2, Role.OWNER: 3}
 
@@ -23,6 +24,11 @@ class Perm(StrEnum):
     MANAGE_JOBS = "manage_jobs"              # confirm / complete on the vendor's behalf
     VIEW_AUDIT = "view_audit"
     VIEW_METRICS = "view_metrics"
+    MANAGE_EQUIPMENT = "manage_equipment"
+    MANAGE_STOCK = "manage_stock"
+    MANAGE_VENDORS = "manage_vendors"
+    MANAGE_TEAM = "manage_team"
+    MANAGE_SETTINGS = "manage_settings"
 
 
 # Minimum role per permission (one row of §9 each).
@@ -36,6 +42,11 @@ PERMISSIONS: dict[Perm, Role] = {
     Perm.MANAGE_JOBS: Role.SUPERVISOR,
     Perm.VIEW_AUDIT: Role.OWNER,
     Perm.VIEW_METRICS: Role.OWNER,
+    Perm.MANAGE_EQUIPMENT: Role.OWNER,
+    Perm.MANAGE_STOCK: Role.SUPERVISOR,
+    Perm.MANAGE_VENDORS: Role.OWNER,
+    Perm.MANAGE_TEAM: Role.OWNER,
+    Perm.MANAGE_SETTINGS: Role.OWNER,
 }
 
 
@@ -52,10 +63,24 @@ def permissions_for(role: Role) -> list[Perm]:
 
 
 def get_current_user(
+    request: Request,
     x_user_id: str | None = Header(default=None),
     session: Session = Depends(get_session),
 ) -> User:
-    """FastAPI dependency: 401 if X-User-Id is missing or unknown."""
+    """Identity is verified in normal mode; membership is reloaded every request."""
+    if not request.app.state.settings.demo_mode:
+        if x_user_id:
+            raise Unauthorized("Demo identity headers are disabled")
+        principal = verified_principal(request)
+        identity = session.get(Identity, principal.subject)
+        if identity is None:
+            raise Forbidden("Business onboarding required")
+        if not identity.active:
+            raise Forbidden("Your business membership is inactive. Contact the owner.")
+        user = session.get(User, identity.user_id)
+        if user is None:
+            raise Unauthorized("Membership not found")
+        return user
     if not x_user_id:
         raise Unauthorized("Missing X-User-Id header")
     user = session.get(User, x_user_id)

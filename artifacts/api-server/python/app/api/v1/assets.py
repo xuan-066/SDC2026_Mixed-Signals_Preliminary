@@ -12,11 +12,13 @@ router = APIRouter(prefix="/v1", tags=["assets"])
 
 
 @router.get("/assets", response_model=list[AssetOut])
-def list_assets(user: User = Depends(require(Perm.VIEW_OPERATIONS)),
+def list_assets(include_archived: bool = False, user: User = Depends(require(Perm.VIEW_OPERATIONS)),
                 session: Session = Depends(get_session), clock: Clock = Depends(get_clock)):
     """Every fridge and freezer of your business, with its status and latest temperature."""
-    assets = session.exec(select(Asset).where(Asset.business_id == user.business_id)
-                          .order_by(Asset.name))
+    query = select(Asset).where(Asset.business_id == user.business_id)
+    if not include_archived:
+        query = query.where(Asset.archived == False)  # noqa: E712
+    assets = session.exec(query.order_by(Asset.name))
     return [asset_out(session, a, clock.now()) for a in assets]
 
 
@@ -28,8 +30,10 @@ def get_asset(asset_id: str, user: User = Depends(require(Perm.VIEW_OPERATIONS))
 
 
 @router.get("/vendors", response_model=list[VendorOut], tags=["vendors"])
-def list_vendors(user: User = Depends(require(Perm.VIEW_VENDORS)),
+def list_vendors(include_archived: bool = False, user: User = Depends(require(Perm.VIEW_VENDORS)),
                  session: Session = Depends(get_session)):
-    vendors = session.exec(select(Vendor).where(Vendor.business_id == user.business_id)
-                           .order_by(Vendor.name))
+    query = select(Vendor).where(Vendor.business_id == user.business_id)
+    if not include_archived:
+        query = query.where(Vendor.archived == False)  # noqa: E712
+    vendors = session.exec(query.order_by(Vendor.name))
     return [vendor_out(v) for v in vendors]

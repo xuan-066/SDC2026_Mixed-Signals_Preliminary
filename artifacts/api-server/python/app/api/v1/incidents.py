@@ -2,12 +2,14 @@ from fastapi import APIRouter, Depends, Request
 from sqlmodel import Session, select
 
 from app.api.v1.views import incident_out
-from app.coldchain import report_flow
+from app.coldchain import report_flow, workflow
 from app.core.clock import Clock, get_clock
 from app.core.rbac import Perm, get_owned, require
 from app.db import get_session
 from app.enums import IncidentStatus
-from app.models import Incident, User
+from app.models import Incident, User, Asset, ApprovalRequest
+from app.enums import ApprovalStatus
+from app.errors import Conflict
 from app.schemas import ClarifyIn, IncidentOut, ReportIn, ReportResult
 
 router = APIRouter(prefix="/v1", tags=["incidents"])
@@ -30,6 +32,29 @@ def get_incident(incident_id: str, user: User = Depends(require(Perm.VIEW_OPERAT
                  session: Session = Depends(get_session)):
     """Full detail: reasons, RM at risk, approval, job and timeline (plan §10)."""
     return incident_out(session, get_owned(session, Incident, incident_id, user), user)
+
+
+@router.post("/incidents/{incident_id}/reassess", response_model=IncidentOut)
+def reassess(incident_id: str, user: User = Depends(require(Perm.MANAGE_JOBS)),
+             session: Session = Depends(get_session), clock: Clock = Depends(get_clock)):
+    incident = get_owned(session, Incident, incident_id, user)
+    if incident.status not in {IncidentStatus.PENDING_APPROVAL, IncidentStatus.DECLINED} or not incident.asset_id:
+        raise Conflict("Only unresolved known-equipment incidents can be reassessed")
+    if workflow.job_for(session, incident.id):
+        raise Conflict("A repair job already exists. Continue that repair instead.")
+    pending = session.exec(select(ApprovalRequest).where(
+        ApprovalRequest.subject_id == incident.id, ApprovalRequest.status == ApprovalStatus.PENDING)).first()
+    if pending:
+        raise Conflict("An approval is still pending. Approve or reject it before reassessing.")
+    snapshot = incident.stock_at_risk_sen
+    workflow.decide_and_act(session, incident, get_owned(session, Asset, incident.asset_id, user), clock.now())
+    incident.stock_at_risk_sen = snapshot
+    session.add(incident)
+    from app.core import audit
+    audit.record(session, business_id=user.business_id, actor_id=user.id, action="INCIDENT_REASSESSED",
+                 entity_type="incident", entity_id=incident.id, at=clock.now())
+    session.commit()
+    return incident_out(session, incident, user)
 
 
 @router.post("/incidents/{incident_id}/clarify", response_model=IncidentOut)

@@ -52,7 +52,7 @@ def gather_context(session: Session, asset: Asset, now: datetime) -> rules.Incid
 
     units = []
     for other in session.exec(select(Asset).where(Asset.business_id == asset.business_id,
-                                                  Asset.id != asset.id)):
+                                                  Asset.id != asset.id, Asset.archived == False)):
         used = sum(s.volume_l for s in _stock(session, other.id))
         other_recent = recent_readings(session, other.id, now)
         # No recent readings: assume it is working (nothing says otherwise).
@@ -63,7 +63,8 @@ def gather_context(session: Session, asset: Asset, now: datetime) -> rules.Incid
 
     vendors = [rules.VendorOffer(v.id, v.name, list(v.services), v.callout_fee_sen,
                                  v.sla_hours, v.warranty_only)
-               for v in session.exec(select(Vendor).where(Vendor.business_id == asset.business_id)
+               for v in session.exec(select(Vendor).where(Vendor.business_id == asset.business_id,
+                                                           Vendor.archived == False)
                                      .order_by(Vendor.id))]
 
     return rules.IncidentContext(
@@ -194,6 +195,8 @@ def process_reading(session: Session, *, asset_id: str, temp_c: float, source: s
                     actor: User, now: datetime) -> tuple[Reading, Incident | None]:
     """handle_reading, also returning the stored Reading (for the API response)."""
     asset = get_owned(session, Asset, asset_id, actor)                 # 404 before anything
+    if asset.archived:
+        raise Conflict("Restore archived equipment before recording a reading")
     if not rules.is_valid_temp(temp_c):
         low, high = policy.VALID_TEMP_RANGE
         raise InvalidInput(f"{temp_c}°C is outside {low}…{high}°C: sensor glitch, not stored")
@@ -248,6 +251,9 @@ def on_approval_decided(session: Session, approval: ApprovalRequest, user: User,
     incident = session.get(Incident, approval.subject_id)
     asset = session.get(Asset, incident.asset_id)
     vendor = session.get(Vendor, incident.decision["vendor"]["id"])
+
+    if approval.status == ApprovalStatus.APPROVED and (vendor is None or vendor.archived):
+        raise Conflict("The recommended vendor is archived. Reject this request and reassess with an active vendor.")
 
     if approval.status == ApprovalStatus.REJECTED:
         incident.status = IncidentStatus.DECLINED

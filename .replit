@@ -11,6 +11,41 @@ env = { "CI" = "true" }
 [workflows]
 runButton = "Project"
 
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "backend-tests"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "web-checks"
+
+[[workflows.workflow]]
+name = "backend-tests"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "pnpm --filter @workspace/api-server test"
+
+[workflows.workflow.metadata]
+isValidation = true
+
+[[workflows.workflow]]
+name = "web-checks"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "pnpm --filter @workspace/sejukguard typecheck && pnpm --filter @workspace/sejukguard test && pnpm --filter @workspace/sejukguard build"
+
+[workflows.workflow.metadata]
+isValidation = true
+
 [agent]
 stack = "PNPM_WORKSPACE"
 expertMode = true
@@ -21,3 +56,8 @@ timeoutMs = 180000
 
 [nix]
 channel = "stable-25_05"
+packages = ["chromium"]
+
+[userenv]
+
+[userenv.development]

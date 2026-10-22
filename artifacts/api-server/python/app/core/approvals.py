@@ -11,11 +11,18 @@ from app.core import audit
 from app.core.rbac import role_at_least
 from app.enums import ApprovalStatus, Role
 from app.errors import Conflict, Forbidden, NotFound
-from app.models import ApprovalRequest, User
+from app.models import ApprovalRequest, User, Business
 from app.money import rm_label
 
 Handler = Callable[[Session, ApprovalRequest, User, datetime], None]
 _handlers: dict[str, Handler] = {}
+
+
+def can_decide(session: Session, approval: ApprovalRequest, user: User) -> bool:
+    business = session.get(Business, approval.business_id)
+    return (role_at_least(user.role, approval.required_role)
+            and (user.role == Role.OWNER or
+                 approval.amount_sen <= business.supervisor_limit_sen))
 
 
 def register_handler(subject_type: str, fn: Handler) -> None:
@@ -49,7 +56,7 @@ def decide(session: Session, *, approval_id: str, user: User, approve: bool,
     if approval is None or approval.business_id != user.business_id:
         raise NotFound(f"Approval {approval_id} not found")
 
-    if not role_at_least(user.role, approval.required_role):
+    if not can_decide(session, approval, user):
         # The refusal itself is evidence, so it is saved even though the request fails.
         _log(session, approval, action="APPROVAL_FORBIDDEN", actor_id=user.id, at=at,
              user_role=user.role.value)

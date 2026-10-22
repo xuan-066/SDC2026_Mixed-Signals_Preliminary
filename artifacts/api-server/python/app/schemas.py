@@ -64,6 +64,8 @@ class AssetOut(BaseModel):
     active_incident_id: str | None
     capacity_l: float
     free_l: float
+    archived: bool = False
+    reading_state: Literal["missing", "stale", "current"] = "missing"
 
 
 class StockOut(BaseModel):
@@ -82,6 +84,7 @@ class AssetDetailOut(AssetOut):
     stock: list[StockOut]
     stock_value_rm: str | None
     readings: list[ReadingOut]         # last 24, oldest first
+    warranty_vendor_id: str | None = None
 
 
 # ---------- vendors ----------
@@ -94,6 +97,7 @@ class VendorOut(BaseModel):
     sla_hours: int
     warranty_only: bool
     phone: str
+    archived: bool = False
 
 
 # ---------- incidents ----------

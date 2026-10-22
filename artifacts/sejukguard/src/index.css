@@ -1,4 +1,6 @@
+@layer theme, base, clerk, components, utilities;
 @import 'tailwindcss';
+@import '@clerk/themes/shadcn.css';
 @import 'tw-animate-css';
 @plugin "@tailwindcss/typography";
 
@@ -59,6 +61,12 @@
   --font-sans: var(--app-font-sans);
   --font-serif: var(--app-font-serif);
   --font-mono: var(--app-font-mono);
+  --font-display: var(--app-font-serif);
+  --color-thaw: hsl(var(--thaw));
+  --color-amber: hsl(var(--amber));
+  --color-watch: hsl(var(--watch));
+  --color-frost: hsl(var(--frost));
+  --color-ok: hsl(var(--ok));
 
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -78,72 +86,49 @@
   --elevate-1: rgba(0, 0, 0, 0.03);
   --elevate-2: rgba(0, 0, 0, 0.08);
 
-  --background: red; /*replace with H S L */
-
-  --foreground: red; /*replace with H S L */
-
-  --border: red; /*replace with H S L */
-
-  --card: red; /*replace with H S L */
-
-  --card-foreground: red; /*replace with H S L */
-
-  --card-border: red; /*replace with H S L */
-
-  --sidebar: red; /*replace with H S L */
-
-  --sidebar-foreground: red; /*replace with H S L */
-
-  --sidebar-border: red; /*replace with H S L */
-
-  --sidebar-primary: red; /*replace with H S L */
-
-  --sidebar-primary-foreground: red; /*replace with H S L */
-
-  --sidebar-accent: red; /*replace with H S L */
-
-  --sidebar-accent-foreground: red; /*replace with H S L */
-
-  --sidebar-ring: red; /*replace with H S L */
-
-  --popover: red; /*replace with H S L */
-
-  --popover-foreground: red; /*replace with H S L */
-
-  --popover-border: red; /*replace with H S L */
-
-  --primary: red; /*replace with H S L */
-
-  --primary-foreground: red; /*replace with H S L */
-
-  --secondary: red; /*replace with H S L */
-
-  --secondary-foreground: red; /*replace with H S L */
-
-  --muted: red; /*replace with H S L */
-
-  --muted-foreground: red; /*replace with H S L */
-
-  --accent: red; /*replace with H S L */
-
-  --accent-foreground: red; /*replace with H S L */
-
-  --destructive: red; /*replace with H S L */
-
-  --destructive-foreground: red; /*replace with H S L */
-
-  --input: red; /*replace with H S L */
-  --ring: red; /*replace with H S L */
-  --chart-1: red; /*replace with H S L */
-  --chart-2: red; /*replace with H S L */
-  --chart-3: red; /*replace with H S L */
-  --chart-4: red; /*replace with H S L */
-  --chart-5: red; /*replace with H S L */
-
-  --app-font-sans: 'Inter', sans-serif;
-  --app-font-serif: Georgia, serif;
-  --app-font-mono: Menlo, monospace;
-  --radius: 0.5rem; /* 8px */
+  --background: 197 33% 95.5%;
+  --foreground: 208 48% 13%;
+  --border: 198 24% 84%;
+  --card: 195 45% 98.5%;
+  --card-foreground: 208 48% 13%;
+  --card-border: 198 24% 86%;
+  --sidebar: 207 52% 12%;
+  --sidebar-foreground: 195 30% 88%;
+  --sidebar-border: 207 35% 20%;
+  --sidebar-primary: 186 72% 58%;
+  --sidebar-primary-foreground: 207 52% 10%;
+  --sidebar-accent: 207 40% 18%;
+  --sidebar-accent-foreground: 190 60% 96%;
+  --sidebar-ring: 186 72% 58%;
+  --popover: 195 45% 98.5%;
+  --popover-foreground: 208 48% 13%;
+  --popover-border: 198 24% 84%;
+  --primary: 191 84% 25%;
+  --primary-foreground: 188 60% 97%;
+  --secondary: 196 32% 90%;
+  --secondary-foreground: 208 48% 16%;
+  --muted: 197 28% 91%;
+  --muted-foreground: 205 16% 38%;
+  --accent: 190 42% 89%;
+  --accent-foreground: 200 60% 16%;
+  --destructive: 5 76% 47%;
+  --destructive-foreground: 20 90% 97%;
+  --input: 198 22% 78%;
+  --ring: 191 84% 32%;
+  --chart-1: 191 84% 28%;
+  --chart-2: 14 86% 54%;
+  --chart-3: 38 94% 48%;
+  --chart-4: 205 45% 40%;
+  --chart-5: 160 45% 36%;
+  --thaw: 12 84% 52%;
+  --amber: 36 94% 45%;
+  --watch: 48 88% 40%;
+  --frost: 186 72% 42%;
+  --ok: 168 55% 30%;
+  --app-font-sans: 'Instrument Sans', ui-sans-serif, sans-serif;
+  --app-font-serif: 'Bricolage Grotesque', ui-sans-serif, sans-serif;
+  --app-font-mono: 'JetBrains Mono', ui-monospace, monospace;
+  --radius: 0.625rem;
   --shadow-2xs: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0); /*replace with H S L */
   --shadow-xs: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0); /*replace with H S L */
   --shadow-sm:
@@ -227,68 +212,19 @@
   --elevate-1: rgba(255, 255, 255, 0.04);
   --elevate-2: rgba(255, 255, 255, 0.09);
 
-  --background: red; /*replace with H S L */
-
-  --foreground: red; /*replace with H S L */
-
-  --border: red; /*replace with H S L */
-
-  --card: red; /*replace with H S L */
-
-  --card-foreground: red; /*replace with H S L */
-
-  --card-border: red; /*replace with H S L */
-
-  --sidebar: red; /*replace with H S L */
-
-  --sidebar-foreground: red; /*replace with H S L */
-
-  --sidebar-border: red; /*replace with H S L */
-
-  --sidebar-primary: red; /*replace with H S L */
-
-  --sidebar-primary-foreground: red; /*replace with H S L */
-
-  --sidebar-accent: red; /*replace with H S L */
-
-  --sidebar-accent-foreground: red; /*replace with H S L */
-
-  --sidebar-ring: red; /*replace with H S L */
-
-  --popover: red; /*replace with H S L */
-
-  --popover-foreground: red; /*replace with H S L */
-
-  --popover-border: red; /*replace with H S L */
-
-  --primary: red; /*replace with H S L */
-
-  --primary-foreground: red; /*replace with H S L */
-
-  --secondary: red; /*replace with H S L */
-
-  --secondary-foreground: red; /*replace with H S L */
-
-  --muted: red; /*replace with H S L */
-
-  --muted-foreground: red; /*replace with H S L */
-
-  --accent: red; /*replace with H S L */
-
-  --accent-foreground: red; /*replace with H S L */
-
-  --destructive: red; /*replace with H S L */
-
-  --destructive-foreground: red; /*replace with H S L */
-
-  /* Used as the border around inputs. Dark mode: Should be a border that is light enough to have high contrast when rendered on a --card background. More contrast than standard --border */
-  --input: red; /*replace with H S L */
-  --ring: red; /*replace with H S L */
-  --chart-1: red; /*replace with H S L */
-  --chart-2: red; /*replace with H S L */
-  --chart-3: red; /*replace with H S L */
-  --chart-4: red; /*replace with H S L */
-  --chart-5: red; /*replace with H S L */
+  --background: 208 45% 8%; --foreground: 195 30% 92%; --border: 207 30% 20%;
+  --card: 208 42% 11%; --card-foreground: 195 30% 92%; --card-border: 207 30% 20%;
+  --sidebar: 208 50% 6%; --sidebar-foreground: 195 30% 88%; --sidebar-border: 207 35% 16%;
+  --sidebar-primary: 186 72% 58%; --sidebar-primary-foreground: 207 52% 10%;
+  --sidebar-accent: 207 40% 15%; --sidebar-accent-foreground: 190 60% 96%; --sidebar-ring: 186 72% 58%;
+  --popover: 208 42% 11%; --popover-foreground: 195 30% 92%; --popover-border: 207 30% 20%;
+  --primary: 186 72% 52%; --primary-foreground: 207 52% 8%;
+  --secondary: 207 30% 18%; --secondary-foreground: 195 30% 92%;
+  --muted: 207 30% 16%; --muted-foreground: 200 15% 65%;
+  --accent: 200 35% 20%; --accent-foreground: 195 30% 92%;
+  --destructive: 5 72% 55%; --destructive-foreground: 20 90% 97%;
+  --input: 207 25% 28%; --ring: 186 72% 52%;
+  --chart-1: 186 72% 52%; --chart-2: 14 86% 60%; --chart-3: 38 94% 55%; --chart-4: 205 45% 60%; --chart-5: 160 45% 50%;
 
   --shadow-2xs: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0);
   --shadow-xs: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0);
@@ -431,3 +367,21 @@
     inset: -1px;
   }
 }
+
+@layer base {
+  h1, h2, h3, .font-display { font-family: var(--app-font-serif); letter-spacing: -0.02em; }
+  body { font-feature-settings: 'ss01', 'tnum'; }
+  body::before {
+    content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0; opacity: .35;
+    background-image: radial-gradient(hsl(var(--primary) / 0.07) 1px, transparent 1px);
+    background-size: 22px 22px;
+  }
+  #root { position: relative; z-index: 1; }
+  :focus-visible { outline: 2px solid hsl(var(--ring)); outline-offset: 2px; }
+}
+.thermal-strip { background: linear-gradient(90deg, hsl(var(--frost)), hsl(var(--primary)) 35%, hsl(var(--watch)) 62%, hsl(var(--amber)) 78%, hsl(var(--thaw))); }
+.rise { animation: rise .45s cubic-bezier(.2,.7,.2,1) both; }
+@keyframes rise { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.pulse-dot { animation: pulsedot 1.6s ease-in-out infinite; }
+@keyframes pulsedot { 0%,100% { opacity: 1; transform: scale(1);} 50% { opacity: .35; transform: scale(.8);} }
+@media (prefers-reduced-motion: reduce) { .rise, .pulse-dot { animation: none; } }

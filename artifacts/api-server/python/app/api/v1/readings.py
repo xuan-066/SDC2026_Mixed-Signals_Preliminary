@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request
 from sqlmodel import Session
 
 from app.api.v1.views import incident_out
@@ -13,10 +13,13 @@ router = APIRouter(prefix="/v1", tags=["readings"])
 
 
 @router.post("/readings", response_model=ReadingResult)
-def post_reading(body: ReadingIn, user: User = Depends(require(Perm.SUBMIT_READING)),
+def post_reading(body: ReadingIn, request: Request, user: User = Depends(require(Perm.SUBMIT_READING)),
                  session: Session = Depends(get_session),
                  clock: Clock = Depends(get_clock)) -> ReadingResult:
     """A temperature reading from staff or a sensor. This is the trigger of the whole journey."""
+    if not request.app.state.settings.demo_mode and body.source != "staff":
+        from app.errors import InvalidInput
+        raise InvalidInput("Only manual staff readings are supported in normal mode")
     reading, incident = workflow.process_reading(
         session, asset_id=body.asset_id, temp_c=body.temp_c, source=body.source,
         actor=user, now=clock.now())

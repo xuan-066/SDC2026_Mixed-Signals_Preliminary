@@ -13,7 +13,8 @@ from app.models import Asset, Incident, User
 
 
 def _assets(session: Session, business_id: str) -> list[Asset]:
-    return list(session.exec(select(Asset).where(Asset.business_id == business_id)
+    return list(session.exec(select(Asset).where(Asset.business_id == business_id,
+                                                Asset.archived == False)
                              .order_by(Asset.name)))
 
 
@@ -68,6 +69,8 @@ def clarify_incident(session: Session, *, incident_id: str, asset_id: str, user:
     if incident.status != IncidentStatus.NEEDS_INFO:
         raise Conflict(f"Incident {incident_id} is {incident.status.value}, not NEEDS_INFO")
     asset = get_owned(session, Asset, asset_id, user)
+    if asset.archived:
+        raise Conflict("Restore archived equipment before selecting it")
     active = workflow.active_incident(session, asset.id)
     if active is not None:
         raise Conflict(f"{asset.name} already has an open incident ({active.id})")

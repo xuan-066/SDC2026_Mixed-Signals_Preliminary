@@ -1,17 +1,30 @@
 from datetime import UTC
 
 from fastapi import APIRouter, Depends
-from sqlmodel import Session
+from sqlmodel import Session, select
 
 from app.api.v1.views import incident_out, job_out
 from app.coldchain import workflow
 from app.core.clock import Clock, get_clock
-from app.core.rbac import Perm, require
+from app.core.rbac import Perm, require, get_owned
 from app.db import get_session
-from app.models import Incident, User
+from app.models import Incident, User, ServiceJob
 from app.schemas import ConfirmIn, JobResult
 
 router = APIRouter(prefix="/v1/jobs", tags=["jobs"])
+
+
+@router.get("")
+def list_jobs(user: User = Depends(require(Perm.MANAGE_JOBS)),
+              session: Session = Depends(get_session)):
+    return [job_out(session, j) for j in session.exec(select(ServiceJob).where(
+        ServiceJob.business_id == user.business_id).order_by(ServiceJob.requested_at.desc()))]
+
+
+@router.get("/{job_id}")
+def get_job(job_id: str, user: User = Depends(require(Perm.MANAGE_JOBS)),
+            session: Session = Depends(get_session)):
+    return job_out(session, get_owned(session, ServiceJob, job_id, user))
 
 
 def _result(session: Session, job, user: User) -> JobResult:

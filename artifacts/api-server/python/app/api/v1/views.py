@@ -1,10 +1,12 @@
 """Database rows → API shapes. Money visibility (§9) is applied here, in one place."""
-from datetime import datetime
+from datetime import datetime, timedelta
+import re
 
 from sqlmodel import Session, select
 
 from app.coldchain import rules, workflow
 from app.core import audit
+from app.core.approvals import can_decide
 from app.core.rbac import Perm, has_perm, role_at_least
 from app.enums import ApprovalStatus
 from app.models import (READING_SEQ, ApprovalRequest, Asset, Incident, Reading, ServiceJob,
@@ -45,6 +47,9 @@ def asset_out(session: Session, asset: Asset, now: datetime) -> AssetOut:
         latest_reading_at=latest.recorded_at if latest else None,
         active_incident_id=active.id if active else None,
         capacity_l=asset.capacity_l, free_l=asset.capacity_l - used,
+        archived=asset.archived,
+        reading_state=("missing" if latest is None else "stale"
+                       if now - latest.recorded_at > timedelta(minutes=60) else "current"),
     )
 
 
@@ -57,6 +62,7 @@ def asset_detail_out(session: Session, asset: Asset, viewer: User, now: datetime
         **asset_out(session, asset, now).model_dump(),
         aliases=list(asset.aliases),
         warranty_until=asset.warranty_until.isoformat() if asset.warranty_until else None,
+        warranty_vendor_id=asset.warranty_vendor_id,
         stock=[StockOut(id=s.id, name=s.name, qty=s.qty, unit=s.unit, volume_l=s.volume_l,
                         unit_cost_rm=money(s.unit_cost_sen, viewer),
                         value_rm=money(round(s.qty * s.unit_cost_sen), viewer))
@@ -70,7 +76,7 @@ def asset_detail_out(session: Session, asset: Asset, viewer: User, now: datetime
 def vendor_out(vendor: Vendor) -> VendorOut:
     return VendorOut(id=vendor.id, name=vendor.name, services=list(vendor.services),
                      callout_rm=rm_str(vendor.callout_fee_sen), sla_hours=vendor.sla_hours,
-                     warranty_only=vendor.warranty_only, phone=vendor.phone)
+                     warranty_only=vendor.warranty_only, phone=vendor.phone, archived=vendor.archived)
 
 
 # ---------- approvals, jobs ----------
@@ -88,7 +94,7 @@ def approval_out(session: Session, approval: ApprovalRequest, viewer: User) -> A
         id=approval.id, status=approval.status, required_role=approval.required_role,
         amount_rm=money(approval.amount_sen, viewer),
         can_decide=(approval.status == ApprovalStatus.PENDING
-                    and role_at_least(viewer.role, approval.required_role)),
+                    and can_decide(session, approval, viewer)),
         subject_type=approval.subject_type, subject_id=approval.subject_id,
         action=approval.action, summary=summary, created_at=approval.created_at,
         decided_by=approval.decided_by, decided_at=approval.decided_at, note=approval.note,
@@ -114,7 +120,10 @@ def _decision_out(decision: dict, viewer: User) -> DecisionOut | None:
         vendor=DecisionVendorOut(id=vendor["id"], name=vendor["name"],
                                  callout_rm=money(vendor["callout_sen"], viewer),
                                  sla_hours=vendor["sla_hours"]) if vendor else None,
-        required_role=decision["required_role"], reasons=decision.get("reasons", []),
+        required_role=decision["required_role"],
+        reasons=[r if has_perm(viewer.role, Perm.VIEW_MONEY)
+                 else re.sub(r"RM\s*[\d,.]+", "[restricted]", r)
+                 for r in decision.get("reasons", [])],
         needs_human=decision.get("needs_human"),
     )
 
