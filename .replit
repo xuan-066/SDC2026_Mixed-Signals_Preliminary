@@ -3,7 +3,9 @@ run = "pip install -q -r requirements.txt && uvicorn app.main:app --host 0.0.0.0
 
 [deployment]
 build = ["sh", "-c", "pip install -q -r requirements.txt"]
-run = ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
+# Disposable SQLite on purpose: the demo reseeds itself, and Replit's injected DATABASE_URL
+# (PostgreSQL) isn't provisioned. Publish as ONE instance: the demo clock lives in memory.
+run = ["sh", "-c", "DATABASE_URL=sqlite:////tmp/sejukguard.db uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
 
 [[ports]]
 localPort = 5000

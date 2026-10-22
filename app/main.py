@@ -1,3 +1,4 @@
+import logging
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
@@ -18,6 +19,9 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     @asynccontextmanager
     async def lifespan(app: FastAPI):
+        # Which kind of database, never the URL itself (it can hold a password).
+        logging.getLogger("uvicorn.error").info(
+            "SejukGuard database: %s", app.state.engine.url.get_backend_name())
         # Seed on startup so a fresh deploy always has the demo world (plan §20).
         init_db(app.state.engine)
         with Session(app.state.engine) as session:
