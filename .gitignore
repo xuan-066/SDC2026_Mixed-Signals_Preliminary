@@ -66,3 +66,6 @@ venv/
 *.db-*
 *.sqlite
 *.sqlite3
+/generated-artifacts/
+/artifacts/sejukguard/test-results/
+/artifacts/sejukguard/playwright-report/
