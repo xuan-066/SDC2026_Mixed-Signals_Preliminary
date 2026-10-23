@@ -28,7 +28,7 @@ if (!basePath) {
   );
 }
 
-export default defineConfig(({ mode }) => ({
+export default defineConfig(async ({ mode }) => ({
   base: basePath,
   plugins: [
     react(),
