@@ -7,7 +7,9 @@ import {
 import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
 import { useMe } from '@/lib/me';
+import { DEMO_MODE } from '@/lib/demo';
 import { useNotifications, useApprovals, useIncidents } from '@/lib/queries';
+import { DemoToolbar } from '@/components/demo-toolbar';
 import { useOnline } from '@/lib/paging';
 import { ROLE_LABEL } from '@/lib/format';
 import type { Perm } from '@/lib/types';
@@ -55,7 +57,8 @@ function NavList({ onNavigate }: { onNavigate?: () => void }) {
   return (
     <nav aria-label="Main" className="space-y-6">
       {NAV.map((g) => {
-        const items = g.items.filter((it) => (!it.perm || can(it.perm)) && (!it.owner || isOwner));
+        const items = g.items.filter((it) => (!it.perm || can(it.perm)) && (!it.owner || isOwner)
+          && (!DEMO_MODE || it.href !== '/account'));
         if (!items.length) return null;
         return (
           <div key={g.group}>
@@ -96,7 +99,7 @@ function Brand() {
   );
 }
 
-function Who() {
+function ClerkWho() {
   const { me } = useMe();
   const { signOut } = useClerk();
   return (
@@ -109,6 +112,21 @@ function Who() {
       </button>
     </div>
   );
+}
+
+function DemoWho() {
+  const { me } = useMe();
+  return (
+    <div className="rounded-xl border border-sidebar-border bg-sidebar-accent/40 p-3">
+      <p className="truncate text-sm font-semibold text-sidebar-accent-foreground" data-testid="text-user-name">{me.name}</p>
+      <p className="truncate text-xs text-sidebar-foreground/60" data-testid="text-business-name">{ROLE_LABEL[me.role]} at {me.business_name}</p>
+      <p className="mt-2 font-mono text-[10px] uppercase tracking-wider text-sidebar-primary">Sample demo account</p>
+    </div>
+  );
+}
+
+function Who() {
+  return DEMO_MODE ? <DemoWho /> : <ClerkWho />;
 }
 
 export function AppShell({ children }: { children: ReactNode }) {
@@ -149,7 +167,10 @@ export function AppShell({ children }: { children: ReactNode }) {
             <WifiOff className="h-4 w-4" />You are offline. Showing last loaded data; actions will not send until you reconnect.
           </div>
         )}
-        <main id="main" className="mx-auto w-full max-w-6xl px-4 pb-28 pt-6 sm:px-6 lg:px-10 lg:pb-12 lg:pt-10">{children}</main>
+        <main id="main" className="mx-auto w-full max-w-6xl px-4 pb-28 pt-6 sm:px-6 lg:px-10 lg:pb-12 lg:pt-10">
+          {DEMO_MODE && <DemoToolbar />}
+          {children}
+        </main>
         <MobileTabs />
       </div>
     </div>
@@ -178,3 +199,4 @@ function MobileTabs() {
     </nav>
   );
 }
+

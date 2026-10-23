@@ -27,6 +27,21 @@ Normal mode is the default: real clock, no automatic synthetic records, no demo
 identity headers or simulation/reset routes. SQLite defaults to `./sejukguard.db`.
 `SEJUKGUARD_DATABASE_URL` overrides the managed scaffold database address.
 
+## Run the local demo
+
+The demo uses fictional seeded accounts and a separate `sejukguard-demo.db` file.
+In two terminals from the repository root, start:
+
+```sh
+pnpm --filter @workspace/api-server demo
+pnpm --filter @workspace/sejukguard demo
+```
+
+Open the web preview at `http://localhost:18810`. Use the demo toolbar to switch
+between Aina, Daniel and Rina, reset the sample data, or advance simulated time
+by 60 minutes. This demo is intended for a local development preview; published
+Replit deployments deliberately reject demo mode and ephemeral SQLite storage.
+
 ## Verify
 
 ```sh
@@ -56,3 +71,4 @@ browser tests**, prerequisites, role matrix, reminders, backups and the legacy d
   Publishing is blocked for SQLite on Replit. A durable-storage/hosting decision
   and configuration need the owner's explicit approval; no provider replacement
   or publishing has been performed.
+

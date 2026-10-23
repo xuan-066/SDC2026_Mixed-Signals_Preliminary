@@ -1,3 +1,5 @@
+import { demoHeaders } from './demo';
+
 export class ApiError extends Error {
   status: number;
   code: string;
@@ -17,7 +19,7 @@ export async function api<T>(path: string, method: Method = 'GET', body?: unknow
     res = await fetch(import.meta.env.BASE_URL.replace(/\/$/, '') + '/v1' + path, {
       method,
       credentials: 'include',
-      headers: { ...(body !== undefined ? { 'Content-Type': 'application/json' } : {}), ...(extraHeaders ?? {}) },
+      headers: { ...(body !== undefined ? { 'Content-Type': 'application/json' } : {}), ...(extraHeaders ?? {}), ...demoHeaders() },
       body: body !== undefined ? JSON.stringify(body) : undefined,
     });
   } catch {
@@ -53,3 +55,4 @@ export function errorMessage(e: unknown): string {
   if (e instanceof Error) return e.message;
   return 'Something went wrong';
 }
+

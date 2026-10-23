@@ -9,10 +9,16 @@ from app.db import get_session, reset_db
 from app.enums import Role
 from app.errors import NotFound
 from app.models import Asset, User
-from app.schemas import AdvanceIn, AdvanceOut, ReadingOut, ResetOut, SensorIn, SensorOut
+from app.schemas import AdvanceIn, AdvanceOut, ClockOut, ReadingOut, ResetOut, SensorIn, SensorOut
 from app.seed import seed
 
 router = APIRouter(prefix="/v1/sim", tags=["demo"])
+
+
+@router.get("/clock", response_model=ClockOut)
+def current_time(clock: Clock = Depends(get_clock)) -> ClockOut:
+    """Read the simulated clock for the demo controls."""
+    return ClockOut(now=clock.now())
 
 
 @router.post("/reset", response_model=ResetOut)
@@ -60,3 +66,4 @@ def sensor(body: SensorIn, session: Session = Depends(get_session),
         readings=[ReadingOut.model_validate(r, from_attributes=True) for r in readings],
         incident=incident_out(session, incident, owner) if incident else None,
     )
+

@@ -6,6 +6,7 @@ import { Switch, Route, Redirect, useLocation, Router as WouterRouter } from 'wo
 import { QueryClient, QueryClientProvider, useQueryClient } from '@tanstack/react-query';
 import { Toaster } from 'sonner';
 import { ApiError } from '@/lib/api';
+import { DEMO_MODE } from '@/lib/demo';
 import { useAccess, useMeQuery } from '@/lib/queries';
 import { MeProvider } from '@/lib/me';
 import { AppShell } from '@/components/shell';
@@ -193,7 +194,18 @@ function Protected({ component: Page }: { component: ComponentType }) {
   );
 }
 
-const p = (C: ComponentType) => () => <Protected component={C} />;
+function DemoProtected({ component: Page }: { component: ComponentType }) {
+  const me = useMeQuery();
+  if (me.isLoading) return <FullLoading />;
+  if (me.error) return <PublicFrame wide><ErrorState error={me.error} onRetry={() => me.refetch()} /></PublicFrame>;
+  return <MeProvider me={me.data!}><AppShell><Page /></AppShell></MeProvider>;
+}
+
+function DemoRedirect() {
+  return <Redirect to="/dashboard" />;
+}
+
+const p = (C: ComponentType) => () => DEMO_MODE ? <DemoProtected component={C} /> : <Protected component={C} />;
 const R = {
   Dashboard: p(Dashboard), Equipment: p(Equipment), EquipmentDetail: p(EquipmentDetail), Incidents: p(Incidents),
   IncidentDetail: p(IncidentDetail), Report: p(Report), Approvals: p(Approvals), Jobs: p(Jobs), JobDetail: p(JobDetail),
@@ -203,11 +215,11 @@ const R = {
 function Routes() {
   return (
     <Switch>
-      <Route path="/" component={Landing} />
-      <Route path="/sign-in/*?" component={SignInPage} />
-      <Route path="/sign-up/*?" component={SignUpPage} />
-      <Route path="/onboarding" component={Onboarding} />
-      <Route path="/invite" component={Invite} />
+      <Route path="/" component={DEMO_MODE ? DemoRedirect : Landing} />
+      <Route path="/sign-in/*?" component={DEMO_MODE ? DemoRedirect : SignInPage} />
+      <Route path="/sign-up/*?" component={DEMO_MODE ? DemoRedirect : SignUpPage} />
+      <Route path="/onboarding" component={DEMO_MODE ? DemoRedirect : Onboarding} />
+      <Route path="/invite" component={DEMO_MODE ? DemoRedirect : Invite} />
       <Route path="/dashboard" component={R.Dashboard} />
       <Route path="/equipment" component={R.Equipment} />
       <Route path="/equipment/:id" component={R.EquipmentDetail} />
@@ -222,7 +234,7 @@ function Routes() {
       <Route path="/activity" component={R.Activity} />
       <Route path="/team" component={R.Team} />
       <Route path="/settings" component={R.Settings} />
-      <Route path="/account" component={R.Account} />
+      <Route path="/account" component={DEMO_MODE ? DemoRedirect : R.Account} />
       <Route component={NotFound} />
     </Switch>
   );
@@ -265,6 +277,16 @@ function MissingConfig() {
 }
 
 function App() {
+  if (DEMO_MODE) {
+    return (
+      <WouterRouter base={basePath}>
+        <QueryClientProvider client={queryClient}>
+          <Routes />
+          <Toaster position="top-center" richColors closeButton />
+        </QueryClientProvider>
+      </WouterRouter>
+    );
+  }
   if (!clerkPubKey) return <MissingConfig />;
   return (
     <WouterRouter base={basePath}>
@@ -274,3 +296,4 @@ function App() {
 }
 
 export default App;
+
