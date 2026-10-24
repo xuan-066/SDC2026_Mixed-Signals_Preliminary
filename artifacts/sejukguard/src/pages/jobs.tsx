@@ -23,7 +23,11 @@ export function Jobs() {
   if (!can('manage_jobs')) return <DeniedState />;
   return (
     <div className="sg-page sg-jobs-page">
-      <PageHeader eyebrow="Vendor jobs" title="Technicians on call" sub="Record what the vendor told you. Glacier Link chases vendors who go quiet." />
+      <PageHeader
+        eyebrow={<span className="text-3xl font-bold normal-case tracking-normal sm:text-4xl">Vendor jobs</span>}
+        title="Technicians on call"
+        sub={<span className="text-base">Record what the vendor told you. Glacier Link chases vendors who go quiet.</span>}
+      />
       <section className="sg-filterbar mb-5 flex flex-col gap-3 rounded-xl border border-[#d8c6ac] bg-[#f5ead8] p-3 md:flex-row md:items-center md:justify-between" aria-label="Job filters">
         <SearchBox value={s} onChange={setS} placeholder="Search vendor" />
         <Chips label="Status" value={f} onChange={setF} options={[
