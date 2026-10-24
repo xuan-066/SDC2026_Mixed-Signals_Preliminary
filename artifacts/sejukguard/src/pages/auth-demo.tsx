@@ -294,7 +294,7 @@ export default function AuthDemoPage() {
                   data-testid="button-submit-auth-demo"
                   className="group mt-1 inline-flex h-12 w-full items-center justify-center gap-2 rounded-lg bg-[#147c76] px-5 text-sm font-bold text-[#fffaf1] shadow-[0_5px_0_#0d625d] transition hover:bg-[#116d68] active:translate-y-0.5 active:shadow-[0_3px_0_#0d625d] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#147c76]"
                 >
-                  {isSignUp ? "Create demo account" : "Sign in to workspace"}
+                  {isSignUp ? "Preview demo sign-up" : "Preview demo sign-in"}
                   <ArrowRight size={17} className="transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
                 </button>
               </form>
@@ -310,6 +310,19 @@ export default function AuthDemoPage() {
                   >
                     {isSignUp ? "Sign in" : "Create an account"}
                   </button>
+                </p>
+              </div>
+              <div className="mt-5 text-center">
+                <Link
+                  href={isSignUp ? "/sign-up" : "/sign-in"}
+                  data-testid="link-real-auth"
+                  className="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-[#147c76] px-4 text-sm font-bold text-[#116d68] transition hover:bg-[#eaf4eb] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#147c76]"
+                >
+                  {isSignUp ? "Open the real sign-up page" : "Open the real sign-in page"}
+                  <ArrowRight size={16} aria-hidden="true" />
+                </Link>
+                <p className="mx-auto mt-2 max-w-sm text-xs leading-5 text-[#66717b]">
+                  Demo entries stay here. Use the secure page to access your existing workspace or create an account.
                 </p>
               </div>
             </section>
