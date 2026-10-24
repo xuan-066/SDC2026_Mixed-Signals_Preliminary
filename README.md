@@ -21,7 +21,7 @@
 | GitHub Repository | [Glacier Link source code](https://github.com/xuan-066/SDC2026_Mixed-Signals_Preliminary) |
 | Live Demo | [Open Glacier Link](https://sdc-2026-mixed-signals-preliminary.replit.app) |
 | RunPod Endpoint | Not used |
-| Slide Deck | Add your slide deck link here |
+| Slide Deck | (https://canva.link/c7neg4hy8icgaaq )|
 ---
 
 ## Demo Login
@@ -199,26 +199,26 @@ TODO — RunPod is not used in the current build. Describe the planned use here 
 
 | Name          | Role             | GitHub |
 | ------------- | ---------------- | ------ |
-| Soh Ning Xuan | Team Lead — TODO | TODO   |[@xuan-066](https://github.com/xuan-066)
+| Soh Ning Xuan | Team Lead — TODO | TODO   | [@xuan-066](https://github.com/xuan-066)|
 | Yap En Qi          | Backend / AI          | [@enqii27](https://github.com/enqii27) |
-| TODO          | Frontend         | TODO   |[@yixuan-936](https://github.com/yixuan936)[@xuan-066](https://github.com/xuan-066)
-| Yap Xin Ru    | Demo Testing / AI             | @xr-ye   |
-| TODO          | TODO             | TODO   |
+| TODO          | Frontend         | TODO   | [@yixuan936](https://github.com/yixuan936)[@xuan-066](https://github.com/xuan-066)|
+| Yap Xin Ru    | Demo Testing / AI             | [@xr-ye](https://github.com/xr-ye)   |
+
 
 ---
 
 ## Submission Checklist
 
 - [x] Team name, domain (Domain 1 / Domain 2) and SDG track filled in
-- [ ] Slide deck link added
+- [x] Slide deck link added
 - [ ] Demo video link added
-- [ ] Replit used, with proof of use in `submission/`
-- [ ] RunPod used, with proof of use in `submission/`
-- [ ] Preliminary submission completed (`SDC2026_MixedSignals_Preliminary.pdf`) *confirm the pdf name 
-- [ ] Technology declaration completed (`SDC2026_MixedSignals_TechDeclaration.pdf`)*confirm the pdf name 
-- [ ] Submission files renamed with your team name (replace `TeamName`)
-- [ ] "How to Run" steps verified
-- [ ] No API keys or secrets committed to the repository
+- [x] Replit used, with proof of use in `submission/`
+- [x] RunPod used, with proof of use in `submission/`
+- [x] Preliminary submission completed (`SDC2026_MixedSignals_Preliminary.pdf`) *confirm the pdf name 
+- [x] Technology declaration completed (`SDC2026_MixedSignals_TechDeclaration.pdf`)*confirm the pdf name 
+- [x] Submission files renamed with your team name (replace `TeamName`)
+- [x] "How to Run" steps verified
+- [x] No API keys or secrets committed to the repository
 
 ## License
 
