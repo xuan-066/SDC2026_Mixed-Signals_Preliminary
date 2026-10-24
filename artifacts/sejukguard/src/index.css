@@ -681,6 +681,14 @@ main > header h1 { max-width: 19ch; }
   .sg-dashboard__incident-top {
     grid-template-columns: 1fr;
   }
+  .sg-dashboard__risk-strip {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .sg-dashboard__risk-value + .sg-dashboard__risk-value {
+    border-top: 1px solid var(--incident-line);
+    border-left: 0;
+    padding-left: 0;
+  }
   .sg-dashboard__response {
     border-top: 1px solid var(--incident-line);
     border-left: 0;

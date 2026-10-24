@@ -8,7 +8,7 @@ import { errorMessage, ApiError } from '@/lib/api';
 import { fmtRm, fmtTemp, INCIDENT_STATUS, JOB_STATUS, SEVERITY, ago } from '@/lib/format';
 import type { IncidentStatus, JobStatus, ReadingState, Severity } from '@/lib/types';
 
-export function PageHeader({ eyebrow, title, sub, actions, back }: { eyebrow?: string; title: ReactNode; sub?: ReactNode; actions?: ReactNode; back?: { href: string; label: string } }) {
+export function PageHeader({ eyebrow, title, sub, actions, back }: { eyebrow?: ReactNode; title: ReactNode; sub?: ReactNode; actions?: ReactNode; back?: { href: string; label: string } }) {
   return (
     <header className="sg-pagehead rise mb-7">
       {back && (

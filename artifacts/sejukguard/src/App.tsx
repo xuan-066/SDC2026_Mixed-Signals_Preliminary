@@ -92,7 +92,7 @@ const clerkAppearance = {
     formFieldSuccessText: 'text-ok',
     alertText: 'text-foreground',
     logoBox: 'justify-center',
-    logoImage: 'h-auto w-44 sm:w-48',
+    logoImage: 'h-auto w-44 sm:w-56',
     socialButtonsBlockButton: 'border border-border bg-card',
     formButtonPrimary: 'bg-primary text-primary-foreground hover:bg-primary/90',
     formFieldInput: 'border border-input bg-card text-foreground',
@@ -109,7 +109,7 @@ function AuthFrame({ children }: { children: React.ReactNode }) {
   return (
     <div className="sg-auth-frame min-h-[100dvh] bg-background">
       <header className="border-b-2 border-[#d99546] bg-[#f4bd78] px-5 py-4"><a href={basePath || '/'} className="mx-auto flex max-w-6xl items-center gap-2.5">
-        <img src={`${window.location.origin}${basePath}/glacier-link-logo.png`} alt="Glacier Link" className="h-auto w-44 sm:w-48" />
+        <img src={`${window.location.origin}${basePath}/glacier-link-logo.png`} alt="Glacier Link" className="h-auto w-44 sm:w-56" />
       </a></header>
       <div className="mx-auto grid min-h-[calc(100dvh-65px)] max-w-6xl items-center gap-8 px-4 py-8 lg:grid-cols-[1fr_440px] lg:px-8">
         <section className="hidden max-w-xl lg:block"><p className="font-mono text-xs font-bold uppercase tracking-[.18em] text-primary">Cold-chain accountability</p><h1 className="mt-3 font-display text-5xl font-extrabold leading-[1.02] text-[#1d3047]">Keep the cold.<br /><span className="text-primary">Protect the stock.</span></h1><p className="mt-5 max-w-md text-base leading-relaxed text-muted-foreground">A clearer response from first reading to approved repair, built for the people running Malaysian kitchens.</p><div className="mt-8 flex gap-2"><span className="h-2 w-14 rounded-full bg-[#e3a454]" /><span className="h-2 w-8 rounded-full bg-primary" /><span className="h-2 w-3 rounded-full bg-frost" /></div></section>

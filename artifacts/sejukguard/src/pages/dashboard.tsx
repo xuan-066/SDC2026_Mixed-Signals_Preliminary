@@ -39,14 +39,11 @@ export default function Dashboard() {
 
   return (
     <div className="sg-dashboard space-y-7">
-      <PageHeader eyebrow={me.business_name} title={greet + ', ' + me.name.split(' ')[0]}
+      <PageHeader eyebrow={<span className="font-sans text-lg font-extrabold normal-case tracking-normal text-[#1d3047] sm:text-xl">{me.business_name}</span>} title={greet + ', ' + me.name.split(' ')[0]}
         sub={<span data-testid="dashboard-incident-summary" className={open.length ? 'text-base font-extrabold text-[#b42335] sm:text-lg' : 'text-sm text-muted-foreground'}>
           {open.length ? `${open.length} open incident${open.length > 1 ? 's' : ''} ${open.length === 1 ? 'needs' : 'need'} attention` : 'No open incidents right now.'}
         </span>}
         actions={<Link href="/report" className="inline-flex h-11 items-center gap-2 rounded-xl bg-primary px-5 text-sm font-bold text-primary-foreground shadow-sm transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" data-testid="link-dashboard-report"><Megaphone className="h-4 w-4" />Report a fault</Link>} />
-      <div className="mb-5 flex flex-wrap items-center justify-end gap-3 border-y border-[#d8c6ac] py-3 text-xs" data-testid="dashboard-scanline">
-        <div className="flex flex-wrap gap-x-5 gap-y-1 text-muted-foreground"><span><b className="text-foreground">{units.length}</b> units</span><span><b className={open.length ? 'text-thaw' : 'text-ok'}>{open.length}</b> open incidents</span><span>Viewing as <b className="capitalize text-foreground">{me.role}</b></span></div>
-      </div>
 
       {incidents.data && priority && (
         <section className={cn('sg-dashboard__incident rise overflow-hidden rounded-2xl border', critical ? 'sg-dashboard__incident--critical' : 'sg-dashboard__incident--watch')} aria-labelledby="priority-incident-title">

@@ -12,7 +12,7 @@ export default function Landing() {
     <div className="sg-landing min-h-[100dvh] bg-sidebar text-sidebar-foreground">
       <header className="mx-auto flex max-w-6xl items-center justify-between px-5 py-5">
         <div className="flex items-center gap-2.5">
-          <img src={basePath + '/glacier-link-logo.png'} alt="Glacier Link" className="h-auto w-40" />
+          <img src={basePath + '/glacier-link-logo.png'} alt="Glacier Link" className="h-auto w-40 sm:w-52" />
         </div>
         <nav className="flex items-center gap-2">
           {a?.authenticated ? (
