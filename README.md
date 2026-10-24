@@ -174,7 +174,7 @@ Backend only: `cd artifacts/api-server/python && pytest -q`. The suite includes 
 - **Secrets:** Clerk keys (and the optional Claude API key) are stored in Replit Secrets, never in the code.
 - **Hosting:** TODO — confirm the deployment. Publishing is currently blocked on purpose because Replit's published filesystem is not durable for SQLite (see *Readiness* below).
 
-📄 Proof of use: TODO [`C:\MEng EEE\test-2\submission\SDC2026_MixedSignals_Replit_POU.pdf`](submission/SDC2026_MixedSignals_Replit_POU.pdf)
+📄 Proof of use: TODO ["C:\MEng EEE\test-2\submission\SDC2026_MixedSignals_Replit_POU.pdf"](submission/SDC2026_MixedSignals_Replit_POU.pdf)
 
 ## How We Use RunPod *(Required)*
 
