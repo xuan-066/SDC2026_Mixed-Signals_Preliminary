@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { UserProfile, useClerk } from '@clerk/react';
+import { UserProfile, useClerk, useUser } from '@clerk/react';
 import { Loader2, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -13,6 +13,7 @@ const basePath = import.meta.env.BASE_URL.replace(/\/$/, '');
 export default function Account() {
   const { me } = useMe();
   const { signOut } = useClerk();
+  const { isLoaded: clerkLoaded, isSignedIn } = useUser();
   const q = useProfile();
   const m = useUpdateProfile();
   const [v, setV] = useState({ name: '', phone: '' });
@@ -45,7 +46,15 @@ export default function Account() {
           <p className="mt-4 text-xs text-muted-foreground">Role changes are made by an owner on the Team page.</p>
         </Panel>
       </div>
-      <div className="mt-6 overflow-x-auto"><UserProfile routing="hash" /></div>
+      {clerkLoaded && isSignedIn ? (
+        <div className="mt-6 overflow-x-auto"><UserProfile routing="hash" /></div>
+      ) : (
+        <Panel className="mt-6" title="Sign-in & security">
+          <p className="text-sm text-muted-foreground">
+            {clerkLoaded ? 'Sign in to manage email, password, and sign-in security.' : 'Checking sign-in security settings…'}
+          </p>
+        </Panel>
+      )}
     </div>
   );
 }
