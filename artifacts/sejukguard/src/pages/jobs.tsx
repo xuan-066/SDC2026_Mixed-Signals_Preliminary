@@ -63,8 +63,8 @@ export function JobDetail() {
   const { can } = useMe();
   const q = useJob(can('manage_jobs') ? id : undefined);
   if (!can('manage_jobs')) return <DeniedState />;
-  if (q.isLoading) return <><PageHeader title="Loading job..." back={{ href: '/jobs', label: 'Jobs' }} /><ListSkeleton rows={3} /></>;
-  if (q.error || !q.data) return <><PageHeader title="Job" back={{ href: '/jobs', label: 'Jobs' }} /><ErrorState error={q.error} onRetry={() => q.refetch()} /></>;
+  if (q.isLoading) return <><PageHeader title="Loading job..." back={{ href: '/jobs', label: <span className="text-base">Jobs</span> }} /><ListSkeleton rows={3} /></>;
+  if (q.error || !q.data) return <><PageHeader title="Job" back={{ href: '/jobs', label: <span className="text-base">Jobs</span> }} /><ErrorState error={q.error} onRetry={() => q.refetch()} /></>;
   const j = q.data;
   const steps = [
     { label: 'Requested', at: j.requested_at },
@@ -74,7 +74,7 @@ export function JobDetail() {
   ];
   return (
     <>
-      <PageHeader back={{ href: '/jobs', label: 'Jobs' }} eyebrow={'Job ' + j.id} title={j.vendor_name} sub={<span className="flex items-center gap-2"><JobStatusPill s={j.status} />{j.chase_count > 0 && <span className="text-amber">Chased {j.chase_count} time{j.chase_count > 1 ? 's' : ''}</span>}</span>}
+      <PageHeader back={{ href: '/jobs', label: <span className="text-base">Jobs</span> }} eyebrow={<span className="text-sm font-bold uppercase tracking-[0.16em]">{'Job ' + j.id}</span>} title={j.vendor_name} sub={<span className="flex items-center gap-2"><JobStatusPill s={j.status} />{j.chase_count > 0 && <span className="text-amber">Chased {j.chase_count} time{j.chase_count > 1 ? 's' : ''}</span>}</span>}
         actions={<Link href={'/incidents/' + j.incident_id} className="inline-flex h-10 items-center rounded-md border border-border bg-card px-4 text-sm font-semibold" data-testid="link-job-incident">View incident</Link>} />
       <div className="sg-job-detail-grid grid gap-6 lg:grid-cols-[1.2fr_.8fr]">
         <Panel className="border-t-4 border-t-[#438fca]" title="Repair response · progress">
@@ -83,7 +83,7 @@ export function JobDetail() {
               <li key={s.label} className="flex items-center gap-3">
                 <span className={'grid h-7 w-7 place-items-center rounded-full text-[10px] font-bold ' + (s.at ? 'bg-primary text-white' : 'border-2 border-border bg-card text-muted-foreground')}>{steps.indexOf(s) + 1}</span>
                 <span className="flex-1 text-sm font-semibold">{s.label}</span>
-                <span className="font-mono text-xs text-muted-foreground">{s.at ? fmtDT(s.at) : 'pending'}</span>
+                <span className="font-mono text-xs text-muted-foreground">{s.at ? fmtDT(s.at) : <span className="font-bold">pending</span>}</span>
               </li>
             ))}
           </ol>
