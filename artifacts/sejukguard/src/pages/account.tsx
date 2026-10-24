@@ -25,7 +25,7 @@ export default function Account() {
   const [err, setErr] = useState('');
   useEffect(() => { if (q.data) setV({ name: q.data.name, phone: q.data.phone ?? '' }); }, [q.data]);
   const handleSignOut = () => {
-    if (demoEnabled() && !isSignedIn) {
+    if (demoEnabled()) {
       signOutDemoIdentity();
       queryClient.clear();
       navigate('/demo-login');
