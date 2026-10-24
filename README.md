@@ -22,7 +22,7 @@
 | Live Demo | [Open Glacier Link](https://sdc-2026-mixed-signals-preliminary.replit.app) |
 | RunPod Endpoint | Not used |
 | Slide Deck | [Open Slide Deck](https://canva.link/c7neg4hy8icgaaq )|
-| Demo Video | [Open Demo Video]()|
+| Demo Video | [Open Demo Video](https://youtu.be/wyY0czWYMKo)|
 ---
 
 ## Demo Login
