@@ -163,11 +163,11 @@ export function Pager({ page, pages, setPage, total }: { page: number; pages: nu
   );
 }
 
-export function Stat({ label, value, hint, tone }: { label: string; value: ReactNode; hint?: ReactNode; tone?: 'thaw' | 'amber' | 'ok' | 'primary' }) {
+export function Stat({ label, value, hint, tone, labelClassName }: { label: string; value: ReactNode; hint?: ReactNode; tone?: 'thaw' | 'amber' | 'ok' | 'primary'; labelClassName?: string }) {
   const toneCls = tone === 'thaw' ? 'text-thaw' : tone === 'amber' ? 'text-amber' : tone === 'ok' ? 'text-ok' : 'text-foreground';
   return (
     <div className="rise rounded-xl border border-card-border bg-card p-4">
-      <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground">{label}</p>
+      <p className={cn('font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground', labelClassName)}>{label}</p>
       <p className={cn('mt-1.5 font-display text-3xl font-extrabold tabular-nums', toneCls)}>{value}</p>
       {hint && <p className="mt-1 text-xs text-muted-foreground">{hint}</p>}
     </div>
