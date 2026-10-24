@@ -16,6 +16,9 @@ export interface Access {
   email?: string;
   verified?: boolean;
   inactive?: boolean;
+  read_only?: boolean;
+  public_demo?: boolean;
+  standalone?: boolean;
   demo_users?: { id: string; name: string; role: Role }[];
 }
 

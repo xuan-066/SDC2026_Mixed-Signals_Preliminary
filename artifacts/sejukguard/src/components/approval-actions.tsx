@@ -48,7 +48,7 @@ export function ApprovalActions({ approval }: { approval: Approval }) {
           </Field>
           <DialogFooter>
             <Button variant="ghost" onClick={() => setMode(null)} disabled={pending}>Cancel</Button>
-            <Button onClick={submit} disabled={pending} variant={mode === 'reject' ? 'destructive' : 'default'} data-testid="button-confirm-decision">
+            <Button writeAction onClick={submit} disabled={pending} variant={mode === 'reject' ? 'destructive' : 'default'} data-testid="button-confirm-decision">
               {pending && <Loader2 className="mr-1.5 h-4 w-4 animate-spin" />}{mode === 'approve' ? 'Approve' : 'Reject'}
             </Button>
           </DialogFooter>

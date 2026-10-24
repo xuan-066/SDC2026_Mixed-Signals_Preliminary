@@ -16,6 +16,8 @@ class Settings:
     llm_enabled: bool = False
     llm_model: str = "claude-opus-5-5"
     run_worker: bool = True
+    view_only_demo: bool = False
+    public_demo: bool = False
 
     @classmethod
     def from_env(cls) -> "Settings":

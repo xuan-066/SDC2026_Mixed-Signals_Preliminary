@@ -22,19 +22,23 @@ export default function ActivityPage() {
   if (!can('view_audit')) return <DeniedState />;
   const m = metrics.data;
   return (
-    <>
-      <PageHeader eyebrow="Activity" title="Who did what, when" sub="The audit trail is append-only. Every approval, dispatch and transfer is recorded here." />
+    <div className="sg-page sg-activity-page">
+      <PageHeader
+        eyebrow={<span className="text-3xl font-bold normal-case tracking-normal sm:text-4xl">Activity</span>}
+        title="Who did what, when"
+        sub={<span className="text-base">The audit trail is append-only. Every approval, dispatch and transfer is recorded here.</span>}
+      />
       {can('view_metrics') && (metrics.isLoading ? <ListSkeleton rows={1} /> : metrics.error ? <ErrorState error={metrics.error} onRetry={() => metrics.refetch()} /> : m && (
-        <div className="mb-6 grid grid-cols-2 gap-3 lg:grid-cols-5">
-          <Stat label="Incidents" value={m.incidents_total} hint={m.incidents_resolved + ' resolved'} />
-          <Stat label="Detect to dispatch" value={m.median_min_detect_to_dispatch === null ? '--' : m.median_min_detect_to_dispatch.toFixed(1)} hint={m.median_min_detect_to_dispatch === null ? 'No dispatches yet' : 'median minutes'} />
-          <Stat label="Recorded risk, resolved" value={<Money v={m.stock_protected_rm} className="text-xl" />} hint="Sum of risk snapshots; not proof stock moved" />
-          <Stat label="Automated actions" value={m.automated_actions} />
-          <Stat label="False alarms avoided" value={m.false_alarms_avoided} tone="ok" />
+          <div className="sg-metrics-band mb-6 grid grid-cols-2 gap-3 border-y-2 border-[#d89b4d] bg-[#f3e6d1] py-3 lg:grid-cols-5">
+          <Stat label="Incidents" value={m.incidents_total} hint={m.incidents_resolved + ' resolved'} labelClassName="text-sm font-extrabold text-black" />
+          <Stat label="Detect to dispatch" value={m.median_min_detect_to_dispatch === null ? '--' : m.median_min_detect_to_dispatch.toFixed(1)} hint={m.median_min_detect_to_dispatch === null ? 'No dispatches yet' : 'median minutes'} labelClassName="text-sm font-extrabold text-black" />
+          <Stat label="Recorded risk, resolved" value={<Money v={m.stock_protected_rm} className="text-xl" />} hint="Sum of risk snapshots; not proof stock moved" labelClassName="text-sm font-extrabold text-black" />
+          <Stat label="Automated actions" value={m.automated_actions} labelClassName="text-sm font-extrabold text-black" />
+          <Stat label="False alarms avoided" value={m.false_alarms_avoided} tone="ok" labelClassName="text-sm font-extrabold text-black" />
         </div>
       ))}
-      <Tabs defaultValue="audit">
-        <TabsList><TabsTrigger value="audit" data-testid="tab-audit">Audit log</TabsTrigger>{can('view_messages') && <TabsTrigger value="messages" data-testid="tab-messages">Mock outbox</TabsTrigger>}</TabsList>
+      <Tabs defaultValue="audit" className="sg-activity-tabs">
+        <TabsList className="rounded-full bg-[#eaddc8] p-1"><TabsTrigger value="audit" className="rounded-full" data-testid="tab-audit">Audit log</TabsTrigger>{can('view_messages') && <TabsTrigger value="messages" className="rounded-full" data-testid="tab-messages">Mock outbox</TabsTrigger>}</TabsList>
         <TabsContent value="audit" className="mt-4">
           <div className="mb-3"><SearchBox value={s} onChange={setS} placeholder="Filter by action, actor, record" /></div>
           {audit.isLoading ? <ListSkeleton /> : audit.error ? <ErrorState error={audit.error} onRetry={() => audit.refetch()} /> : events.length === 0 ? <EmptyState icon={FileClock} title="No events" /> : (
@@ -45,7 +49,7 @@ export default function ActivityPage() {
                   <tbody className="divide-y divide-border">
                     {pg.slice.map((e) => (
                       <tr key={e.id} className="align-top" data-testid={'row-audit-' + e.id}>
-                        <td className="whitespace-nowrap px-4 py-2.5 font-mono text-xs text-muted-foreground">{fmtDT(e.at)}</td>
+                        <td className="whitespace-nowrap px-4 py-2.5 font-mono text-xs font-bold text-black">{fmtDT(e.at)}</td>
                         <td className="px-4 py-2.5">{e.actor_id === 'system' ? <Pill className="border-primary/30 text-primary">system</Pill> : e.actor_id}</td>
                         <td className="px-4 py-2.5"><p className="font-semibold">{humanize(e.action)}</p>{Object.keys(e.details).length > 0 && <p className="max-w-md break-words font-mono text-[11px] text-muted-foreground">{JSON.stringify(e.details)}</p>}</td>
                         <td className="whitespace-nowrap px-4 py-2.5 text-xs">{e.entity_type === 'incident' ? <Link href={'/incidents/' + e.entity_id} className="text-primary">{e.entity_type} {e.entity_id}</Link> : e.entity_type + ' ' + e.entity_id}</td>
@@ -67,7 +71,7 @@ export default function ActivityPage() {
                 <ul className="space-y-2">
                   {mpg.slice.map((x) => (
                     <li key={x.id} className="rounded-lg border border-dashed border-border bg-card p-3 text-sm">
-                      <div className="mb-1 flex flex-wrap items-center gap-2 text-xs text-muted-foreground"><Pill className="border-amber/40 text-amber">mock {x.channel}</Pill>to {x.to_type} {x.to_id} - {fmtDT(x.created_at)}</div>
+                      <div className="mb-1 flex flex-wrap items-center gap-2 text-xs text-muted-foreground"><Pill className="border-amber/40 text-amber">mock {x.channel}</Pill><span className="font-bold text-black">to {x.to_type} {x.to_id}</span><span>- {fmtDT(x.created_at)}</span></div>
                       <p className="whitespace-pre-wrap">{x.body}</p>
                     </li>
                   ))}
@@ -78,6 +82,6 @@ export default function ActivityPage() {
           </TabsContent>
         )}
       </Tabs>
-    </>
+    </div>
   );
 }

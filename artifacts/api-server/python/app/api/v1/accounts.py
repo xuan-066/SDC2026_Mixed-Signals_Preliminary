@@ -76,6 +76,8 @@ def log(session, user, action, entity_type, entity_id):
 def access(request: Request, session: Session = Depends(get_session)):
     if request.app.state.settings.demo_mode:
         return {"mode": "demo", "authenticated": False, "member": False,
+                "read_only": request.app.state.settings.view_only_demo,
+                "public_demo": request.app.state.settings.public_demo,
                 "demo_users": [{"id": u.id, "name": u.name, "role": u.role}
                                for u in session.exec(select(User))]}
     if not request.cookies.get("__session"):

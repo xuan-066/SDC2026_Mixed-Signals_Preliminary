@@ -1,4 +1,4 @@
-import { useEffect, useRef, type ComponentType } from 'react';
+import { useEffect, useRef, useState, type ComponentType } from 'react';
 import { ClerkProvider, SignIn, SignUp, useClerk } from '@clerk/react';
 import { publishableKeyFromHost } from '@clerk/react/internal';
 import { shadcn } from '@clerk/themes';
@@ -7,7 +7,12 @@ import { QueryClient, QueryClientProvider, useQueryClient } from '@tanstack/reac
 import { Toaster } from 'sonner';
 import { ApiError } from '@/lib/api';
 import { useAccess, useMeQuery } from '@/lib/queries';
+import { demoSignedOut, demoUserId, setDemoIdentity } from '@/lib/demo';
 import { MeProvider } from '@/lib/me';
+import { ViewOnlyDemoContext } from '@/lib/view-only';
+import { RealSessionProvider } from '@/lib/session-auth';
+import { useHashLocation } from 'wouter/use-hash-location';
+import { brandLogo } from '@/lib/branding';
 import { AppShell } from '@/components/shell';
 import { ErrorState, ListSkeleton } from '@/components/common';
 import { PublicCard, PublicFrame } from '@/pages/public-frame';
@@ -29,19 +34,23 @@ import ActivityPage from '@/pages/activity';
 import Team from '@/pages/team';
 import SettingsPage from '@/pages/settings';
 import Account from '@/pages/account';
+import AuthDemoPage from '@/pages/auth-demo';
+import DemoLoginPage from '@/pages/demo-login';
 
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
+      networkMode: import.meta.env.VITE_STANDALONE_DEMO === 'true' ? 'always' : 'online',
       retry: (n, e) => !(e instanceof ApiError && e.status >= 400 && e.status < 500) && n < 2,
       refetchOnWindowFocus: true,
     },
-    mutations: { retry: false },
+    mutations: { retry: false, networkMode: import.meta.env.VITE_STANDALONE_DEMO === 'true' ? 'always' : 'online' },
   },
 });
 
-// REQUIRED — copy verbatim.
-const clerkPubKey = publishableKeyFromHost(
+// file:// exports have no hostname or real identity provider.
+// Preserve the managed-host key resolution for the ordinary web application.
+const clerkPubKey = import.meta.env.VITE_STANDALONE_DEMO === 'true' ? '' : publishableKeyFromHost(
   window.location.hostname,
   import.meta.env.VITE_CLERK_PUBLISHABLE_KEY,
 );
@@ -61,7 +70,7 @@ const clerkAppearance = {
   options: {
     logoPlacement: 'inside' as const,
     logoLinkUrl: basePath || '/',
-    logoImageUrl: `${window.location.origin}${basePath}/logo.svg`,
+    logoImageUrl: import.meta.env.VITE_STANDALONE_DEMO === 'true' ? brandLogo : `${window.location.origin}${basePath}/glacier-link-logo.png`,
   },
   variables: {
     colorPrimary: 'hsl(191 84% 25%)',
@@ -81,7 +90,7 @@ const clerkAppearance = {
     card: '!shadow-none !border-0 !bg-transparent !rounded-none',
     footer: '!shadow-none !border-0 !bg-transparent !rounded-none',
     headerTitle: 'font-display text-2xl font-extrabold text-foreground',
-    headerSubtitle: 'text-muted-foreground',
+    headerSubtitle: 'text-base text-muted-foreground',
     socialButtonsBlockButtonText: 'text-foreground font-semibold',
     formFieldLabel: 'text-foreground font-semibold',
     footerActionLink: 'text-primary font-semibold',
@@ -91,7 +100,7 @@ const clerkAppearance = {
     formFieldSuccessText: 'text-ok',
     alertText: 'text-foreground',
     logoBox: 'justify-center',
-    logoImage: 'h-10 w-10',
+    logoImage: 'h-auto w-44 sm:w-56',
     socialButtonsBlockButton: 'border border-border bg-card',
     formButtonPrimary: 'bg-primary text-primary-foreground hover:bg-primary/90',
     formFieldInput: 'border border-input bg-card text-foreground',
@@ -106,9 +115,16 @@ const clerkAppearance = {
 
 function AuthFrame({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex min-h-[100dvh] flex-col items-center justify-center gap-6 bg-background px-4 py-10">
-      {children}
-      <p className="max-w-sm text-center text-xs text-muted-foreground">Forgot your password? Use "Forgot password" on the sign-in form to recover your account.</p>
+    <div className="sg-auth-frame min-h-[100dvh] bg-background">
+      <header className="border-b-2 border-[#d99546] bg-[#f4bd78] px-5 py-4"><a href={basePath || '/'} className="mx-auto flex max-w-6xl items-center gap-2.5">
+        <img src={brandLogo} alt="Glacier Link" className="h-auto w-44 sm:w-56" />
+      </a></header>
+      <div className="mx-auto grid min-h-[calc(100dvh-65px)] max-w-6xl items-center gap-8 px-4 py-8 lg:grid-cols-[1fr_440px] lg:px-8">
+        <section className="hidden max-w-xl lg:block"><p className="font-mono text-sm font-bold uppercase tracking-[.18em] text-primary">Cold-chain accountability</p><h1 className="mt-3 font-display text-5xl font-extrabold leading-[1.02] text-[#1d3047]">Keep the cold.<br /><span className="text-primary">Protect the stock.</span></h1><p className="mt-5 max-w-md text-base leading-relaxed text-muted-foreground">A clearer response from first reading to approved repair, built for the people running Malaysian kitchens.</p><div className="mt-8 flex gap-2"><span className="h-2 w-14 rounded-full bg-[#e3a454]" /><span className="h-2 w-8 rounded-full bg-primary" /><span className="h-2 w-3 rounded-full bg-frost" /></div></section>
+        <div className="space-y-4">{children}
+          <p className="text-center text-xs text-muted-foreground">Forgot your password? Use "Forgot password" on the sign-in form to recover your account.</p>
+        </div>
+      </div>
     </div>
   );
 }
@@ -172,13 +188,29 @@ function SessionProblem({ title, body }: { title: string; body: string }) {
 function Protected({ component: Page }: { component: ComponentType }) {
   const access = useAccess();
   const a = access.data;
-  const ready = !!a && a.authenticated && a.member && !a.inactive;
+  const demo = a?.mode === 'demo';
+  const [demoReady, setDemoReady] = useState(false);
+  useEffect(() => {
+    if (demo) {
+      if (!a?.public_demo && !a?.read_only && !demoSignedOut() && !demoUserId()) {
+        const owner = a?.demo_users?.find((u) => u.role === 'owner') ?? a?.demo_users?.[0];
+        if (owner) setDemoIdentity(owner.id);
+      }
+      setDemoReady(true);
+    }
+  }, [demo, a]);
+  const ready = !!a && (demo ? !!demoUserId() : a.authenticated && a.member && !a.inactive);
   const me = useMeQuery(ready);
   if (access.isLoading) return <FullLoading />;
   if (access.error) return <PublicFrame wide><ErrorState error={access.error} onRetry={() => access.refetch()} /></PublicFrame>;
-  if (!a!.authenticated) return <Redirect to="/sign-in" />;
-  if (a!.inactive) return <SessionProblem title="Your access is paused" body="An owner has deactivated your membership. Ask them to reactivate you on the Team page." />;
-  if (!a!.member) return <Redirect to="/onboarding" />;
+  if (!a) return <FullLoading />;
+  if (demo && (demoSignedOut() || ((a?.public_demo || a?.read_only) && !demoUserId()))) return <Redirect to="/demo-login" />;
+  if (demo && (!demoReady || !demoUserId())) return <FullLoading />;
+  if (!demo && !a!.authenticated) return <Redirect to="/sign-in" />;
+  if (demo && me.isLoading) return <FullLoading />;
+  if (demo && me.error) return <PublicFrame wide><ErrorState error={me.error} onRetry={() => me.refetch()} /></PublicFrame>;
+  if (!demo && a!.inactive) return <SessionProblem title="Your access is paused" body="An owner has deactivated your membership. Ask them to reactivate you on the Team page." />;
+  if (!demo && !a!.member) return <Redirect to="/onboarding" />;
   if (me.isLoading) return <FullLoading />;
   if (me.error) {
     const e = me.error;
@@ -186,9 +218,12 @@ function Protected({ component: Page }: { component: ComponentType }) {
     if (e instanceof ApiError && e.status === 403 && /onboarding/i.test(e.message)) return <Redirect to="/onboarding" />;
     return <PublicFrame wide><ErrorState error={e} onRetry={() => me.refetch()} /></PublicFrame>;
   }
+  if (!me.data) return <FullLoading />;
   return (
-    <MeProvider me={me.data!}>
-      <AppShell><Page /></AppShell>
+    <MeProvider me={me.data}>
+      <ViewOnlyDemoContext.Provider value={a?.read_only === true}>
+        <AppShell><Page /></AppShell>
+      </ViewOnlyDemoContext.Provider>
     </MeProvider>
   );
 }
@@ -201,6 +236,12 @@ const R = {
 };
 
 function Routes() {
+  const access = useAccess();
+  const [path] = useLocation();
+  const accountSetup = ['/sign-in', '/sign-up', '/onboarding', '/invite']
+    .some((route) => path === route || path.startsWith(route + '/'));
+  if (accountSetup && access.isLoading) return <FullLoading />;
+  if (accountSetup && (access.data?.public_demo || access.data?.read_only)) return <Redirect to="/demo-login" />;
   return (
     <Switch>
       <Route path="/" component={Landing} />
@@ -238,16 +279,18 @@ function ClerkProviderWithRoutes() {
       signInUrl={`${basePath}/sign-in`}
       signUpUrl={`${basePath}/sign-up`}
       localization={{
-        signIn: { start: { title: 'Welcome back', subtitle: 'Sign in to your kitchen on SejukGuard' } },
+        signIn: { start: { title: 'Welcome back', subtitle: 'Sign in to your kitchen on Glacier Link' } },
         signUp: { start: { title: 'Create your account', subtitle: 'Then set up your business or accept an invite' } },
       }}
       routerPush={(to) => setLocation(stripBase(to))}
       routerReplace={(to) => setLocation(stripBase(to), { replace: true })}
     >
       <QueryClientProvider client={queryClient}>
-        <ClerkQueryClientCacheInvalidator />
-        <Routes />
-        <Toaster position="top-center" richColors closeButton />
+        <RealSessionProvider>
+          <ClerkQueryClientCacheInvalidator />
+          <Routes />
+          <Toaster position="top-center" richColors closeButton />
+        </RealSessionProvider>
       </QueryClientProvider>
     </ClerkProvider>
   );
@@ -258,17 +301,38 @@ function MissingConfig() {
     <div className="flex min-h-[100dvh] items-center justify-center p-6">
       <div className="max-w-md rounded-2xl border border-thaw/40 bg-card p-6" role="alert" data-testid="state-missing-config">
         <h1 className="text-2xl font-extrabold">Sign-in is not configured</h1>
-        <p className="mt-2 text-sm text-muted-foreground">SejukGuard could not find its authentication key for this host. An administrator needs to set the Clerk publishable key; no business data is shown until then.</p>
+        <p className="mt-2 text-sm text-muted-foreground">Glacier Link could not find its authentication key for this host. An administrator needs to set the Clerk publishable key; no business data is shown until then.</p>
       </div>
     </div>
   );
 }
 
-function App() {
+function BackendModeRoutes() {
+  const access = useAccess();
+  if (access.error) return <PublicFrame><ErrorState error={access.error} onRetry={() => access.refetch()} /></PublicFrame>;
+  if (!access.data) return <FullLoading />;
+  if (access.data.public_demo) {
+    return <><Routes /><Toaster position="top-center" richColors closeButton /></>;
+  }
   if (!clerkPubKey) return <MissingConfig />;
+  return <ClerkProviderWithRoutes />;
+}
+
+function AppRouteResolver() {
+  const [location] = useLocation();
+  const path = location.split('?')[0].replace(/\/$/, '') || '/';
+
+  if (path === '/auth-demo') return <AuthDemoPage />;
+  if (path === '/demo-login') {
+    return <QueryClientProvider client={queryClient}><DemoLoginPage /></QueryClientProvider>;
+  }
+  return <QueryClientProvider client={queryClient}><BackendModeRoutes /></QueryClientProvider>;
+}
+
+function App() {
   return (
-    <WouterRouter base={basePath}>
-      <ClerkProviderWithRoutes />
+    <WouterRouter base={basePath} hook={import.meta.env.VITE_STANDALONE_DEMO === 'true' ? useHashLocation : undefined}>
+      <AppRouteResolver />
     </WouterRouter>
   );
 }

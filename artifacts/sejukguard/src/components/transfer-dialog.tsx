@@ -94,7 +94,7 @@ export function TransferDialog({ sourceId, incidentId, suggestedId, label = 'Mov
           )}
           <DialogFooter>
             <Button variant="ghost" onClick={() => setOpen(false)} disabled={m.isPending}>Cancel</Button>
-            <Button onClick={submit} disabled={m.isPending || !src.data} data-testid="button-submit-transfer">{m.isPending && <Loader2 className="mr-1.5 h-4 w-4 animate-spin" />}Record transfer</Button>
+            <Button writeAction onClick={submit} disabled={m.isPending || !src.data} data-testid="button-submit-transfer">{m.isPending && <Loader2 className="mr-1.5 h-4 w-4 animate-spin" />}Record transfer</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

@@ -58,10 +58,11 @@ export default function Team() {
   };
 
   return (
-    <>
+    <div className="sg-page sg-team-page">
       <PageHeader eyebrow="Team" title="People and responsibility" sub="Roles decide who reports, who approves and who sees money. Each account belongs to one business."
         actions={<Button onClick={() => { setErr(''); setInviteOpen(true); }} data-testid="button-invite"><MailPlus className="mr-1.5 h-4 w-4" />Invite</Button>} />
-      <Panel title="Members" pad={false}>
+      <div className="sg-team-grid grid gap-6 xl:grid-cols-[1.15fr_.85fr]">
+      <Panel className="border-t-4 border-t-[#438fca]" title="People with access" pad={false}>
         {team.isLoading ? <div className="p-4"><ListSkeleton rows={3} /></div> : team.error ? <div className="p-4"><ErrorState error={team.error} onRetry={() => team.refetch()} /></div> :
           !team.data?.length ? <div className="p-4"><EmptyState icon={Users} title="Just you so far" /></div> : (
             <ul className="divide-y divide-border">
@@ -99,7 +100,7 @@ export default function Team() {
           )}
       </Panel>
 
-      <Panel className="mt-6" title="Invitations" pad={false}>
+      <Panel className="border-t-4 border-t-[#d99a43]" title="Pending invitations" pad={false}>
         {invites.isLoading ? <div className="p-4"><ListSkeleton rows={2} /></div> : invites.error ? <div className="p-4"><ErrorState error={invites.error} onRetry={() => invites.refetch()} /></div> :
           !invites.data?.length ? <p className="p-4 text-sm text-muted-foreground">No invitations sent.</p> : (
             <ul className="divide-y divide-border">
@@ -127,6 +128,7 @@ export default function Team() {
             </ul>
           )}
       </Panel>
+      </div>
 
       <Dialog open={inviteOpen} onOpenChange={(o) => !create.isPending && setInviteOpen(o)}>
         <DialogContent className="sm:max-w-md">
@@ -154,6 +156,6 @@ export default function Team() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </>
+    </div>
   );
 }
