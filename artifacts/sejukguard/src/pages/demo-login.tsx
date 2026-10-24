@@ -10,10 +10,9 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { useAccess } from '@/lib/queries';
 import { setDemoIdentity } from '@/lib/demo';
+import { resolveDemoLogin } from '@/lib/demo-accounts';
 import { PublicCard, PublicFrame } from '@/pages/public-frame';
 
-const demoUsername = 'rina';
-const demoPassword = 'demo';
 const credentialsSchema = z.object({
   username: z.string().min(1, 'Enter the demo username.'),
   password: z.string().min(1, 'Enter the demo password.'),
@@ -28,11 +27,8 @@ export default function DemoLoginPage() {
   const [loginError, setLoginError] = useState('');
   const form = useForm<Credentials>({
     resolver: zodResolver(credentialsSchema),
-    defaultValues: { username: demoUsername, password: '' },
+    defaultValues: { username: '', password: '' },
   });
-  const rina = access.data?.demo_users?.find(
-    (user) => user.name.trim().toLowerCase() === 'rina' && user.role === 'owner',
-  );
 
   const handleSubmit = form.handleSubmit(({ username, password }) => {
     setLoginError('');
@@ -40,15 +36,12 @@ export default function DemoLoginPage() {
       setLoginError('Demo sign-in is unavailable in this environment. Use the real sign-in page instead.');
       return;
     }
-    if (username.trim().toLowerCase() !== demoUsername || password !== demoPassword) {
+    const user = resolveDemoLogin(access.data, username, password);
+    if (!user) {
       setLoginError('That demo username or password is not correct.');
       return;
     }
-    if (!rina) {
-      setLoginError('Rina’s demo account is not available in this workspace.');
-      return;
-    }
-    setDemoIdentity(rina.id);
+    setDemoIdentity(user.id);
     queryClient.clear();
     navigate('/dashboard');
   });
@@ -56,8 +49,8 @@ export default function DemoLoginPage() {
   return (
     <PublicFrame>
       <PublicCard
-        title="Sign in to the Rina demo"
-        sub="Use the sample login to enter the existing Glacier Link demo workspace. Signing in does not reset or edit its records."
+        title="Sign in to the demo"
+        sub="Sign in to your own demo dashboard and role. Signing in does not reset or edit existing workspace records."
       >
         <Form {...form}>
           <form onSubmit={handleSubmit} className="space-y-4" data-testid="form-demo-login">
@@ -88,7 +81,7 @@ export default function DemoLoginPage() {
               )}
             />
             <p className="rounded-lg bg-muted px-3 py-2 text-sm text-muted-foreground" data-testid="text-demo-credentials">
-              Public demo credentials: <strong>rina</strong> / <strong>demo</strong>
+              Demo usernames: <strong>rina</strong>, <strong>daniel</strong>, <strong>aina</strong>, <strong>lim</strong>. Use the assigned demo password.
             </p>
             {access.error && (
               <p className="text-sm font-medium text-destructive" role="alert" data-testid="status-demo-access-error">
@@ -104,7 +97,7 @@ export default function DemoLoginPage() {
               {access.isLoading || form.formState.isSubmitting
                 ? <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 : <LockKeyhole className="mr-2 h-4 w-4" />}
-              Sign in as Rina
+              Sign in to demo
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </form>
@@ -114,7 +107,7 @@ export default function DemoLoginPage() {
             Use the real sign-in page
           </Link>
           <p className="mt-2 text-xs text-muted-foreground">
-            Demo login is public and only selects the existing seeded Rina demo identity; it is not a real account.
+            Demo login only selects an existing seeded demo user with their own role and workspace; it is not real account authentication.
           </p>
         </div>
       </PublicCard>
