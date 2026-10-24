@@ -30,6 +30,7 @@ import ActivityPage from '@/pages/activity';
 import Team from '@/pages/team';
 import SettingsPage from '@/pages/settings';
 import Account from '@/pages/account';
+import AuthDemoPage from '@/pages/auth-demo';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -286,11 +287,19 @@ function MissingConfig() {
   );
 }
 
-function App() {
+function AppRouteResolver() {
+  const [location] = useLocation();
+  const path = location.split('?')[0].replace(/\/$/, '') || '/';
+
+  if (path === '/auth-demo') return <AuthDemoPage />;
   if (!clerkPubKey) return <MissingConfig />;
+  return <ClerkProviderWithRoutes />;
+}
+
+function App() {
   return (
     <WouterRouter base={basePath}>
-      <ClerkProviderWithRoutes />
+      <AppRouteResolver />
     </WouterRouter>
   );
 }
