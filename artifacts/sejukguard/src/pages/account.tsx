@@ -42,8 +42,8 @@ export default function Account() {
         </Panel>
         <Panel className="border-t-4 border-t-[#438fca]" title={<span className="font-bold text-black">Access &amp; membership</span>}>
           <dl className="space-y-3 text-sm">
-            <div className="flex justify-between"><dt className="font-bold text-black">Business</dt><dd className="font-mono text-[11px] font-bold text-black">{me.business_name}</dd></div>
-            <div className="flex justify-between"><dt className="font-bold text-black">Role</dt><dd className="font-mono text-[11px] font-bold text-black">{ROLE_LABEL[me.role]}</dd></div>
+            <div className="flex justify-between"><dt className="font-bold text-black">Business</dt><dd className="font-mono text-sm font-bold text-black">{me.business_name}</dd></div>
+            <div className="flex justify-between"><dt className="font-bold text-black">Role</dt><dd className="font-mono text-sm font-bold text-black">{ROLE_LABEL[me.role]}</dd></div>
             <div><dt className="mb-1 font-bold text-black">Permissions</dt><dd className="flex flex-wrap gap-1">{me.permissions.map((p) => <span key={p} className="rounded bg-muted px-2 py-0.5 font-mono text-[11px] font-bold text-black">{p}</span>)}</dd></div>
           </dl>
           <p className="mt-4 text-xs text-muted-foreground">Role changes are made by an owner on the Team page.</p>
