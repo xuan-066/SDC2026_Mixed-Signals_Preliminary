@@ -22,7 +22,11 @@ export default function Incidents() {
   const pg = usePaged(filtered, 15, f + s);
   return (
     <div className="sg-page sg-incidents-page">
-      <PageHeader eyebrow="Incidents" title="What went wrong, and what happened next" sub="Declined and unresolved incidents stay visible until someone resolves them." />
+      <PageHeader
+        eyebrow={<span className="text-3xl font-bold normal-case tracking-normal sm:text-4xl">Incidents</span>}
+        title="What went wrong"
+        sub={<span className="text-base">Declined and unresolved incidents stay visible until someone resolves them.</span>}
+      />
       <section className="sg-filterbar mb-5 flex flex-col gap-3 rounded-xl border border-[#d8c6ac] bg-[#f5ead8] p-3 md:flex-row md:items-center md:justify-between" aria-label="Incident filters">
         <SearchBox value={s} onChange={setS} placeholder="Search unit, report text" />
         <Chips label="Status" value={f} onChange={setF} options={[

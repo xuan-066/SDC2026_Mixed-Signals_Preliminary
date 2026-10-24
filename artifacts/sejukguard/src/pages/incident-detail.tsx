@@ -31,7 +31,7 @@ export default function IncidentDetail() {
 
   return (
     <>
-      <PageHeader back={{ href: '/incidents', label: 'Incidents' }} eyebrow={'Incident ' + i.id}
+      <PageHeader back={{ href: '/incidents', label: <span className="text-base">Incidents</span> }} eyebrow={<span className="text-sm font-bold uppercase tracking-[0.16em]">{'Incident ' + i.id}</span>}
         title={i.asset?.name ?? 'Which unit is this?'}
         sub={<span className="flex flex-wrap items-center gap-2"><SeverityPill s={i.severity} /><IncidentStatusPill s={i.status} /><span>Opened {fmtDT(i.created_at)}</span>{i.resolved_at && <span>- resolved {fmtDT(i.resolved_at)}</span>}</span>}
         actions={<>
@@ -73,7 +73,7 @@ export default function IncidentDetail() {
                 </div>
                 {d.needs_human && <p className="flex items-start gap-2 rounded-lg bg-amber/10 p-3 text-sm font-medium text-amber"><AlertOctagon className="mt-0.5 h-4 w-4 shrink-0" />{d.needs_human}</p>}
                 {d.reasons.length > 0 && <ul className="list-disc space-y-1 pl-5 text-sm text-muted-foreground">{d.reasons.map((r, k) => <li key={k}>{r}</li>)}</ul>}
-                <p className="text-xs text-muted-foreground">Approval needed from: {ROLE_LABEL[d.required_role]}</p>
+                <p className="text-sm font-semibold">Approval needed from: {ROLE_LABEL[d.required_role]}</p>
                 {isSupervisor && i.asset && open && (
                   <div className="flex flex-wrap items-center gap-3 border-t border-border pt-4">
                     <TransferDialog sourceId={i.asset.id} incidentId={i.id} suggestedId={d.backup_unit?.id} label="Record stock move" />
@@ -96,7 +96,7 @@ export default function IncidentDetail() {
             <Panel title="Approval">
               <div className="space-y-2 text-sm">
                 <p className="font-semibold">{i.approval.summary}</p>
-                <p className="text-muted-foreground">Status <b className="text-foreground">{humanize(i.approval.status.toLowerCase())}</b> - amount <Money v={i.approval.amount_rm} /> - needs {ROLE_LABEL[i.approval.required_role]}</p>
+                <p className="text-muted-foreground">Status <b className={i.approval.status === 'PENDING' ? 'text-thaw' : 'text-foreground'}>{humanize(i.approval.status.toLowerCase())}</b> - amount <Money v={i.approval.amount_rm} /> - needs {ROLE_LABEL[i.approval.required_role]}</p>
                 {i.approval.decided_at && <p className="text-muted-foreground">Decided {fmtDT(i.approval.decided_at)}{i.approval.decided_by ? ' by ' + i.approval.decided_by : ''}{i.approval.note ? ': "' + i.approval.note + '"' : ''}</p>}
                 {i.approval.status === 'REJECTED' && <p className="font-semibold text-thaw">Rejected. No vendor request was created; the fault is unresolved until someone acts.</p>}
                 <div className="pt-1"><ApprovalActions approval={i.approval} /></div>
