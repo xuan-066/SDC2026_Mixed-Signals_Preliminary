@@ -197,7 +197,7 @@ TODO — RunPod is not used in the current build. Describe the planned use here 
 | Soh Ning Xuan | Team Lead — TODO | TODO   |
 | Yap En Qi          | Backend / AI          | [@enqii27](https://github.com/enqii27) |
 | TODO          | Frontend         | TODO   |
-| TODO          | Demo Testing / AI             | @xr-ye   |
+| Yap Xin Ru    | Demo Testing / AI             | @xr-ye   |
 | TODO          | TODO             | TODO   |
 
 ---
