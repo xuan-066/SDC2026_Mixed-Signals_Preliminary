@@ -188,15 +188,16 @@ TODO — RunPod is not used in the current build. Describe the planned use here 
 ## Future Improvements
 - [ ] Durable hosted database for real business deployments
 - [ ] Re-decide vendor and approver when severity rises; suggest the next vendor after 2 unanswered chases
+- [ ] Make a user interface (UI) more organized, streamline the layout by reducing clutter, grouping related items, and establishing a clear visual hierarchy.
 
 ## Team
 
 | Name          | Role             | GitHub |
 | ------------- | ---------------- | ------ |
 | Soh Ning Xuan | Team Lead — TODO | TODO   |
-| TODO          | Backend          | [@enqii27](https://github.com/enqii27) |
+| Yap En Qi          | Backend / AI          | [@enqii27](https://github.com/enqii27) |
 | TODO          | Frontend         | TODO   |
-| TODO          | TODO             | TODO   |
+| TODO          | Demo Testing / AI             | @xr-ye   |
 | TODO          | TODO             | TODO   |
 
 ---
@@ -208,8 +209,8 @@ TODO — RunPod is not used in the current build. Describe the planned use here 
 - [ ] Demo video link added
 - [ ] Replit used, with proof of use in `submission/`
 - [ ] RunPod used, with proof of use in `submission/`
-- [ ] Preliminary submission completed (`SDC2026_MixedSignals_Preliminary.pdf`)
-- [ ] Technology declaration completed (`SDC2026_MixedSignals_TechDeclaration.pdf`)
+- [ ] Preliminary submission completed (`SDC2026_MixedSignals_Preliminary.pdf`) *confirm the pdf name 
+- [ ] Technology declaration completed (`SDC2026_MixedSignals_TechDeclaration.pdf`)*confirm the pdf name 
 - [ ] Submission files renamed with your team name (replace `TeamName`)
 - [ ] "How to Run" steps verified
 - [ ] No API keys or secrets committed to the repository
