@@ -19,7 +19,7 @@
 | Resource          | Link                                           |
 | ----------------- | ---------------------------------------------- |
 | GitHub Repository | TODO           |
-| Live Demo         | TODO: Replit URL                               |
+| Live Demo         | TODO: Replit URL   [https://sdc-2026-mixed-signals-preliminary.replit.app ]                           |
 | RunPod Endpoint   | TODO (not used yet — see [How We Use RunPod](#how-we-use-runpod-required)) |
 | Slide Deck        | TODO                                           |
 | Demo Video        | TODO                                           |
@@ -112,42 +112,38 @@ Every decision comes from **deterministic rules that explain themselves in plain
 
 ## How to Run
 
-### Option 1 — Run on Replit (Recommended)
+### Live Demo
 
-1. Import this repository via **Create App → Import from GitHub**.
-2. Open **Secrets** and add `CLERK_PUBLISHABLE_KEY` and `CLERK_SECRET_KEY` (needed for real sign-in). See `artifacts/api-server/python/.env.example` for optional settings.
-3. In the Shell:
+Open the deployed Glacier Link prototype:
+
+[https://sdc-2026-mixed-signals-preliminary.replit.app](https://sdc-2026-mixed-signals-preliminary.replit.app)
+
+The demo uses synthetic sample businesses and records. It does not contact vendors or send WhatsApp messages.
+
+### Option 1 — Run the project on Replit
+
+1. In Replit, select **Create App → Import from GitHub** and import this repository.
+2. Install the dependencies from the Shell:
+
    ```sh
    pnpm install --frozen-lockfile
    bash scripts/install-python.sh
-   ```
-4. Start the **artifacts/api-server: API Server** and **artifacts/sejukguard: web** workflows, then open the web preview at `/`. The API docs are at `/docs`.
-
-**Normal mode** (default) uses real accounts: sign up, verify your email, then create a business or accept an invitation.
-
-**Demo mode** loads a fictional bakery (Seri Pagi Bakery & Café), a simulated clock and four demo logins (Rina — owner, Daniel — supervisor, Aina — staff, Lim — owner of a second business). Set `DEMO_MODE=true` and use a separate database file; never point demo mode at real data. Details: [docs/operations.md](docs/operations.md) → *Legacy demo*.
 
 ### Option 2 — Run the backend locally
-
-```bash
-# 1. Clone the repository
+# Clone the repository
 git clone https://github.com/xuan-066/test-2.git
-cd test-2/artifacts/api-server/python
+cd test-2
 
-# 2. Create and activate a virtual environment (Python 3.12)
+# Install the Python dependencies
+cd artifacts/api-server/python
 python -m venv .venv
-source .venv/bin/activate        # Windows: .venv\Scripts\activate
-
-# 3. Install dependencies
+.\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
 
-# 4. Start in demo mode
-DEMO_MODE=true uvicorn app.main:app --reload     # Windows PowerShell: $env:DEMO_MODE="true"; uvicorn app.main:app --reload
-# then open http://127.0.0.1:8000/docs
-
-# 5. In a second terminal: run the whole demo journey (✅ per step)
-python scripts/demo_journey.py
-```
+# Start the API in demo mode
+$env:DEMO_MODE = "true"
+$env:DATABASE_URL = "sqlite:///./sejukguard-demo.db"
+uvicorn app.main:app --reload
 
 ### Run Tests
 
@@ -194,9 +190,9 @@ TODO — RunPod is not used in the current build. Describe the planned use here 
 
 | Name          | Role             | GitHub |
 | ------------- | ---------------- | ------ |
-| Soh Ning Xuan | Team Lead — TODO | TODO   |
+| Soh Ning Xuan | Team Lead — TODO | TODO   |[@xuan-066](https://github.com/xuan-066)
 | Yap En Qi          | Backend / AI          | [@enqii27](https://github.com/enqii27) |
-| TODO          | Frontend         | TODO   |
+| TODO          | Frontend         | TODO   |[@yixuan-936](https://github.com/yixuan936)[@xuan-066](https://github.com/xuan-066)
 | Yap Xin Ru    | Demo Testing / AI             | @xr-ye   |
 | TODO          | TODO             | TODO   |
 
