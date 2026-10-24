@@ -9,7 +9,7 @@ import { useAssets, usePostReport } from '@/lib/queries';
 import { humanize } from '@/lib/format';
 import type { ReportResult } from '@/lib/types';
 
-const EXAMPLES = ['Freezer 2 tak sejuk, ais dah cair', 'Chiller depan bunyi kuat, pintu tak rapat', 'Peti ais dapur bocor air'];
+const EXAMPLES = ['Freezer 2 is not cooling', 'Front chiller door not closing properly', 'Kitchen fridge is leaking'];
 
 export default function Report() {
   const [text, setText] = useState('');
@@ -24,13 +24,17 @@ export default function Report() {
   };
   return (
     <>
-      <PageHeader eyebrow="Report" title="Something wrong with a fridge?" sub="Write it how you would tell your supervisor. Bahasa, English or campur is fine." />
+      <PageHeader
+        eyebrow={<span className="text-3xl font-bold normal-case tracking-normal sm:text-4xl">Report</span>}
+        title="Something wrong with a fridge?"
+        sub={<span className="text-base">Write it how you would tell your supervisor.</span>}
+      />
       <div className="sg-report-layout grid gap-6 lg:grid-cols-[1.2fr_.8fr]">
         <div className="space-y-6">
           <Panel className="border-t-4 border-t-[#d99a43]">
             <form onSubmit={(e) => { e.preventDefault(); submit(); }} className="space-y-3">
               <label htmlFor="report" className="sr-only">Fault report</label>
-              <Textarea id="report" rows={5} value={text} onChange={(e) => { setText(e.target.value); setErr(''); }} maxLength={1000} placeholder="Freezer 2 tak sejuk..." className="text-base" data-testid="input-report" />
+              <Textarea id="report" rows={5} value={text} onChange={(e) => { setText(e.target.value); setErr(''); }} maxLength={1000} placeholder="Describe the issue..." className="text-base" data-testid="input-report" />
               <div className="flex flex-wrap gap-1.5">{EXAMPLES.map((x) => <button type="button" key={x} onClick={() => setText(x)} className="rounded-full border border-border px-3 py-1 text-xs text-muted-foreground hover:border-primary/40" data-testid={'button-example-' + x.slice(0, 6)}>{x}</button>)}</div>
               {err && <p className="text-sm text-destructive" role="alert">{err}</p>}
               <div className="flex items-center justify-between gap-2">
