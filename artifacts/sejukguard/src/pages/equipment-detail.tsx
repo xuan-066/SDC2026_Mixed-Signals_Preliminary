@@ -27,15 +27,15 @@ export default function EquipmentDetail() {
   const [stockOpen, setStockOpen] = useState(false);
   const [stockItem, setStockItem] = useState<StockItem | undefined>();
 
-  if (q.isLoading) return <><PageHeader title="Loading unit..." back={{ href: '/equipment', label: 'Equipment' }} /><ListSkeleton rows={4} /></>;
-  if (q.error || !q.data) return <><PageHeader title="Equipment" back={{ href: '/equipment', label: 'Equipment' }} /><ErrorState error={q.error} onRetry={() => q.refetch()} /></>;
+  if (q.isLoading) return <><PageHeader title="Loading unit..." back={{ href: '/equipment', label: <span className="text-base">Equipment</span> }} /><ListSkeleton rows={4} /></>;
+  if (q.error || !q.data) return <><PageHeader title="Equipment" back={{ href: '/equipment', label: <span className="text-base">Equipment</span> }} /><ErrorState error={q.error} onRetry={() => q.refetch()} /></>;
   const a = q.data;
   const warrantyVendor = vendors.data?.find((v) => v.id === a.warranty_vendor_id);
   const used = a.capacity_l - a.free_l;
 
   return (
     <>
-      <PageHeader back={{ href: '/equipment', label: 'Equipment' }} eyebrow={a.type + (a.archived ? ' - archived' : '')} title={a.name}
+      <PageHeader back={{ href: '/equipment', label: <span className="text-base">Equipment</span> }} eyebrow={<span className="text-sm font-bold uppercase tracking-[0.16em]">{a.type + (a.archived ? ' - archived' : '')}</span>} title={a.name}
         sub={<span className="flex flex-wrap items-center gap-2"><SeverityPill s={a.status} />Safe {fmtTemp(a.range_c[0])} to {fmtTemp(a.range_c[1])}{a.aliases.length > 0 && <span>- also called {a.aliases.join(', ')}</span>}</span>}
         actions={<>
           {!a.archived && <ReadingDialog assetId={a.id} assetName={a.name} range={a.range_c} size="default" />}

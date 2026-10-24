@@ -29,7 +29,10 @@ export default function Equipment() {
 
   return (
     <div className="sg-page sg-equipment-page">
-      <PageHeader eyebrow="Equipment" title="Chillers and freezers" sub="Every unit with its latest real reading. Stale means more than 60 minutes old."
+      <PageHeader
+        eyebrow={<span className="text-3xl font-bold normal-case tracking-normal sm:text-4xl">Equipment</span>}
+        title="Chillers and freezers"
+        sub={<span className="text-base">Every unit with its latest real reading. Stale means more than 60 minutes old.</span>}
         actions={isOwner && <Button onClick={() => setAdding(true)} data-testid="button-add-equipment"><Plus className="mr-1.5 h-4 w-4" />Add equipment</Button>} />
       <section className="sg-filterbar mb-5 flex flex-col gap-3 rounded-xl border border-[#d8c6ac] bg-[#f5ead8] p-3 md:flex-row md:items-center md:justify-between" aria-label="Equipment filters">
         <SearchBox value={q} onChange={setQ} placeholder="Search units" />
