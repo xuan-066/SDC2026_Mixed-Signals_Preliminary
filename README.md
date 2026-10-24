@@ -24,6 +24,17 @@
 | Slide Deck | Add your slide deck link here |
 ---
 
+## Demo Login
+
+Use these accounts only on the fictional demo environment. They contain sample data and are not real business accounts.
+
+| Username | Password | Role |
+| --- | --- | --- |
+| `rina` | `2345` | Owner |
+| `daniel` | `3456` | Supervisor |
+| `aina` | `1234` | Staff |
+| `lim` | `0123` | Owner of a second demo business |
+
 ## Overview
 
 ### Problem
