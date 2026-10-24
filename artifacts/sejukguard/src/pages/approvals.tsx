@@ -25,7 +25,11 @@ export default function Approvals() {
   if (!can('decide_approval')) return <DeniedState />;
   return (
     <div className="sg-page sg-approvals-page">
-      <PageHeader eyebrow="Approvals" title="Spending decisions" sub="You can only decide requests within your role and limit. The server decides who may act; buttons appear only when you can." />
+      <PageHeader
+        eyebrow={<span className="text-3xl font-bold normal-case tracking-normal sm:text-4xl">Approvals</span>}
+        title="Spending decisions"
+        sub={<span className="text-base">You can only decide requests within your role and limit. The server decides who may act; buttons appear only when you can.</span>}
+      />
       <section className="sg-filterbar mb-5 flex flex-col gap-3 rounded-xl border border-[#d8c6ac] bg-[#f5ead8] p-3 md:flex-row md:items-center md:justify-between" aria-label="Approval filters">
         <SearchBox value={s} onChange={setS} placeholder="Search approvals" />
         <Chips label="Status" value={f} onChange={setF} options={[
@@ -42,11 +46,11 @@ export default function Approvals() {
                 <li key={a.id} className={'sg-approval-row rise rounded-xl border border-card-border bg-card p-4 ' + (a.status === 'PENDING' ? 'border-l-[5px] border-l-[#d99a43]' : '')} data-testid={'card-approval-' + a.id}>
                   <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                     <div className="min-w-0">
-                      <div className="flex flex-wrap items-center gap-2"><Pill className={CLS[a.status]}>{a.status.toLowerCase()}</Pill><span className="text-xs text-muted-foreground">needs {ROLE_LABEL[a.required_role]}</span></div>
+                      <div className="flex flex-wrap items-center gap-2"><Pill className={CLS[a.status]}>{a.status.toLowerCase()}</Pill><span className="text-xs font-bold text-muted-foreground">needs {ROLE_LABEL[a.required_role]}</span></div>
                       <p className="mt-1.5 font-semibold">{a.summary}</p>
                       <p className="mt-0.5 text-xs text-muted-foreground" title={fmtDT(a.created_at)}>Requested {ago(a.created_at)}{a.decided_at ? ' - decided ' + ago(a.decided_at) + (a.decided_by ? ' by ' + a.decided_by : '') : ''}</p>
                       {a.note && <p className="mt-1 text-sm italic text-muted-foreground">"{a.note}"</p>}
-                      {a.subject_type === 'incident' && <Link href={'/incidents/' + a.subject_id} className="mt-1 inline-block text-xs font-semibold text-primary" data-testid={'link-approval-incident-' + a.id}>View incident</Link>}
+                      {a.subject_type === 'incident' && <Link href={'/incidents/' + a.subject_id} className="mt-1 inline-block text-xs font-bold text-primary" data-testid={'link-approval-incident-' + a.id}>View incident</Link>}
                     </div>
                     <div className="flex flex-col items-start gap-2 sm:items-end"><Money v={a.amount_rm} className="text-xl font-bold" /><ApprovalActions approval={a} /></div>
                   </div>
