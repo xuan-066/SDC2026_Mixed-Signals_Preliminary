@@ -385,3 +385,43 @@
 .pulse-dot { animation: pulsedot 1.6s ease-in-out infinite; }
 @keyframes pulsedot { 0%,100% { opacity: 1; transform: scale(1);} 50% { opacity: .35; transform: scale(.8);} }
 @media (prefers-reduced-motion: reduce) { .rise, .pulse-dot { animation: none; } }
+
+/* Dashboard-only palette: warm paper, clean cards, and a distinct orange action color. */
+.sg-dashboard {
+  --background: 38 42% 94%;
+  --foreground: 25 29% 16%;
+  --border: 34 23% 82%;
+  --card: 42 50% 99%;
+  --card-foreground: 25 29% 16%;
+  --card-border: 34 24% 85%;
+  --popover: 42 50% 99%;
+  --popover-foreground: 25 29% 16%;
+  --popover-border: 34 23% 82%;
+  --primary: 22 82% 45%;
+  --primary-foreground: 42 50% 99%;
+  --secondary: 37 35% 88%;
+  --secondary-foreground: 25 29% 16%;
+  --muted: 37 28% 89%;
+  --muted-foreground: 26 13% 37%;
+  --accent: 36 50% 89%;
+  --accent-foreground: 25 29% 16%;
+  --input: 34 22% 76%;
+  --ring: 22 82% 40%;
+  --thaw: 7 68% 39%;
+  --amber: 32 78% 34%;
+  --watch: 46 70% 32%;
+  --frost: 174 36% 32%;
+  --ok: 158 42% 29%;
+  min-height: calc(100dvh - 2rem);
+  border-radius: 1.25rem;
+  background: hsl(var(--background));
+  padding: clamp(1rem, 2.4vw, 2rem);
+  color: hsl(var(--foreground));
+}
+
+.sg-dashboard__urgent [data-testid^='status-severity-'],
+.sg-dashboard__urgent [data-testid='status-incident'] {
+  border-color: rgb(255 248 238 / 45%);
+  background: rgb(255 248 238 / 12%);
+  color: #fff8ee;
+}
