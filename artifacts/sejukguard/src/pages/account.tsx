@@ -21,7 +21,10 @@ export default function Account() {
   useEffect(() => { if (q.data) setV({ name: q.data.name, phone: q.data.phone ?? '' }); }, [q.data]);
   return (
     <div className="sg-page sg-account-page">
-      <PageHeader eyebrow="Account" title="My account" sub="Your name and phone are what your team sees. Email, password and sign-in security are managed below."
+      <PageHeader
+        eyebrow={<span className="text-3xl font-bold normal-case tracking-normal sm:text-4xl">Account</span>}
+        title="My account"
+        sub={<span className="text-base">Your name and phone are what your team sees. Email, password and sign-in security are managed below.</span>}
         actions={<Button variant="outline" onClick={() => signOut({ redirectUrl: basePath || '/' })} data-testid="button-account-sign-out"><LogOut className="mr-1.5 h-4 w-4" />Sign out</Button>} />
       <div className="sg-account-layout grid gap-6 lg:grid-cols-[1.1fr_.9fr]">
         <Panel className="border-t-4 border-t-primary" title="Your team profile">
@@ -37,11 +40,11 @@ export default function Account() {
             </form>
           )}
         </Panel>
-        <Panel className="border-t-4 border-t-[#438fca]" title="Access & membership">
+        <Panel className="border-t-4 border-t-[#438fca]" title={<span className="font-bold text-black">Access &amp; membership</span>}>
           <dl className="space-y-3 text-sm">
-            <div className="flex justify-between"><dt className="text-muted-foreground">Business</dt><dd className="font-semibold">{me.business_name}</dd></div>
-            <div className="flex justify-between"><dt className="text-muted-foreground">Role</dt><dd className="font-semibold">{ROLE_LABEL[me.role]}</dd></div>
-            <div><dt className="mb-1 text-muted-foreground">Permissions</dt><dd className="flex flex-wrap gap-1">{me.permissions.map((p) => <span key={p} className="rounded bg-muted px-2 py-0.5 font-mono text-[11px]">{p}</span>)}</dd></div>
+            <div className="flex justify-between"><dt className="font-bold text-black">Business</dt><dd className="font-bold text-black">{me.business_name}</dd></div>
+            <div className="flex justify-between"><dt className="font-bold text-black">Role</dt><dd className="font-bold text-black">{ROLE_LABEL[me.role]}</dd></div>
+            <div><dt className="mb-1 font-bold text-black">Permissions</dt><dd className="flex flex-wrap gap-1">{me.permissions.map((p) => <span key={p} className="rounded bg-muted px-2 py-0.5 font-mono text-[11px] font-bold text-black">{p}</span>)}</dd></div>
           </dl>
           <p className="mt-4 text-xs text-muted-foreground">Role changes are made by an owner on the Team page.</p>
         </Panel>
