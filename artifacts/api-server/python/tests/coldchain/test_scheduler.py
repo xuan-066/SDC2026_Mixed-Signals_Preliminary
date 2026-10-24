@@ -73,7 +73,7 @@ def test_advance_rejects_negative_minutes(client):
     assert client.post("/v1/sim/advance", json={"minutes": -5}).status_code == 422
 
 
-def test_sim_hidden_when_demo_mode_false(clerk_test_keys):
+def test_sim_hidden_when_demo_mode_false():
     app = create_app(Settings(database_url="sqlite://", demo_mode=False))
     with TestClient(app) as c:
         assert c.post("/v1/sim/reset").status_code == 404
@@ -127,4 +127,3 @@ def test_sensor_patterns_fit_the_unit(client):
                                                "pattern": "compressor_fail"}).json()
     assert [r["temp_c"] for r in body["readings"]] == [2.0, 7.0, 9.0]
     assert body["incident"]["severity"] == "CRITICAL"
-

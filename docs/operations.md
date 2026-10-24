@@ -10,7 +10,41 @@ issuer, expiry, not-before and authorized party, then checks the primary email
 against Clerk. Role and active membership are read from SQLite on every request.
 Provider/network failure fails closed with a temporary error, not demo access.
 
-Configuration:
+## Public interactive demo
+
+The artifact's preview and production API commands use `start-demo.sh`, which
+starts `app.demo` with an isolated, in-memory fictional snapshot. It deliberately
+does not read `DATABASE_URL` or `SEJUKGUARD_DATABASE_URL`. The existing SQLite
+databases are not opened, copied or changed. The snapshot includes a critical
+Freezer 2 incident and pending approval; each restart rebuilds that sample.
+
+Visitors can edit the sample records within the selected user's role permissions.
+Changes are shared between visitors and exist only until server restart or
+republishing. Workers and LLM calls are disabled, and real-account changes through
+the Clerk proxy are rejected. Demo login/logout select a browser-local sample
+identity. These are not real authentication credentials or a mechanism for
+protecting private information. A view-only variant remains available internally
+through `create_demo_app(read_only=True)`, which rejects write requests and makes
+SQLite query-only.
+
+This restricted sample-data mode is the only exception to the publishing safety
+block below. `start-python.sh` remains the operational/legacy entrypoint and
+continues to refuse unsafe real-business SQLite or legacy-demo deployments.
+Do not replace the public entrypoint with it to bypass the storage requirement.
+
+The web artifact is built statically with SPA rewrites; the API artifact runs the
+sample service. Publishing is user-initiated. Later source changes require
+republishing. Visitor actions modify only the temporary sample data, never the
+operational database.
+
+Publishing disables automatic packager installation with
+`packager.features.enabledForHosting = false`. The root pre-build installs Node
+dependencies using the frozen pnpm lockfile, and the API artifact build runs the
+explicit Python installer. Keep these together: automatic `uv sync` treats
+Replit's `.pythonlibs` package directory as a virtual environment and fails
+before artifact builds can run. Do not create a virtual environment to fix it.
+
+Configuration for the normal/interactive entrypoint:
 
 | Setting | Meaning |
 |---|---|

@@ -28,7 +28,7 @@ if (!basePath) {
   );
 }
 
-export default defineConfig(async ({ mode }) => ({
+export default defineConfig({
   base: basePath,
   plugins: [
     react(),
@@ -73,20 +73,10 @@ export default defineConfig(async ({ mode }) => ({
     fs: {
       strict: true,
     },
-    ...(mode === 'demo' && process.env.REPL_ID === undefined ? {
-      proxy: {
-        '/v1': { target: 'http://127.0.0.1:8000', changeOrigin: true },
-        '/health': { target: 'http://127.0.0.1:8000', changeOrigin: true },
-        '/docs': { target: 'http://127.0.0.1:8000', changeOrigin: true },
-        '/openapi.json': { target: 'http://127.0.0.1:8000', changeOrigin: true },
-        '/redoc': { target: 'http://127.0.0.1:8000', changeOrigin: true },
-      },
-    } : {}),
   },
   preview: {
     port,
     host: '0.0.0.0',
     allowedHosts: true,
   },
-}));
-
+});

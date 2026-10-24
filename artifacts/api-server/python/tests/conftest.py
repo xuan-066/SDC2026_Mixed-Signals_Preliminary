@@ -1,19 +1,9 @@
-import base64
-
 import pytest
 from fastapi.testclient import TestClient
 from sqlmodel import Session
 
 from app.config import Settings
 from app.main import create_app
-
-
-@pytest.fixture
-def clerk_test_keys(monkeypatch):
-    """Fake Clerk configuration for tests that exercise normal-mode startup."""
-    monkeypatch.setenv("CLERK_PUBLISHABLE_KEY", "pk_test_" + base64.b64encode(
-        b"fixture.clerk.accounts.dev$").decode())
-    monkeypatch.setenv("CLERK_SECRET_KEY", "fixture-only-not-real")
 
 
 @pytest.fixture
@@ -41,4 +31,3 @@ def as_user():
     def _headers(user_id: str) -> dict[str, str]:
         return {"X-User-Id": user_id}
     return _headers
-

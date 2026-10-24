@@ -22,15 +22,19 @@ export function Jobs() {
   const pg = usePaged(filtered, 12, f + s);
   if (!can('manage_jobs')) return <DeniedState />;
   return (
-    <>
-      <PageHeader eyebrow="Vendor jobs" title="Technicians on call" sub="Record what the vendor told you. SejukGuard chases vendors who go quiet." />
-      <div className="mb-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+    <div className="sg-page sg-jobs-page">
+      <PageHeader
+        eyebrow={<span className="text-3xl font-bold normal-case tracking-normal sm:text-4xl">Vendor jobs</span>}
+        title="Technicians on call"
+        sub={<span className="text-base">Record what the vendor told you. Glacier Link chases vendors who go quiet.</span>}
+      />
+      <section className="sg-filterbar mb-5 flex flex-col gap-3 rounded-xl border border-[#d8c6ac] bg-[#f5ead8] p-3 md:flex-row md:items-center md:justify-between" aria-label="Job filters">
         <SearchBox value={s} onChange={setS} placeholder="Search vendor" />
         <Chips label="Status" value={f} onChange={setF} options={[
           { value: 'open', label: 'Open', count: list.filter((j) => j.status !== 'DONE').length },
           { value: 'REQUESTED', label: 'Requested' }, { value: 'CONFIRMED', label: 'Confirmed' }, { value: 'DONE', label: 'Done' }, { value: 'all', label: 'All', count: list.length },
         ]} />
-      </div>
+      </section>
       {q.isLoading ? <ListSkeleton /> : q.error ? <ErrorState error={q.error} onRetry={() => q.refetch()} /> :
         filtered.length === 0 ? <EmptyState icon={Wrench} title="No jobs here" body="Jobs are created when a vendor call-out is approved." /> : (
           <>
@@ -50,7 +54,7 @@ export function Jobs() {
             <Pager {...pg} />
           </>
         )}
-    </>
+    </div>
   );
 }
 
@@ -59,8 +63,8 @@ export function JobDetail() {
   const { can } = useMe();
   const q = useJob(can('manage_jobs') ? id : undefined);
   if (!can('manage_jobs')) return <DeniedState />;
-  if (q.isLoading) return <><PageHeader title="Loading job..." back={{ href: '/jobs', label: 'Jobs' }} /><ListSkeleton rows={3} /></>;
-  if (q.error || !q.data) return <><PageHeader title="Job" back={{ href: '/jobs', label: 'Jobs' }} /><ErrorState error={q.error} onRetry={() => q.refetch()} /></>;
+  if (q.isLoading) return <><PageHeader title="Loading job..." back={{ href: '/jobs', label: <span className="text-base">Jobs</span> }} /><ListSkeleton rows={3} /></>;
+  if (q.error || !q.data) return <><PageHeader title="Job" back={{ href: '/jobs', label: <span className="text-base">Jobs</span> }} /><ErrorState error={q.error} onRetry={() => q.refetch()} /></>;
   const j = q.data;
   const steps = [
     { label: 'Requested', at: j.requested_at },
@@ -70,16 +74,16 @@ export function JobDetail() {
   ];
   return (
     <>
-      <PageHeader back={{ href: '/jobs', label: 'Jobs' }} eyebrow={'Job ' + j.id} title={j.vendor_name} sub={<span className="flex items-center gap-2"><JobStatusPill s={j.status} />{j.chase_count > 0 && <span className="text-amber">Chased {j.chase_count} time{j.chase_count > 1 ? 's' : ''}</span>}</span>}
+      <PageHeader back={{ href: '/jobs', label: <span className="text-base">Jobs</span> }} eyebrow={<span className="text-sm font-bold uppercase tracking-[0.16em]">{'Job ' + j.id}</span>} title={j.vendor_name} sub={<span className="flex items-center gap-2"><JobStatusPill s={j.status} />{j.chase_count > 0 && <span className="text-amber">Chased {j.chase_count} time{j.chase_count > 1 ? 's' : ''}</span>}</span>}
         actions={<Link href={'/incidents/' + j.incident_id} className="inline-flex h-10 items-center rounded-md border border-border bg-card px-4 text-sm font-semibold" data-testid="link-job-incident">View incident</Link>} />
-      <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
-        <Panel title="Progress">
-          <ol className="space-y-4">
+      <div className="sg-job-detail-grid grid gap-6 lg:grid-cols-[1.2fr_.8fr]">
+        <Panel className="border-t-4 border-t-[#438fca]" title="Repair response · progress">
+          <ol className="sg-job-steps space-y-4">
             {steps.map((s) => (
               <li key={s.label} className="flex items-center gap-3">
-                <span className={'h-3 w-3 rounded-full ' + (s.at ? 'bg-primary' : 'border-2 border-border')} />
+                <span className={'grid h-7 w-7 place-items-center rounded-full text-[10px] font-bold ' + (s.at ? 'bg-primary text-white' : 'border-2 border-border bg-card text-muted-foreground')}>{steps.indexOf(s) + 1}</span>
                 <span className="flex-1 text-sm font-semibold">{s.label}</span>
-                <span className="font-mono text-xs text-muted-foreground">{s.at ? fmtDT(s.at) : 'pending'}</span>
+                <span className="font-mono text-xs text-muted-foreground">{s.at ? fmtDT(s.at) : <span className="font-bold">pending</span>}</span>
               </li>
             ))}
           </ol>

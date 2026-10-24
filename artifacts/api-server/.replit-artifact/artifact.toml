@@ -10,13 +10,13 @@ name = "API Server"
 paths = ["/api/__clerk", "/v1", "/health", "/docs", "/openapi.json", "/redoc"]
 
 [services.development]
-run = "pnpm --filter @workspace/api-server run dev"
+run = "pnpm --filter @workspace/api-server run demo"
 
 [services.production.build]
 args = ["bash", "scripts/install-python.sh"]
 
 [services.production.run]
-args = ["bash", "artifacts/api-server/start-python.sh"]
+args = ["bash", "artifacts/api-server/start-demo.sh"]
 
 [services.production.run.env]
 PORT = "8080"

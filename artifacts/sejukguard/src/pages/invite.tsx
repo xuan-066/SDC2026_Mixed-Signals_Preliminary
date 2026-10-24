@@ -23,7 +23,7 @@ export default function Invite() {
   if (!a.authenticated)
     return (
       <PublicFrame>
-        <PublicCard title="You have been invited to a SejukGuard team" sub="Sign in or create an account with the email address the invitation was sent to. You will come back here to accept.">
+        <PublicCard title="You have been invited to a Glacier Link team" sub="Sign in or create an account with the email address the invitation was sent to. You will come back here to accept.">
           <div className="flex flex-col gap-2 sm:flex-row">
             <Link href={'/sign-up?redirect_url=' + back} className="inline-flex h-10 flex-1 items-center justify-center rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground" data-testid="link-invite-sign-up">Create account</Link>
             <Link href={'/sign-in?redirect_url=' + back} className="inline-flex h-10 flex-1 items-center justify-center rounded-md border border-border px-4 text-sm font-semibold" data-testid="link-invite-sign-in">Sign in</Link>
@@ -44,7 +44,8 @@ export default function Invite() {
 
   return (
     <PublicFrame>
-      <PublicCard title="Join the team" sub={<>Accept as <b>{a.email}</b>. Your role was chosen by the owner and can be changed by them later.</>}>
+        <PublicCard title="Join the team" sub={<>Accept as <b>{a.email}</b>. Your role was chosen by the owner and can be changed by them later.</>}>
+          <div className="mb-5 rounded-lg bg-[#e1f0eb] px-4 py-3 text-sm text-[#245c56]"><span className="font-mono text-[10px] font-bold uppercase tracking-[.14em]">Team invitation</span><p className="mt-1">Your access is attached to this business and role.</p></div>
         {accept.error && <p className="mb-4 rounded-lg bg-destructive/10 p-3 text-sm text-destructive" role="alert" data-testid="text-invite-error">{errorMessage(accept.error)}. The link may have expired, been revoked, or be meant for another email.</p>}
         <Button className="w-full" disabled={accept.isPending} onClick={() => accept.mutate(token, { onSuccess: () => nav('/dashboard') })} data-testid="button-accept-invite">
           {accept.isPending && <Loader2 className="mr-1.5 h-4 w-4 animate-spin" />}Accept invitation

@@ -17,10 +17,6 @@ class ResetOut(BaseModel):
     now: datetime
 
 
-class ClockOut(BaseModel):
-    now: datetime
-
-
 class AdvanceIn(BaseModel):
     minutes: int = Field(ge=0, le=24 * 60, examples=[60])
 
@@ -271,4 +267,3 @@ class MetricsOut(BaseModel):
     stock_protected_rm: str                       # Σ stock at risk of RESOLVED incidents
     automated_actions: int                        # audit events by "system"
     false_alarms_avoided: int                     # count of WATCH_CLEARED
-

@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Mono:wght@400;700&family=Fraunces:opsz,wght@9..144,600;9..144,700;9..144,800&display=swap');
 @layer theme, base, clerk, components, utilities;
 @import 'tailwindcss';
 @import '@clerk/themes/shadcn.css';
@@ -86,47 +87,47 @@
   --elevate-1: rgba(0, 0, 0, 0.03);
   --elevate-2: rgba(0, 0, 0, 0.08);
 
-  --background: 197 33% 95.5%;
-  --foreground: 208 48% 13%;
-  --border: 198 24% 84%;
-  --card: 195 45% 98.5%;
-  --card-foreground: 208 48% 13%;
-  --card-border: 198 24% 86%;
-  --sidebar: 207 52% 12%;
-  --sidebar-foreground: 195 30% 88%;
-  --sidebar-border: 207 35% 20%;
-  --sidebar-primary: 186 72% 58%;
-  --sidebar-primary-foreground: 207 52% 10%;
-  --sidebar-accent: 207 40% 18%;
-  --sidebar-accent-foreground: 190 60% 96%;
-  --sidebar-ring: 186 72% 58%;
-  --popover: 195 45% 98.5%;
-  --popover-foreground: 208 48% 13%;
-  --popover-border: 198 24% 84%;
-  --primary: 191 84% 25%;
-  --primary-foreground: 188 60% 97%;
-  --secondary: 196 32% 90%;
-  --secondary-foreground: 208 48% 16%;
-  --muted: 197 28% 91%;
-  --muted-foreground: 205 16% 38%;
-  --accent: 190 42% 89%;
-  --accent-foreground: 200 60% 16%;
-  --destructive: 5 76% 47%;
-  --destructive-foreground: 20 90% 97%;
-  --input: 198 22% 78%;
-  --ring: 191 84% 32%;
+  --background: 39 85% 96%;
+  --foreground: 216 48% 15%;
+  --border: 39 30% 78%;
+  --card: 42 60% 99%;
+  --card-foreground: 216 48% 15%;
+  --card-border: 39 30% 76%;
+  --sidebar: 216 48% 15%;
+  --sidebar-foreground: 40 60% 91%;
+  --sidebar-border: 216 34% 25%;
+  --sidebar-primary: 174 55% 56%;
+  --sidebar-primary-foreground: 216 48% 13%;
+  --sidebar-accent: 216 38% 22%;
+  --sidebar-accent-foreground: 42 60% 97%;
+  --sidebar-ring: 174 55% 56%;
+  --popover: 42 60% 99%;
+  --popover-foreground: 216 48% 15%;
+  --popover-border: 39 30% 78%;
+  --primary: 174 59% 32%;
+  --primary-foreground: 42 60% 98%;
+  --secondary: 39 47% 86%;
+  --secondary-foreground: 216 48% 15%;
+  --muted: 39 40% 90%;
+  --muted-foreground: 215 18% 42%;
+  --accent: 174 38% 88%;
+  --accent-foreground: 216 48% 15%;
+  --destructive: 350 61% 48%;
+  --destructive-foreground: 42 60% 97%;
+  --input: 39 24% 72%;
+  --ring: 174 59% 32%;
   --chart-1: 191 84% 28%;
   --chart-2: 14 86% 54%;
   --chart-3: 38 94% 48%;
   --chart-4: 205 45% 40%;
   --chart-5: 160 45% 36%;
-  --thaw: 12 84% 52%;
-  --amber: 36 94% 45%;
-  --watch: 48 88% 40%;
-  --frost: 186 72% 42%;
-  --ok: 168 55% 30%;
-  --app-font-sans: 'Instrument Sans', ui-sans-serif, sans-serif;
-  --app-font-serif: 'Bricolage Grotesque', ui-sans-serif, sans-serif;
+  --thaw: 350 61% 48%;
+  --amber: 31 83% 48%;
+  --watch: 43 80% 43%;
+  --frost: 215 62% 56%;
+  --ok: 174 59% 32%;
+  --app-font-sans: 'DM Sans', ui-sans-serif, sans-serif;
+  --app-font-serif: 'Fraunces', Georgia, serif;
   --app-font-mono: 'JetBrains Mono', ui-monospace, monospace;
   --radius: 0.625rem;
   --shadow-2xs: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0); /*replace with H S L */
@@ -212,7 +213,7 @@
   --elevate-1: rgba(255, 255, 255, 0.04);
   --elevate-2: rgba(255, 255, 255, 0.09);
 
-  --background: 208 45% 8%; --foreground: 195 30% 92%; --border: 207 30% 20%;
+  --background: 216 48% 9%; --foreground: 42 45% 92%; --border: 216 28% 24%;
   --card: 208 42% 11%; --card-foreground: 195 30% 92%; --card-border: 207 30% 20%;
   --sidebar: 208 50% 6%; --sidebar-foreground: 195 30% 88%; --sidebar-border: 207 35% 16%;
   --sidebar-primary: 186 72% 58%; --sidebar-primary-foreground: 207 52% 10%;
@@ -385,3 +386,327 @@
 .pulse-dot { animation: pulsedot 1.6s ease-in-out infinite; }
 @keyframes pulsedot { 0%,100% { opacity: 1; transform: scale(1);} 50% { opacity: .35; transform: scale(.8);} }
 @media (prefers-reduced-motion: reduce) { .rise, .pulse-dot { animation: none; } }
+
+/* Dashboard-only palette: warm paper, clean cards, and a distinct orange action color. */
+.sg-dashboard {
+  --background: 39 85% 96%;
+  --foreground: 216 48% 15%;
+  --border: 39 30% 78%;
+  --card: 42 60% 99%;
+  --card-foreground: 216 48% 15%;
+  --card-border: 39 30% 76%;
+  --popover: 42 60% 99%;
+  --popover-foreground: 216 48% 15%;
+  --popover-border: 39 30% 78%;
+  --primary: 174 59% 32%;
+  --primary-foreground: 42 60% 98%;
+  --secondary: 39 47% 86%;
+  --secondary-foreground: 216 48% 15%;
+  --muted: 39 40% 90%;
+  --muted-foreground: 215 18% 42%;
+  --accent: 174 38% 88%;
+  --accent-foreground: 216 48% 15%;
+  --input: 39 24% 72%;
+  --ring: 174 59% 32%;
+  --thaw: 350 61% 48%;
+  --amber: 31 83% 48%;
+  --watch: 43 80% 43%;
+  --frost: 215 62% 56%;
+  --ok: 174 59% 32%;
+  min-height: calc(100dvh - 2rem);
+  border-radius: 1.25rem;
+  background: hsl(var(--background));
+  padding: clamp(1rem, 2.4vw, 2rem);
+  color: hsl(var(--foreground));
+}
+
+/* Shared operational language: navy structure, teal action, amber framing. */
+.sg-dashboard { background-image: linear-gradient(135deg, hsl(39 90% 97%), hsl(38 74% 93%)); }
+main > .rise, main > .grid > .rise { animation-delay: 40ms; }
+button, a { -webkit-tap-highlight-color: transparent; }
+main h1 { color: hsl(var(--foreground)); }
+main > header { position: relative; }
+main > header h1 { max-width: 19ch; }
+.sg-dashboard .sg-dashboard__secondary { border-color: hsl(var(--amber)); }
+.sg-dashboard .sg-dashboard__stat-row > div { background: hsl(38 58% 91%); }
+@media (min-width: 1024px) {
+  #main { padding-top: 2rem; }
+}
+.sg-landing {
+  --sidebar: 39 85% 96%;
+  --sidebar-foreground: 216 25% 36%;
+  --sidebar-border: 39 30% 76%;
+  --sidebar-accent: 42 60% 99%;
+  --sidebar-accent-foreground: 216 48% 15%;
+  --sidebar-primary: 174 59% 32%;
+  --sidebar-primary-foreground: 42 60% 98%;
+}
+.sg-landing header { border-bottom: 2px solid hsl(31 56% 58%); background: hsl(35 84% 73%); }
+.sg-landing header a:first-child { color: hsl(216 48% 15%); }
+.sg-pagehead { padding: .15rem 0 0; }
+.sg-pagehead h1 { font-size: clamp(2rem, 4vw, 3.35rem); line-height: 1.02; }
+.sg-pagehead > div:first-of-type > div > p:first-child { font-family: var(--app-font-mono); font-size: .65rem; font-weight: 700; letter-spacing: .16em; }
+.sg-filterbar { box-shadow: inset 0 3px 0 hsl(31 70% 60%); }
+.sg-panel { border-radius: .85rem; }
+.sg-incident-list [data-testid^="row-incident-"] { min-height: 94px; }
+.sg-notification-stream > li:first-child { border-top: 0; }
+.sg-team-grid > section, .sg-team-grid .sg-panel { min-width: 0; }
+.sg-job-steps > li { position: relative; padding-bottom: .4rem; }
+.sg-job-steps > li:not(:last-child)::after { position: absolute; left: .82rem; top: 1.9rem; bottom: -.25rem; width: 2px; background: hsl(215 62% 56% / .32); content: ""; }
+.sg-stock-ledger table thead { background: hsl(39 42% 91%); }
+.sg-auth-frame .cl-rootBox { width: 100%; }
+.sg-auth-frame .cl-cardBox { margin-inline: auto; }
+.sg-public-frame { position: relative; }
+.sg-public-frame::after { position: fixed; z-index: 0; pointer-events: none; right: 0; bottom: 0; width: 18rem; height: 18rem; border-radius: 100% 0 0 0; background: hsl(174 59% 32% / .045); content: ""; }
+.sg-public-frame > * { position: relative; z-index: 1; }
+@media (max-width: 767px) {
+  .sg-pagehead h1 { font-size: clamp(1.9rem, 9vw, 2.5rem); }
+  .sg-filterbar { align-items: stretch; }
+  .sg-landing section:first-of-type { padding-top: 2rem; }
+}
+
+.sg-dashboard__urgent [data-testid^='status-severity-'],
+.sg-dashboard__urgent [data-testid='status-incident'] {
+  border-color: rgb(255 248 238 / 45%);
+  background: rgb(255 248 238 / 12%);
+  color: #fff8ee;
+}
+
+/* Dashboard scan hierarchy: one connected incident / response / evidence surface. */
+.sg-dashboard__incident {
+  box-shadow: 0 18px 42px -30px hsl(12 55% 22% / .55);
+}
+.sg-dashboard__incident--critical {
+  --incident-ink: #fff6eb;
+  --incident-muted: rgb(255 246 235 / .88);
+  --incident-line: rgb(255 246 235 / .2);
+  border-color: #c45f55;
+  background: #94443a;
+  color: var(--incident-ink);
+}
+.sg-dashboard__incident--watch {
+  --incident-ink: #fff7e8;
+  --incident-muted: rgb(255 247 232 / .76);
+  --incident-line: rgb(255 247 232 / .22);
+  border-color: #a46c2b;
+  background: #674720;
+  color: var(--incident-ink);
+}
+.sg-dashboard__incident-top {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(285px, .65fr);
+}
+.sg-dashboard__incident-main {
+  padding: clamp(1.1rem, 3vw, 2rem);
+}
+.sg-dashboard__priority-label {
+  display: inline-flex;
+  min-height: 2rem;
+  align-items: center;
+  gap: .5rem;
+  border: 1px solid rgb(255 246 235 / .3);
+  border-radius: 999px;
+  background: rgb(255 246 235 / .11);
+  padding: .35rem .75rem;
+  color: var(--incident-ink);
+  font-size: .7rem;
+  font-weight: 800;
+  letter-spacing: .11em;
+  text-transform: uppercase;
+}
+.sg-dashboard__incident--critical .sg-dashboard__priority-label {
+  background: #f4c5a1;
+  border-color: #f4c5a1;
+  color: #63271f;
+}
+.sg-dashboard__incident [data-testid^='status-severity-'],
+.sg-dashboard__incident [data-testid='status-incident'] {
+  border-color: var(--incident-line);
+  background: rgb(255 246 235 / .12);
+  color: var(--incident-ink);
+}
+.sg-dashboard__incident [data-testid='status-severity-CRITICAL'] {
+  background: #fff1df;
+  border-color: #fff1df;
+  color: #7a211a;
+  font-weight: 900;
+}
+.sg-dashboard__incident [data-testid='status-severity-WARNING'] {
+  background: #f2c779;
+  border-color: #f2c779;
+  color: #55330e;
+}
+.sg-dashboard__incident [data-testid='status-severity-WATCH'] {
+  background: #e6d49a;
+  border-color: #e6d49a;
+  color: #4c3b12;
+}
+.sg-dashboard__eyebrow,
+.sg-dashboard__section-kicker {
+  color: var(--incident-muted, hsl(var(--muted-foreground)));
+  font-family: var(--app-font-mono);
+  font-size: .64rem;
+  font-weight: 700;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+}
+.sg-dashboard__risk-strip {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-top: 1px solid var(--incident-line);
+  border-bottom: 1px solid var(--incident-line);
+}
+.sg-dashboard__risk-value {
+  min-width: 0;
+  padding: 1rem 1.1rem 1rem 0;
+}
+.sg-dashboard__risk-value + .sg-dashboard__risk-value {
+  border-left: 1px solid var(--incident-line);
+  padding-left: 1.25rem;
+}
+.sg-dashboard__risk-label {
+  color: var(--incident-muted);
+  font-size: .67rem;
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+.sg-dashboard__response {
+  border-left: 1px solid var(--incident-line);
+  background: rgb(255 247 233 / .1);
+  padding: clamp(1.1rem, 2.6vw, 1.75rem);
+}
+.sg-dashboard__response-index {
+  display: grid;
+  height: 2rem;
+  width: 2rem;
+  flex: none;
+  place-items: center;
+  border: 1px solid var(--incident-line);
+  border-radius: 50%;
+  color: var(--incident-muted);
+  font-family: var(--app-font-mono);
+  font-size: .7rem;
+}
+.sg-dashboard__response-body {
+  margin-top: 1.1rem;
+  overflow: hidden;
+  border: 1px solid rgb(89 52 30 / .15);
+  border-radius: .85rem;
+  background: #fff4e5;
+  color: #38261e;
+}
+.sg-dashboard__decision-row {
+  padding: 1rem;
+}
+.sg-dashboard__decision-row + .sg-dashboard__decision-row {
+  border-top: 1px solid #e9d3bb;
+}
+.sg-dashboard__decision-label {
+  color: #6e3b2d;
+  font-family: var(--app-font-mono);
+  font-size: .8rem;
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+.sg-dashboard__pending-pill [data-testid='status-incident'] {
+  border-color: #ffe6a8;
+  background: #ffe6a8;
+  color: #5c3512;
+  font-size: .8rem;
+  font-weight: 900;
+}
+.sg-dashboard__risk-note {
+  margin-top: .8rem;
+  color: var(--incident-muted);
+  font-size: .72rem;
+  line-height: 1.5;
+}
+.sg-dashboard__timeline {
+  border-top: 1px solid #dfcbbb;
+  background: #f3e5d6;
+  padding: 1.15rem clamp(1.1rem, 3vw, 2rem) 1.35rem;
+  color: #38261e;
+}
+.sg-dashboard__timeline .sg-dashboard__eyebrow {
+  color: #98613f;
+}
+.sg-dashboard__timeline-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+.sg-dashboard__timeline-event {
+  position: relative;
+  min-width: 0;
+  border-top: 2px solid #d1a786;
+  padding: .75rem .5rem 0 0;
+}
+.sg-dashboard__timeline-dot {
+  position: absolute;
+  top: -.38rem;
+  left: 0;
+  height: .65rem;
+  width: .65rem;
+  border: 2px solid #f3e5d6;
+  border-radius: 999px;
+  background: #a3442d;
+}
+.sg-dashboard__secondary {
+  border-left: 4px solid #c67545;
+  padding: .35rem 0 .25rem 1rem;
+}
+.sg-dashboard__secondary .sg-dashboard__section-kicker {
+  color: #a05435;
+}
+.sg-dashboard__stat-row {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: .7rem;
+}
+.sg-dashboard__stat-row > div {
+  border-color: #dec7b1;
+  background: #f2e5d6;
+  box-shadow: inset 0 3px 0 #d39165;
+}
+.sg-dashboard__stat-row > div:first-child {
+  box-shadow: inset 0 3px 0 #a54131;
+}
+.sg-dashboard__stat-row > div p:first-child {
+  color: #795943;
+}
+
+@media (max-width: 767px) {
+  .sg-dashboard__incident-top {
+    grid-template-columns: 1fr;
+  }
+  .sg-dashboard__risk-strip {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .sg-dashboard__risk-value + .sg-dashboard__risk-value {
+    border-top: 1px solid var(--incident-line);
+    border-left: 0;
+    padding-left: 0;
+  }
+  .sg-dashboard__response {
+    border-top: 1px solid var(--incident-line);
+    border-left: 0;
+  }
+  .sg-dashboard__timeline-list {
+    grid-template-columns: 1fr;
+    gap: .65rem;
+  }
+  .sg-dashboard__timeline-event {
+    border-top: 0;
+    border-left: 2px solid #d1a786;
+    padding: 0 0 .15rem .85rem;
+  }
+  .sg-dashboard__timeline-dot {
+    top: .15rem;
+    left: -.38rem;
+  }
+  .sg-dashboard__stat-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

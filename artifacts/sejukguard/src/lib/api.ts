@@ -1,4 +1,4 @@
-import { demoHeaders } from './demo';
+import { demoHeaders, setServerMode, clearDemoIdentity, isViewOnlyDemo } from './demo';
 
 export class ApiError extends Error {
   status: number;
@@ -14,19 +14,22 @@ type Method = 'GET' | 'POST' | 'PUT' | 'DELETE';
 
 /** Same-origin call to the Python API. Auth rides on Clerk's __session cookie; no tokens here. */
 export async function api<T>(path: string, method: Method = 'GET', body?: unknown, extraHeaders?: Record<string, string>): Promise<T> {
+  if (method !== 'GET' && isViewOnlyDemo()) {
+    throw new ApiError(403, 'DEMO_READ_ONLY', 'This is a view-only demo. Saving, approvals, transfers and resets are disabled.');
+  }
   let res: Response;
   try {
     res = await fetch(import.meta.env.BASE_URL.replace(/\/$/, '') + '/v1' + path, {
       method,
       credentials: 'include',
-      headers: { ...(body !== undefined ? { 'Content-Type': 'application/json' } : {}), ...(extraHeaders ?? {}), ...demoHeaders() },
+      headers: { ...(body !== undefined ? { 'Content-Type': 'application/json' } : {}), ...demoHeaders(path), ...(extraHeaders ?? {}) },
       body: body !== undefined ? JSON.stringify(body) : undefined,
     });
   } catch {
-    throw new ApiError(0, 'network', navigator.onLine ? 'Could not reach SejukGuard. Check your connection and try again.' : 'You are offline. Changes were not sent.');
+    throw new ApiError(0, 'network', navigator.onLine ? 'Could not reach Glacier Link. Check your connection and try again.' : 'You are offline. Changes were not sent.');
   }
   if (!res.ok) {
-    if (res.status === 401 && typeof window !== 'undefined') window.dispatchEvent(new Event('sejukguard-session-expired'));
+    if (res.status === 401 && typeof window !== 'undefined' && !demoHeaders(path)['X-User-Id']) window.dispatchEvent(new Event('sejukguard-session-expired'));
     let code = 'http_' + res.status;
     let message = res.statusText || 'Request failed';
     try {
@@ -44,7 +47,13 @@ export async function api<T>(path: string, method: Method = 'GET', body?: unknow
   }
   if (res.status === 204) return undefined as T;
   const text = await res.text();
-  return (text ? JSON.parse(text) : undefined) as T;
+  const result = (text ? JSON.parse(text) : undefined) as T;
+  const accessMode = (result as { mode?: string } | undefined)?.mode;
+  if (path === '/access' && (accessMode === 'demo' || accessMode === 'normal')) {
+    setServerMode(accessMode, (result as { read_only?: boolean }).read_only === true);
+    if (accessMode === 'normal') clearDemoIdentity();
+  }
+  return result;
 }
 
 export function errorMessage(e: unknown): string {
@@ -55,4 +64,3 @@ export function errorMessage(e: unknown): string {
   if (e instanceof Error) return e.message;
   return 'Something went wrong';
 }
-
