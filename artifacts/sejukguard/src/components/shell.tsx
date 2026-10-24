@@ -3,7 +3,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { Link, useLocation } from 'wouter';
 import { useClerk } from '@clerk/react';
 import {
-  Activity, Bell, ChevronDown, CircleHelp, ClipboardCheck, Gauge, LogOut, Menu, Megaphone, RotateCcw, Settings, ShieldAlert, Snowflake, Truck, UserCircle, Users, Wrench, WifiOff, type LucideIcon,
+  Activity, Bell, ChevronDown, CircleHelp, ClipboardCheck, Gauge, LogIn, LogOut, Menu, Megaphone, RotateCcw, Settings, ShieldAlert, Snowflake, Truck, UserCircle, Users, Wrench, WifiOff, type LucideIcon,
 } from 'lucide-react';
 import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet';
 import {
@@ -19,7 +19,7 @@ import { useOnline } from '@/lib/paging';
 import { ROLE_LABEL } from '@/lib/format';
 import type { Perm } from '@/lib/types';
 import { api } from '@/lib/api';
-import { demoEnabled, demoUserId, setDemoIdentity } from '@/lib/demo';
+import { demoEnabled, demoUserId, setDemoIdentity, signOutDemoIdentity } from '@/lib/demo';
 import { toast } from 'sonner';
 
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, '');
@@ -110,6 +110,22 @@ function ProfileMenu({ onNavigate }: { onNavigate?: () => void }) {
     window.location.reload();
   };
 
+  const openDemoSignIn = () => {
+    onNavigate?.();
+    navigate('/demo-login');
+  };
+
+  const logOut = () => {
+    if (isDemo) {
+      signOutDemoIdentity();
+      qc.clear();
+      onNavigate?.();
+      navigate('/demo-login');
+      return;
+    }
+    void signOut({ redirectUrl: `${basePath}/sign-in` });
+  };
+
   const resetDemo = async () => {
     if (!window.confirm('Reset the demo workspace? All demo changes will be replaced with the Freezer 2 compressor-failure scenario.')) return;
     setResetBusy(true);
@@ -178,8 +194,13 @@ function ProfileMenu({ onNavigate }: { onNavigate?: () => void }) {
               <RotateCcw className="h-4 w-4" />{resetBusy ? 'Resetting demo…' : 'Reset demo'}
             </DropdownMenuItem>
           )}
+          {isDemo && (
+            <DropdownMenuItem onSelect={openDemoSignIn} className="cursor-pointer text-[#eaf1f2] focus:bg-[#1c3b4a] focus:text-white" data-testid="button-demo-sign-in">
+              <LogIn className="h-4 w-4" />Demo sign-in
+            </DropdownMenuItem>
+          )}
           <DropdownMenuSeparator className="bg-[#29424f]" />
-          <DropdownMenuItem onSelect={() => signOut({ redirectUrl: basePath || '/' })} className="cursor-pointer text-[#eaf1f2] focus:bg-[#1c3b4a] focus:text-white" data-testid="button-sign-out">
+          <DropdownMenuItem onSelect={logOut} className="cursor-pointer text-[#eaf1f2] focus:bg-[#1c3b4a] focus:text-white" data-testid="button-sign-out">
             <LogOut className="h-4 w-4" />Log out
           </DropdownMenuItem>
         </DropdownMenuContent>

@@ -7,7 +7,7 @@ import { QueryClient, QueryClientProvider, useQueryClient } from '@tanstack/reac
 import { Toaster } from 'sonner';
 import { ApiError } from '@/lib/api';
 import { useAccess, useMeQuery } from '@/lib/queries';
-import { demoUserId, setDemoIdentity } from '@/lib/demo';
+import { demoSignedOut, demoUserId, setDemoIdentity } from '@/lib/demo';
 import { MeProvider } from '@/lib/me';
 import { AppShell } from '@/components/shell';
 import { ErrorState, ListSkeleton } from '@/components/common';
@@ -31,6 +31,7 @@ import Team from '@/pages/team';
 import SettingsPage from '@/pages/settings';
 import Account from '@/pages/account';
 import AuthDemoPage from '@/pages/auth-demo';
+import DemoLoginPage from '@/pages/demo-login';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -185,7 +186,7 @@ function Protected({ component: Page }: { component: ComponentType }) {
   const [demoReady, setDemoReady] = useState(false);
   useEffect(() => {
     if (demo) {
-      if (!demoUserId()) {
+      if (!demoSignedOut() && !demoUserId()) {
         const owner = a?.demo_users?.find((u) => u.role === 'owner') ?? a?.demo_users?.[0];
         if (owner) setDemoIdentity(owner.id);
       }
@@ -196,6 +197,7 @@ function Protected({ component: Page }: { component: ComponentType }) {
   const me = useMeQuery(ready);
   if (access.isLoading) return <FullLoading />;
   if (access.error) return <PublicFrame wide><ErrorState error={access.error} onRetry={() => access.refetch()} /></PublicFrame>;
+  if (demo && demoSignedOut()) return <Redirect to="/demo-login" />;
   if (demo && (!demoReady || !demoUserId())) return <FullLoading />;
   if (!demo && !a!.authenticated) return <Redirect to="/sign-in" />;
   if (demo && me.isLoading) return <FullLoading />;
@@ -292,6 +294,9 @@ function AppRouteResolver() {
   const path = location.split('?')[0].replace(/\/$/, '') || '/';
 
   if (path === '/auth-demo') return <AuthDemoPage />;
+  if (path === '/demo-login') {
+    return <QueryClientProvider client={queryClient}><DemoLoginPage /></QueryClientProvider>;
+  }
   if (!clerkPubKey) return <MissingConfig />;
   return <ClerkProviderWithRoutes />;
 }

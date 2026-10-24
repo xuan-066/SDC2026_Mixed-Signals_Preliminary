@@ -1,12 +1,15 @@
 import { useEffect, useState } from 'react';
 import { UserProfile, useClerk, useUser } from '@clerk/react';
 import { Loader2, LogOut } from 'lucide-react';
+import { useQueryClient } from '@tanstack/react-query';
+import { useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ErrorState, Field, ListSkeleton, PageHeader, Panel } from '@/components/common';
 import { useProfile, useUpdateProfile } from '@/lib/queries';
 import { useMe } from '@/lib/me';
 import { ROLE_LABEL } from '@/lib/format';
+import { demoEnabled, signOutDemoIdentity } from '@/lib/demo';
 
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, '');
 
@@ -14,18 +17,29 @@ export default function Account() {
   const { me } = useMe();
   const { signOut } = useClerk();
   const { isLoaded: clerkLoaded, isSignedIn } = useUser();
+  const queryClient = useQueryClient();
+  const [, navigate] = useLocation();
   const q = useProfile();
   const m = useUpdateProfile();
   const [v, setV] = useState({ name: '', phone: '' });
   const [err, setErr] = useState('');
   useEffect(() => { if (q.data) setV({ name: q.data.name, phone: q.data.phone ?? '' }); }, [q.data]);
+  const handleSignOut = () => {
+    if (demoEnabled() && !isSignedIn) {
+      signOutDemoIdentity();
+      queryClient.clear();
+      navigate('/demo-login');
+      return;
+    }
+    void signOut({ redirectUrl: `${basePath}/sign-in` });
+  };
   return (
     <div className="sg-page sg-account-page">
       <PageHeader
         eyebrow={<span className="text-3xl font-bold normal-case tracking-normal sm:text-4xl">Account</span>}
         title="My account"
         sub={<span className="text-base">Your name and phone are what your team sees. Email, password and sign-in security are managed below.</span>}
-        actions={<Button variant="outline" onClick={() => signOut({ redirectUrl: basePath || '/' })} data-testid="button-account-sign-out"><LogOut className="mr-1.5 h-4 w-4" />Sign out</Button>} />
+        actions={<Button variant="outline" onClick={handleSignOut} disabled={!clerkLoaded} data-testid="button-account-sign-out"><LogOut className="mr-1.5 h-4 w-4" />Sign out</Button>} />
       <div className="sg-account-layout grid gap-6 lg:grid-cols-[1.1fr_.9fr]">
         <Panel className="border-t-4 border-t-primary" title="Your team profile">
           {q.isLoading ? <ListSkeleton rows={2} /> : q.error ? <ErrorState error={q.error} onRetry={() => q.refetch()} /> : (
