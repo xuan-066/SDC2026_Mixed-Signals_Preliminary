@@ -82,7 +82,7 @@ const clerkAppearance = {
     card: '!shadow-none !border-0 !bg-transparent !rounded-none',
     footer: '!shadow-none !border-0 !bg-transparent !rounded-none',
     headerTitle: 'font-display text-2xl font-extrabold text-foreground',
-    headerSubtitle: 'text-muted-foreground',
+    headerSubtitle: 'text-base text-muted-foreground',
     socialButtonsBlockButtonText: 'text-foreground font-semibold',
     formFieldLabel: 'text-foreground font-semibold',
     footerActionLink: 'text-primary font-semibold',
@@ -112,7 +112,7 @@ function AuthFrame({ children }: { children: React.ReactNode }) {
         <img src={`${window.location.origin}${basePath}/glacier-link-logo.png`} alt="Glacier Link" className="h-auto w-44 sm:w-56" />
       </a></header>
       <div className="mx-auto grid min-h-[calc(100dvh-65px)] max-w-6xl items-center gap-8 px-4 py-8 lg:grid-cols-[1fr_440px] lg:px-8">
-        <section className="hidden max-w-xl lg:block"><p className="font-mono text-xs font-bold uppercase tracking-[.18em] text-primary">Cold-chain accountability</p><h1 className="mt-3 font-display text-5xl font-extrabold leading-[1.02] text-[#1d3047]">Keep the cold.<br /><span className="text-primary">Protect the stock.</span></h1><p className="mt-5 max-w-md text-base leading-relaxed text-muted-foreground">A clearer response from first reading to approved repair, built for the people running Malaysian kitchens.</p><div className="mt-8 flex gap-2"><span className="h-2 w-14 rounded-full bg-[#e3a454]" /><span className="h-2 w-8 rounded-full bg-primary" /><span className="h-2 w-3 rounded-full bg-frost" /></div></section>
+        <section className="hidden max-w-xl lg:block"><p className="font-mono text-sm font-bold uppercase tracking-[.18em] text-primary">Cold-chain accountability</p><h1 className="mt-3 font-display text-5xl font-extrabold leading-[1.02] text-[#1d3047]">Keep the cold.<br /><span className="text-primary">Protect the stock.</span></h1><p className="mt-5 max-w-md text-base leading-relaxed text-muted-foreground">A clearer response from first reading to approved repair, built for the people running Malaysian kitchens.</p><div className="mt-8 flex gap-2"><span className="h-2 w-14 rounded-full bg-[#e3a454]" /><span className="h-2 w-8 rounded-full bg-primary" /><span className="h-2 w-3 rounded-full bg-frost" /></div></section>
         <div className="space-y-4">{children}
           <p className="text-center text-xs text-muted-foreground">Forgot your password? Use "Forgot password" on the sign-in form to recover your account.</p>
         </div>
