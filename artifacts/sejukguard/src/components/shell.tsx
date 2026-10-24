@@ -105,7 +105,7 @@ function Brand() {
   );
 }
 
-function ProfileMenu() {
+function ProfileMenu({ onNavigate }: { onNavigate?: () => void }) {
   const { me, isOwner } = useMe();
   const { signOut } = useClerk();
   const access = useAccess();
@@ -135,6 +135,7 @@ function ProfileMenu() {
       }
       await qc.invalidateQueries();
       toast.success('Demo reset. Freezer 2 incident is ready.');
+      onNavigate?.();
       navigate('/dashboard');
     } catch (e) {
       toast.error(e instanceof Error ? e.message : 'Could not reset demo');
@@ -147,13 +148,13 @@ function ProfileMenu() {
     <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <button type="button" className="inline-flex h-10 max-w-[120px] items-center gap-2 rounded-xl border border-[#b87936]/45 bg-[#fff1da]/50 px-2 text-[#1d3047] transition-colors hover:bg-[#fff1da] sm:max-w-[220px] sm:px-3" aria-label={'Open profile menu for ' + me.name} data-testid="button-profile-menu">
+          <button type="button" className="inline-flex h-12 w-full items-center gap-3 rounded-xl border border-[#29424f] bg-[#102331]/70 px-3 text-sidebar-accent-foreground transition-colors hover:bg-[#1c3b4a]" aria-label={'Open profile menu for ' + me.name} data-testid="button-profile-menu">
             <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-[#164351] text-sm font-bold text-[#64d5dc]">{me.name.trim().charAt(0).toUpperCase()}</span>
             <span className="truncate text-sm font-bold" data-testid="text-user-name">{me.name}</span>
-            <ChevronDown className="h-4 w-4 shrink-0 opacity-75" />
+            <ChevronDown className="ml-auto h-4 w-4 shrink-0 opacity-75" />
           </button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" side="bottom" sideOffset={8} className="w-[340px] max-w-[calc(100vw-2rem)] border-[#29424f] bg-[#102331] p-3 text-[#eaf1f2] shadow-xl">
+        <DropdownMenuContent align="start" side="top" sideOffset={8} className="w-[268px] max-w-[calc(100vw-2rem)] border-[#29424f] bg-[#102331] p-3 text-[#eaf1f2] shadow-xl">
           <div className="flex items-center gap-3 px-2 py-2">
             <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-[#164351] text-lg font-bold text-[#64d5dc]">{me.name.trim().charAt(0).toUpperCase()}</span>
             <div className="min-w-0">
@@ -163,7 +164,7 @@ function ProfileMenu() {
           </div>
           <DropdownMenuSeparator className="bg-[#29424f]" />
           <DropdownMenuItem asChild className="cursor-pointer text-[#eaf1f2] focus:bg-[#1c3b4a] focus:text-white">
-            <Link href={isOwner ? '/settings' : '/account'} className="flex w-full items-center gap-3 px-3 py-2.5">
+            <Link href={isOwner ? '/settings' : '/account'} onClick={onNavigate} className="flex w-full items-center gap-3 px-3 py-2.5">
               <Settings className="h-4 w-4" />Settings
             </Link>
           </DropdownMenuItem>
@@ -204,9 +205,9 @@ function ProfileMenu() {
             <DialogDescription className="text-[#aab8c1]">Quick ways to respond to a cold-chain issue.</DialogDescription>
           </DialogHeader>
           <div className="grid gap-2">
-            <Link href="/report" onClick={() => setHelpOpen(false)} className="rounded-lg border border-[#29424f] px-3 py-2.5 text-sm font-semibold hover:bg-[#1c3b4a]">Report a fault</Link>
-            <Link href="/incidents" onClick={() => setHelpOpen(false)} className="rounded-lg border border-[#29424f] px-3 py-2.5 text-sm font-semibold hover:bg-[#1c3b4a]">Review incidents</Link>
-            <Link href="/equipment" onClick={() => setHelpOpen(false)} className="rounded-lg border border-[#29424f] px-3 py-2.5 text-sm font-semibold hover:bg-[#1c3b4a]">Check equipment</Link>
+            <Link href="/report" onClick={() => { setHelpOpen(false); onNavigate?.(); }} className="rounded-lg border border-[#29424f] px-3 py-2.5 text-sm font-semibold hover:bg-[#1c3b4a]">Report a fault</Link>
+            <Link href="/incidents" onClick={() => { setHelpOpen(false); onNavigate?.(); }} className="rounded-lg border border-[#29424f] px-3 py-2.5 text-sm font-semibold hover:bg-[#1c3b4a]">Review incidents</Link>
+            <Link href="/equipment" onClick={() => { setHelpOpen(false); onNavigate?.(); }} className="rounded-lg border border-[#29424f] px-3 py-2.5 text-sm font-semibold hover:bg-[#1c3b4a]">Check equipment</Link>
           </div>
         </DialogContent>
       </Dialog>
@@ -225,7 +226,6 @@ export function AppShell({ children }: { children: ReactNode }) {
           <div className="mx-auto flex max-w-[1440px] items-center justify-between gap-2 px-3 py-3 sm:gap-3 sm:px-6">
             <Brand />
             <div className="flex items-center gap-2">
-              <ProfileMenu />
               <button type="button" onClick={() => setNavOpen(true)} className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-[#b87936]/45 bg-[#fff1da]/50 text-[#1d3047] transition-colors hover:bg-[#fff1da]" aria-label="Open navigation menu" data-testid="button-open-menu">
                 <Menu className="h-5 w-5" />
               </button>
@@ -237,6 +237,9 @@ export function AppShell({ children }: { children: ReactNode }) {
             <SheetTitle className="sr-only">Main navigation</SheetTitle>
             <div className="border-b border-sidebar-border pb-4"><Brand /></div>
             <div className="flex-1"><NavList onNavigate={() => setNavOpen(false)} /></div>
+            <div className="border-t border-sidebar-border pt-4">
+              <ProfileMenu onNavigate={() => setNavOpen(false)} />
+            </div>
           </SheetContent>
         </Sheet>
         {!online && (

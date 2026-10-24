@@ -39,7 +39,7 @@ export default function Dashboard() {
 
   return (
     <div className="sg-dashboard space-y-7">
-      <PageHeader eyebrow={<span className="font-sans text-lg font-extrabold normal-case tracking-normal text-[#1d3047] sm:text-xl">{me.business_name}</span>} title={greet + ', ' + me.name.split(' ')[0]}
+      <PageHeader eyebrow={<span className="font-sans text-2xl font-extrabold leading-tight normal-case tracking-normal text-[#1d3047] sm:text-3xl">{me.business_name}</span>} title={greet + ', ' + me.name.split(' ')[0]}
         sub={<span data-testid="dashboard-incident-summary" className={open.length ? 'text-base font-extrabold text-[#b42335] sm:text-lg' : 'text-sm text-muted-foreground'}>
           {open.length ? `${open.length} open incident${open.length > 1 ? 's' : ''} ${open.length === 1 ? 'needs' : 'need'} attention` : 'No open incidents right now.'}
         </span>}
