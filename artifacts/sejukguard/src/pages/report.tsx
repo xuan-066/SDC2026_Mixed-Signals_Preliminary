@@ -25,9 +25,9 @@ export default function Report() {
   return (
     <>
       <PageHeader eyebrow="Report" title="Something wrong with a fridge?" sub="Write it how you would tell your supervisor. Bahasa, English or campur is fine." />
-      <div className="grid gap-6 lg:grid-cols-[1fr_360px]">
+      <div className="sg-report-layout grid gap-6 lg:grid-cols-[1.2fr_.8fr]">
         <div className="space-y-6">
-          <Panel>
+          <Panel className="border-t-4 border-t-[#d99a43]">
             <form onSubmit={(e) => { e.preventDefault(); submit(); }} className="space-y-3">
               <label htmlFor="report" className="sr-only">Fault report</label>
               <Textarea id="report" rows={5} value={text} onChange={(e) => { setText(e.target.value); setErr(''); }} maxLength={1000} placeholder="Freezer 2 tak sejuk..." className="text-base" data-testid="input-report" />
@@ -55,7 +55,7 @@ export default function Report() {
             </Panel>
           )}
         </div>
-        <Panel title="Or record a reading" pad={false}>
+        <Panel className="border-t-4 border-t-[#438fca]" title="Temperature check" pad={false}>
           {assets.isLoading ? <div className="p-4"><ListSkeleton rows={3} /></div> : assets.error ? <div className="p-4"><ErrorState error={assets.error} onRetry={() => assets.refetch()} /></div> :
             !assets.data?.length ? <div className="p-4"><EmptyState icon={Snowflake} title="No units yet" /></div> : (
               <ul className="divide-y divide-border">

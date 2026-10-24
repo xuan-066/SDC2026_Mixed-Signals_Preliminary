@@ -1,16 +1,15 @@
 import { Link, Redirect } from 'wouter';
 import { ArrowRight, ClipboardCheck, MoveRight, Snowflake, Thermometer, Users } from 'lucide-react';
 import { useAccess } from '@/lib/queries';
-import { ROLE_LABEL } from '@/lib/format';
 
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, '');
 
 export default function Landing() {
   const access = useAccess();
   const a = access.data;
-  if (a?.authenticated && a.member && !a.inactive) return <Redirect to="/dashboard" />;
+  if (a?.mode === 'demo' || (a?.authenticated && a.member && !a.inactive)) return <Redirect to="/dashboard" />;
   return (
-    <div className="min-h-[100dvh] bg-sidebar text-sidebar-foreground">
+    <div className="sg-landing min-h-[100dvh] bg-sidebar text-sidebar-foreground">
       <header className="mx-auto flex max-w-6xl items-center justify-between px-5 py-5">
         <div className="flex items-center gap-2.5">
           <img src={basePath + '/logo.svg'} alt="" className="h-9 w-9" />
@@ -45,15 +44,6 @@ export default function Landing() {
               I already have an account
             </Link>
           </div>
-          {a?.mode === 'demo' && (
-            <div className="mt-8 rounded-xl border border-sidebar-border bg-sidebar-accent/40 p-4 text-sm" data-testid="panel-demo">
-              <p className="font-semibold text-sidebar-accent-foreground">This server is running in demo mode.</p>
-              <p className="mt-1 text-sidebar-foreground/70">Demo identities are selected by the server, not by this page:</p>
-              <ul className="mt-2 flex flex-wrap gap-2">
-                {(a.demo_users ?? []).map((u) => <li key={u.id} className="rounded-full bg-sidebar-accent px-3 py-1 text-xs">{u.name} - {ROLE_LABEL[u.role]}</li>)}
-              </ul>
-            </div>
-          )}
         </div>
 
         <div className="rise relative rounded-2xl border border-sidebar-border bg-sidebar-accent/30 p-5" style={{ animationDelay: '120ms' }} aria-hidden>

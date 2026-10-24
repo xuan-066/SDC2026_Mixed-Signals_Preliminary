@@ -1,4 +1,4 @@
-import { useEffect, useRef, type ComponentType } from 'react';
+import { useEffect, useRef, useState, type ComponentType } from 'react';
 import { ClerkProvider, SignIn, SignUp, useClerk } from '@clerk/react';
 import { publishableKeyFromHost } from '@clerk/react/internal';
 import { shadcn } from '@clerk/themes';
@@ -7,6 +7,7 @@ import { QueryClient, QueryClientProvider, useQueryClient } from '@tanstack/reac
 import { Toaster } from 'sonner';
 import { ApiError } from '@/lib/api';
 import { useAccess, useMeQuery } from '@/lib/queries';
+import { demoUserId, setDemoIdentity } from '@/lib/demo';
 import { MeProvider } from '@/lib/me';
 import { AppShell } from '@/components/shell';
 import { ErrorState, ListSkeleton } from '@/components/common';
@@ -106,9 +107,17 @@ const clerkAppearance = {
 
 function AuthFrame({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex min-h-[100dvh] flex-col items-center justify-center gap-6 bg-background px-4 py-10">
-      {children}
-      <p className="max-w-sm text-center text-xs text-muted-foreground">Forgot your password? Use "Forgot password" on the sign-in form to recover your account.</p>
+    <div className="sg-auth-frame min-h-[100dvh] bg-background">
+      <header className="border-b-2 border-[#d99546] bg-[#f4bd78] px-5 py-4"><a href={basePath || '/'} className="mx-auto flex max-w-6xl items-center gap-2.5">
+        <img src={`${window.location.origin}${basePath}/logo.svg`} alt="" className="h-8 w-8" />
+        <span className="font-display text-lg font-extrabold text-[#1d3047]">Sejuk<span className="text-primary">Guard</span></span>
+      </a></header>
+      <div className="mx-auto grid min-h-[calc(100dvh-65px)] max-w-6xl items-center gap-8 px-4 py-8 lg:grid-cols-[1fr_440px] lg:px-8">
+        <section className="hidden max-w-xl lg:block"><p className="font-mono text-xs font-bold uppercase tracking-[.18em] text-primary">Cold-chain accountability</p><h1 className="mt-3 font-display text-5xl font-extrabold leading-[1.02] text-[#1d3047]">Keep the cold.<br /><span className="text-primary">Protect the stock.</span></h1><p className="mt-5 max-w-md text-base leading-relaxed text-muted-foreground">A clearer response from first reading to approved repair, built for the people running Malaysian kitchens.</p><div className="mt-8 flex gap-2"><span className="h-2 w-14 rounded-full bg-[#e3a454]" /><span className="h-2 w-8 rounded-full bg-primary" /><span className="h-2 w-3 rounded-full bg-frost" /></div></section>
+        <div className="space-y-4">{children}
+          <p className="text-center text-xs text-muted-foreground">Forgot your password? Use "Forgot password" on the sign-in form to recover your account.</p>
+        </div>
+      </div>
     </div>
   );
 }
@@ -172,13 +181,27 @@ function SessionProblem({ title, body }: { title: string; body: string }) {
 function Protected({ component: Page }: { component: ComponentType }) {
   const access = useAccess();
   const a = access.data;
-  const ready = !!a && a.authenticated && a.member && !a.inactive;
+  const demo = a?.mode === 'demo';
+  const [demoReady, setDemoReady] = useState(false);
+  useEffect(() => {
+    if (demo) {
+      if (!demoUserId()) {
+        const owner = a?.demo_users?.find((u) => u.role === 'owner') ?? a?.demo_users?.[0];
+        if (owner) setDemoIdentity(owner.id);
+      }
+      setDemoReady(true);
+    }
+  }, [demo, a]);
+  const ready = !!a && (demo ? !!demoUserId() : a.authenticated && a.member && !a.inactive);
   const me = useMeQuery(ready);
   if (access.isLoading) return <FullLoading />;
   if (access.error) return <PublicFrame wide><ErrorState error={access.error} onRetry={() => access.refetch()} /></PublicFrame>;
-  if (!a!.authenticated) return <Redirect to="/sign-in" />;
-  if (a!.inactive) return <SessionProblem title="Your access is paused" body="An owner has deactivated your membership. Ask them to reactivate you on the Team page." />;
-  if (!a!.member) return <Redirect to="/onboarding" />;
+  if (demo && (!demoReady || !demoUserId())) return <FullLoading />;
+  if (!demo && !a!.authenticated) return <Redirect to="/sign-in" />;
+  if (demo && me.isLoading) return <FullLoading />;
+  if (demo && me.error) return <PublicFrame wide><ErrorState error={me.error} onRetry={() => me.refetch()} /></PublicFrame>;
+  if (!demo && a!.inactive) return <SessionProblem title="Your access is paused" body="An owner has deactivated your membership. Ask them to reactivate you on the Team page." />;
+  if (!demo && !a!.member) return <Redirect to="/onboarding" />;
   if (me.isLoading) return <FullLoading />;
   if (me.error) {
     const e = me.error;

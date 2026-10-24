@@ -28,10 +28,10 @@ export default function Equipment() {
   const pg = usePaged(filtered, 12, q + f + archived);
 
   return (
-    <>
+    <div className="sg-page sg-equipment-page">
       <PageHeader eyebrow="Equipment" title="Chillers and freezers" sub="Every unit with its latest real reading. Stale means more than 60 minutes old."
         actions={isOwner && <Button onClick={() => setAdding(true)} data-testid="button-add-equipment"><Plus className="mr-1.5 h-4 w-4" />Add equipment</Button>} />
-      <div className="mb-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+      <section className="sg-filterbar mb-5 flex flex-col gap-3 rounded-xl border border-[#d8c6ac] bg-[#f5ead8] p-3 md:flex-row md:items-center md:justify-between" aria-label="Equipment filters">
         <SearchBox value={q} onChange={setQ} placeholder="Search units" />
         <div className="flex flex-wrap items-center gap-3">
           <Chips label="Filter" value={f} onChange={setF} options={[
@@ -42,7 +42,7 @@ export default function Equipment() {
           ]} />
           {isOwner && <label className="flex items-center gap-2 text-xs font-semibold text-muted-foreground"><Switch checked={archived} onCheckedChange={setArchived} data-testid="switch-include-archived" />Show archived</label>}
         </div>
-      </div>
+      </section>
       {assets.isLoading ? <ListSkeleton rows={6} /> : assets.error ? <ErrorState error={assets.error} onRetry={() => assets.refetch()} /> :
         list.length === 0 ? <EmptyState icon={Snowflake} title="No equipment yet" body={isOwner ? 'Add your first chiller or freezer with its safe temperature band.' : 'Your owner has not added any units yet.'}
           action={isOwner && <Button onClick={() => setAdding(true)} data-testid="button-empty-add-equipment">Add equipment</Button>} /> :
@@ -69,7 +69,7 @@ export default function Equipment() {
             <Pager {...pg} />
           </>
         )}
-      <AssetFormDialog open={adding} onOpenChange={setAdding} onSaved={(id) => nav('/equipment/' + id)} />
-    </>
+       <AssetFormDialog open={adding} onOpenChange={setAdding} onSaved={(id) => nav('/equipment/' + id)} />
+    </div>
   );
 }

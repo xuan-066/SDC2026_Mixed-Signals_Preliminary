@@ -33,9 +33,11 @@ function SettingsForm() {
     m.mutate({ name: v.name.trim(), kind: v.kind.trim(), supervisor_limit_sen: sen as number });
   };
   return (
-    <>
+    <div className="sg-page sg-settings-page">
       <PageHeader eyebrow="Settings" title="Business settings" sub="Changes apply to new approval requests immediately." />
-      <Panel className="max-w-xl">
+      <div className="sg-settings-layout grid gap-5 lg:grid-cols-[.65fr_1.35fr]">
+      <aside className="rounded-xl border border-[#d8c6ac] bg-[#20364d] p-5 text-[#fff5e5]"><p className="font-mono text-[10px] uppercase tracking-[.16em] text-[#f4bd78]">Decision policy</p><h2 className="mt-2 font-display text-2xl font-bold">Keep approval limits clear.</h2><p className="mt-3 text-sm leading-relaxed text-white/70">Supervisor requests under this ceiling can be approved without waiting for the owner. New requests use the saved limit.</p></aside>
+      <Panel className="border-t-4 border-t-[#d99a43]">
         <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); submit(); }}>
           <Field label="Business name" htmlFor="s-name" error={errs.name}><Input id="s-name" value={v.name} onChange={(e) => setV({ ...v, name: e.target.value })} data-testid="input-settings-name" /></Field>
           <Field label="Kind of business" htmlFor="s-kind" error={errs.kind}><Input id="s-kind" value={v.kind} onChange={(e) => setV({ ...v, kind: e.target.value })} data-testid="input-settings-kind" /></Field>
@@ -45,6 +47,7 @@ function SettingsForm() {
           <Button type="submit" disabled={m.isPending || !dirty} data-testid="button-save-settings">{m.isPending && <Loader2 className="mr-1.5 h-4 w-4 animate-spin" />}Save settings</Button>
         </form>
       </Panel>
-    </>
+      </div>
+    </div>
   );
 }

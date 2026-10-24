@@ -54,12 +54,12 @@ export default function EquipmentDetail() {
         </Link>
       )}
 
-      <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
-        <Panel title="Temperature, actual readings">
+      <div className="sg-equipment-detail-grid grid gap-6 lg:grid-cols-[1.5fr_.7fr]">
+        <Panel title="Temperature record · actual readings">
           {a.readings.length === 0 ? <EmptyState icon={ShieldAlert} title="No readings yet" body="Nothing is plotted until someone records a reading or a sensor reports." /> : <TempChart readings={a.readings} range={a.range_c} />}
         </Panel>
         <div className="space-y-4">
-          <Panel>
+          <Panel className="border-t-4 border-t-primary">
             <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground">Latest</p>
             <Temp t={a.latest_temp_c} className="font-display text-5xl font-extrabold" />
             <div className="mt-1"><ReadingAge at={a.latest_reading_at} state={a.reading_state} /></div>
@@ -77,7 +77,7 @@ export default function EquipmentDetail() {
         </div>
       </div>
 
-      <Panel className="mt-6" title={'Stock (' + a.stock.length + ')'} pad={false}
+      <Panel className="sg-stock-ledger mt-6" title={'Stock protection · ' + a.stock.length + ' lines'} pad={false}
         action={isSupervisor && !a.archived && <div className="flex gap-2">
           {a.stock.length > 0 && <TransferDialog sourceId={a.id} incidentId={a.active_incident_id} />}
           <Button size="sm" variant="outline" onClick={() => { setStockItem(undefined); setStockOpen(true); }} data-testid="button-add-stock"><Plus className="mr-1 h-4 w-4" />Add</Button>

@@ -46,6 +46,7 @@ export default function Onboarding() {
   return (
     <PublicFrame>
       <PublicCard title="Set up your business" sub={<>Signed in as <b>{a.email}</b>. This creates an empty business with you as owner. Next you will add your fridges and freezers. Joining someone else's business? Open the invitation link they sent you instead.</>}>
+        <div className="mb-5 grid grid-cols-3 border-y border-[#d8c6ac] py-3 text-center font-mono text-[10px] uppercase tracking-wide text-muted-foreground"><span className="font-bold text-primary">01 Business</span><span>02 Equipment</span><span>03 Team</span></div>
         <form className="space-y-4" onSubmit={(ev) => { ev.preventDefault(); submit(); }}>
           <Field label="Business name" htmlFor="b-name" error={errs.name}><Input id="b-name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Restoran Seri Kenanga" data-testid="input-business-name" /></Field>
           <Field label="Kind of business" htmlFor="b-kind" error={errs.kind}>

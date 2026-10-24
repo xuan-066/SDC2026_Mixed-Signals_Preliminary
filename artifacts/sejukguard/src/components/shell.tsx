@@ -1,4 +1,5 @@
 import { useState, type ReactNode } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { Link, useLocation } from 'wouter';
 import { useClerk } from '@clerk/react';
 import {
@@ -11,6 +12,10 @@ import { useNotifications, useApprovals, useIncidents } from '@/lib/queries';
 import { useOnline } from '@/lib/paging';
 import { ROLE_LABEL } from '@/lib/format';
 import type { Perm } from '@/lib/types';
+import { useAccess } from '@/lib/queries';
+import { api } from '@/lib/api';
+import { demoEnabled, demoUserId, setDemoIdentity } from '@/lib/demo';
+import { toast } from 'sonner';
 
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, '');
 
@@ -91,7 +96,7 @@ function Brand() {
   return (
     <Link href="/dashboard" className="flex items-center gap-2.5" data-testid="link-home">
       <img src={basePath + '/logo.svg'} alt="" className="h-8 w-8" />
-      <span className="font-display text-lg font-extrabold tracking-tight text-sidebar-accent-foreground">Sejuk<span className="text-sidebar-primary">Guard</span></span>
+      <span className="font-display text-lg font-extrabold tracking-tight text-[#1d3047]">Sejuk<span className="text-primary">Guard</span></span>
     </Link>
   );
 }
@@ -116,28 +121,29 @@ export function AppShell({ children }: { children: ReactNode }) {
   const online = useOnline();
   const badges = useBadges();
   return (
-    <div className="min-h-[100dvh] lg:grid lg:grid-cols-[256px_1fr]">
+    <div className="min-h-[100dvh]">
       <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:left-2 focus:top-2 focus:z-50 focus:rounded focus:bg-card focus:px-3 focus:py-2">Skip to content</a>
-      <aside className="sticky top-0 hidden h-[100dvh] flex-col gap-6 overflow-y-auto bg-sidebar p-4 lg:flex">
-        <Brand />
-        <div className="flex-1"><NavList /></div>
-        <Who />
-      </aside>
       <div className="min-w-0">
-        <header className="sticky top-0 z-30 flex items-center justify-between gap-3 bg-sidebar px-4 py-3 lg:hidden">
+        <header className="sticky top-0 z-30 border-b-2 border-[#d99546] bg-[#f4bd78] text-[#1d3047] shadow-[0_3px_0_hsl(31_56%_48%/.08)]">
+          <div className="mx-auto flex max-w-[1440px] items-center justify-between gap-3 px-4 py-3 sm:px-6">
           <Brand />
           <div className="flex items-center gap-1">
-            <Link href="/notifications" className="relative rounded-lg p-2 text-sidebar-foreground" aria-label={'Notifications, ' + badges.notif + ' unread'} data-testid="link-mobile-notifications">
+            <Link href="/notifications" className="relative rounded-lg p-2 text-[#1d3047] lg:hidden" aria-label={'Notifications, ' + badges.notif + ' unread'} data-testid="link-mobile-notifications">
               <Bell className="h-5 w-5" />
               {badges.notif > 0 && <span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-thaw" />}
             </Link>
-            <button type="button" onClick={() => setOpen(true)} className="rounded-lg p-2 text-sidebar-foreground" aria-label="Open menu" data-testid="button-open-menu">
+            <div className="hidden lg:block"><Who /></div>
+            <button type="button" onClick={() => setOpen(true)} className="rounded-lg p-2 text-[#1d3047] lg:hidden" aria-label="Open menu" data-testid="button-open-menu">
               <Menu className="h-5 w-5" />
             </button>
           </div>
+          </div>
+          <div className="hidden border-t border-[#b87936]/35 bg-[#f7c98f] lg:block">
+            <TopNavigation />
+          </div>
         </header>
         <Sheet open={open} onOpenChange={setOpen}>
-          <SheetContent side="left" className="flex w-[280px] flex-col gap-6 overflow-y-auto border-sidebar-border bg-sidebar p-4">
+          <SheetContent side="left" className="flex w-[300px] flex-col gap-6 overflow-y-auto border-sidebar-border bg-sidebar p-4">
             <SheetTitle className="sr-only">Navigation</SheetTitle>
             <Brand />
             <div className="flex-1"><NavList onNavigate={() => setOpen(false)} /></div>
@@ -149,11 +155,73 @@ export function AppShell({ children }: { children: ReactNode }) {
             <WifiOff className="h-4 w-4" />You are offline. Showing last loaded data; actions will not send until you reconnect.
           </div>
         )}
-        <main id="main" className="mx-auto w-full max-w-6xl px-4 pb-28 pt-6 sm:px-6 lg:px-10 lg:pb-12 lg:pt-10">{children}</main>
+        {demoEnabled() && <DemoPreview />}
+        <main id="main" className="mx-auto w-full max-w-[1440px] px-4 pb-28 pt-6 sm:px-6 lg:px-10 lg:pb-14 lg:pt-8">{children}</main>
         <MobileTabs />
       </div>
     </div>
   );
+}
+
+function TopNavigation() {
+  const { can, isOwner } = useMe();
+  const [loc] = useLocation();
+  const badges = useBadges();
+  const items = NAV.flatMap((g) => g.items).filter((it) => (!it.perm || can(it.perm)) && (!it.owner || isOwner));
+  return <nav aria-label="Workspace" className="mx-auto flex max-w-[1440px] gap-1 overflow-x-auto px-4 py-2.5 sm:px-6" data-testid="nav-workspace">
+    {items.map((it) => {
+      const active = loc === it.href || loc.startsWith(it.href + '/');
+      const count = it.badge ? badges[it.badge] : 0;
+      return <Link key={it.href} href={it.href} aria-current={active ? 'page' : undefined} data-testid={'link-nav-' + it.href.slice(1)}
+        className={cn('inline-flex shrink-0 items-center gap-2 rounded-full px-3.5 py-2 text-xs font-bold transition-colors', active ? 'bg-[#fff7e9] text-[#1c3047] shadow-sm' : 'text-[#34465a] hover:bg-[#ffefd8]')}>
+        <it.icon className="h-3.5 w-3.5" />{it.label}
+        {count > 0 && <span className={cn('rounded-full px-1.5 py-0.5 font-mono text-[10px]', it.badge === 'incidents' ? 'bg-thaw text-white' : 'bg-[#20364d] text-white')}>{count}</span>}
+      </Link>;
+    })}
+  </nav>;
+}
+
+function DemoPreview() {
+  const access = useAccess();
+  const qc = useQueryClient();
+  const [busy, setBusy] = useState(false);
+  const [, navigate] = useLocation();
+  const users = access.data?.demo_users ?? [];
+  const current = demoUserId() ?? '';
+  const changeRole = (id: string) => {
+    if (!id || id === current) return;
+    setDemoIdentity(id);
+    qc.clear();
+    window.location.reload();
+  };
+  const reset = async () => {
+    if (!window.confirm('Reset the demo workspace? All demo changes will be replaced with the Freezer 2 compressor-failure scenario.')) return;
+    setBusy(true);
+    try {
+      await api('/sim/reset', 'POST');
+      await api('/sim/sensor', 'POST', { asset_id: 'a_fz2', pattern: 'compressor_fail' });
+      for (const assetId of ['a_fz1', 'a_ch1', 'a_ch2']) {
+        await api('/sim/sensor', 'POST', { asset_id: assetId, pattern: 'recover' });
+      }
+      await qc.invalidateQueries();
+      toast.success('Demo reset. Freezer 2 incident is ready.');
+      navigate('/dashboard');
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : 'Could not reset demo');
+    } finally {
+      setBusy(false);
+    }
+  };
+  return <div className="sticky top-0 z-20 flex flex-wrap items-center justify-between gap-3 border-b-2 border-[#d8903d] bg-[#f5bd72] px-4 py-2 text-[#1d3047] shadow-sm sm:px-6" data-testid="banner-demo-preview">
+    <div className="flex items-center gap-2 text-xs font-extrabold uppercase tracking-[.12em]"><span className="h-2 w-2 rounded-full bg-[#a52e43]" />Demo preview <span className="hidden font-medium normal-case tracking-normal sm:inline">· isolated workspace</span></div>
+    <div className="flex items-center gap-2">
+      <label htmlFor="demo-role-switch" className="sr-only">Switch demo role</label>
+      <select id="demo-role-switch" value={current} onChange={(e) => changeRole(e.target.value)} className="h-8 max-w-[150px] rounded border border-[#b47a39] bg-[#fff0d9] px-2 text-xs font-bold" data-testid="select-demo-user">
+        {users.map((u) => <option key={u.id} value={u.id}>{u.name} · {ROLE_LABEL[u.role]}</option>)}
+      </select>
+      <button type="button" onClick={reset} disabled={busy} className="h-8 rounded-full border border-[#8b5c2b] px-3 text-xs font-bold hover:bg-[#ffdda9] disabled:opacity-50" data-testid="button-reset-demo">{busy ? 'Resetting…' : 'Reset demo'}</button>
+    </div>
+  </div>;
 }
 
 function MobileTabs() {

@@ -61,3 +61,5 @@ packages = ["chromium"]
 [userenv]
 
 [userenv.development]
+DEMO_MODE = "true"
+SEJUKGUARD_DATABASE_URL = "sqlite:////home/runner/workspace/generated-artifacts/sejukguard-demo.sqlite3"

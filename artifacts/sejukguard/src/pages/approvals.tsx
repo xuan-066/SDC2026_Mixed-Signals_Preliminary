@@ -24,22 +24,22 @@ export default function Approvals() {
   const pg = usePaged(filtered, 10, f + s);
   if (!can('decide_approval')) return <DeniedState />;
   return (
-    <>
+    <div className="sg-page sg-approvals-page">
       <PageHeader eyebrow="Approvals" title="Spending decisions" sub="You can only decide requests within your role and limit. The server decides who may act; buttons appear only when you can." />
-      <div className="mb-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+      <section className="sg-filterbar mb-5 flex flex-col gap-3 rounded-xl border border-[#d8c6ac] bg-[#f5ead8] p-3 md:flex-row md:items-center md:justify-between" aria-label="Approval filters">
         <SearchBox value={s} onChange={setS} placeholder="Search approvals" />
         <Chips label="Status" value={f} onChange={setF} options={[
           { value: 'mine', label: 'Mine to decide', count: list.filter((a) => a.can_decide).length },
           { value: 'PENDING', label: 'Pending', count: list.filter((a) => a.status === 'PENDING').length },
           { value: 'APPROVED', label: 'Approved' }, { value: 'REJECTED', label: 'Rejected' }, { value: 'all', label: 'All', count: list.length },
         ]} />
-      </div>
+      </section>
       {q.isLoading ? <ListSkeleton /> : q.error ? <ErrorState error={q.error} onRetry={() => q.refetch()} /> :
         filtered.length === 0 ? <EmptyState icon={ClipboardCheck} title={f === 'mine' ? 'Nothing waiting on you' : 'No approvals here'} /> : (
           <>
             <ul className="space-y-3">
               {pg.slice.map((a) => (
-                <li key={a.id} className="rise rounded-xl border border-card-border bg-card p-4" data-testid={'card-approval-' + a.id}>
+                <li key={a.id} className={'sg-approval-row rise rounded-xl border border-card-border bg-card p-4 ' + (a.status === 'PENDING' ? 'border-l-[5px] border-l-[#d99a43]' : '')} data-testid={'card-approval-' + a.id}>
                   <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                     <div className="min-w-0">
                       <div className="flex flex-wrap items-center gap-2"><Pill className={CLS[a.status]}>{a.status.toLowerCase()}</Pill><span className="text-xs text-muted-foreground">needs {ROLE_LABEL[a.required_role]}</span></div>
@@ -56,6 +56,6 @@ export default function Approvals() {
             <Pager {...pg} />
           </>
         )}
-    </>
+    </div>
   );
 }

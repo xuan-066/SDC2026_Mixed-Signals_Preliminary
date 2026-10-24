@@ -22,10 +22,10 @@ export default function ActivityPage() {
   if (!can('view_audit')) return <DeniedState />;
   const m = metrics.data;
   return (
-    <>
+    <div className="sg-page sg-activity-page">
       <PageHeader eyebrow="Activity" title="Who did what, when" sub="The audit trail is append-only. Every approval, dispatch and transfer is recorded here." />
       {can('view_metrics') && (metrics.isLoading ? <ListSkeleton rows={1} /> : metrics.error ? <ErrorState error={metrics.error} onRetry={() => metrics.refetch()} /> : m && (
-        <div className="mb-6 grid grid-cols-2 gap-3 lg:grid-cols-5">
+          <div className="sg-metrics-band mb-6 grid grid-cols-2 gap-3 border-y-2 border-[#d89b4d] bg-[#f3e6d1] py-3 lg:grid-cols-5">
           <Stat label="Incidents" value={m.incidents_total} hint={m.incidents_resolved + ' resolved'} />
           <Stat label="Detect to dispatch" value={m.median_min_detect_to_dispatch === null ? '--' : m.median_min_detect_to_dispatch.toFixed(1)} hint={m.median_min_detect_to_dispatch === null ? 'No dispatches yet' : 'median minutes'} />
           <Stat label="Recorded risk, resolved" value={<Money v={m.stock_protected_rm} className="text-xl" />} hint="Sum of risk snapshots; not proof stock moved" />
@@ -33,8 +33,8 @@ export default function ActivityPage() {
           <Stat label="False alarms avoided" value={m.false_alarms_avoided} tone="ok" />
         </div>
       ))}
-      <Tabs defaultValue="audit">
-        <TabsList><TabsTrigger value="audit" data-testid="tab-audit">Audit log</TabsTrigger>{can('view_messages') && <TabsTrigger value="messages" data-testid="tab-messages">Mock outbox</TabsTrigger>}</TabsList>
+      <Tabs defaultValue="audit" className="sg-activity-tabs">
+        <TabsList className="rounded-full bg-[#eaddc8] p-1"><TabsTrigger value="audit" className="rounded-full" data-testid="tab-audit">Audit log</TabsTrigger>{can('view_messages') && <TabsTrigger value="messages" className="rounded-full" data-testid="tab-messages">Mock outbox</TabsTrigger>}</TabsList>
         <TabsContent value="audit" className="mt-4">
           <div className="mb-3"><SearchBox value={s} onChange={setS} placeholder="Filter by action, actor, record" /></div>
           {audit.isLoading ? <ListSkeleton /> : audit.error ? <ErrorState error={audit.error} onRetry={() => audit.refetch()} /> : events.length === 0 ? <EmptyState icon={FileClock} title="No events" /> : (
@@ -78,6 +78,6 @@ export default function ActivityPage() {
           </TabsContent>
         )}
       </Tabs>
-    </>
+    </div>
   );
 }

@@ -16,13 +16,13 @@ export default function Notifications() {
   const filtered = useMemo(() => list.filter((n) => f === 'all' || !n.read_at).sort((a, b) => +new Date(b.created_at) - +new Date(a.created_at)), [list, f]);
   const pg = usePaged(filtered, 15, f);
   return (
-    <>
+    <div className="sg-page sg-notifications-page">
       <PageHeader eyebrow="Notifications" title="For you" sub="In-app notices only. SejukGuard does not send SMS or WhatsApp from this release." />
-      <div className="mb-4"><Chips label="Show" value={f} onChange={setF} options={[{ value: 'unread', label: 'Unread', count: list.filter((n) => !n.read_at).length }, { value: 'all', label: 'All', count: list.length }]} /></div>
+      <section className="sg-filterbar mb-5 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-[#d8c6ac] bg-[#f5ead8] p-3" aria-label="Notification controls"><p className="font-mono text-[10px] font-bold uppercase tracking-[.14em] text-muted-foreground">Inbox view</p><Chips label="Show" value={f} onChange={setF} options={[{ value: 'unread', label: 'Unread', count: list.filter((n) => !n.read_at).length }, { value: 'all', label: 'All', count: list.length }]} /></section>
       {q.isLoading ? <ListSkeleton /> : q.error ? <ErrorState error={q.error} onRetry={() => q.refetch()} /> :
         filtered.length === 0 ? <EmptyState icon={Bell} title={f === 'unread' ? 'All caught up' : 'No notifications'} /> : (
           <>
-            <ul className="divide-y divide-border overflow-hidden rounded-xl border border-card-border bg-card">
+            <ul className="sg-notification-stream divide-y divide-border overflow-hidden rounded-xl border border-card-border bg-card">
               {pg.slice.map((n) => (
                 <li key={n.id} className={cn('flex items-start gap-3 p-4', !n.read_at && 'bg-accent/40')} data-testid={'row-notification-' + n.id}>
                   <span className={cn('mt-1.5 h-2 w-2 shrink-0 rounded-full', n.read_at ? 'bg-transparent' : 'bg-thaw')} />
@@ -37,6 +37,6 @@ export default function Notifications() {
             <Pager {...pg} />
           </>
         )}
-    </>
+    </div>
   );
 }

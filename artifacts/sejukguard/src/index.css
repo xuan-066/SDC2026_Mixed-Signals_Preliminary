@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Mono:wght@400;700&family=Fraunces:opsz,wght@9..144,600;9..144,700;9..144,800&display=swap');
 @layer theme, base, clerk, components, utilities;
 @import 'tailwindcss';
 @import '@clerk/themes/shadcn.css';
@@ -86,47 +87,47 @@
   --elevate-1: rgba(0, 0, 0, 0.03);
   --elevate-2: rgba(0, 0, 0, 0.08);
 
-  --background: 197 33% 95.5%;
-  --foreground: 208 48% 13%;
-  --border: 198 24% 84%;
-  --card: 195 45% 98.5%;
-  --card-foreground: 208 48% 13%;
-  --card-border: 198 24% 86%;
-  --sidebar: 207 52% 12%;
-  --sidebar-foreground: 195 30% 88%;
-  --sidebar-border: 207 35% 20%;
-  --sidebar-primary: 186 72% 58%;
-  --sidebar-primary-foreground: 207 52% 10%;
-  --sidebar-accent: 207 40% 18%;
-  --sidebar-accent-foreground: 190 60% 96%;
-  --sidebar-ring: 186 72% 58%;
-  --popover: 195 45% 98.5%;
-  --popover-foreground: 208 48% 13%;
-  --popover-border: 198 24% 84%;
-  --primary: 191 84% 25%;
-  --primary-foreground: 188 60% 97%;
-  --secondary: 196 32% 90%;
-  --secondary-foreground: 208 48% 16%;
-  --muted: 197 28% 91%;
-  --muted-foreground: 205 16% 38%;
-  --accent: 190 42% 89%;
-  --accent-foreground: 200 60% 16%;
-  --destructive: 5 76% 47%;
-  --destructive-foreground: 20 90% 97%;
-  --input: 198 22% 78%;
-  --ring: 191 84% 32%;
+  --background: 39 85% 96%;
+  --foreground: 216 48% 15%;
+  --border: 39 30% 78%;
+  --card: 42 60% 99%;
+  --card-foreground: 216 48% 15%;
+  --card-border: 39 30% 76%;
+  --sidebar: 216 48% 15%;
+  --sidebar-foreground: 40 60% 91%;
+  --sidebar-border: 216 34% 25%;
+  --sidebar-primary: 174 55% 56%;
+  --sidebar-primary-foreground: 216 48% 13%;
+  --sidebar-accent: 216 38% 22%;
+  --sidebar-accent-foreground: 42 60% 97%;
+  --sidebar-ring: 174 55% 56%;
+  --popover: 42 60% 99%;
+  --popover-foreground: 216 48% 15%;
+  --popover-border: 39 30% 78%;
+  --primary: 174 59% 32%;
+  --primary-foreground: 42 60% 98%;
+  --secondary: 39 47% 86%;
+  --secondary-foreground: 216 48% 15%;
+  --muted: 39 40% 90%;
+  --muted-foreground: 215 18% 42%;
+  --accent: 174 38% 88%;
+  --accent-foreground: 216 48% 15%;
+  --destructive: 350 61% 48%;
+  --destructive-foreground: 42 60% 97%;
+  --input: 39 24% 72%;
+  --ring: 174 59% 32%;
   --chart-1: 191 84% 28%;
   --chart-2: 14 86% 54%;
   --chart-3: 38 94% 48%;
   --chart-4: 205 45% 40%;
   --chart-5: 160 45% 36%;
-  --thaw: 12 84% 52%;
-  --amber: 36 94% 45%;
-  --watch: 48 88% 40%;
-  --frost: 186 72% 42%;
-  --ok: 168 55% 30%;
-  --app-font-sans: 'Instrument Sans', ui-sans-serif, sans-serif;
-  --app-font-serif: 'Bricolage Grotesque', ui-sans-serif, sans-serif;
+  --thaw: 350 61% 48%;
+  --amber: 31 83% 48%;
+  --watch: 43 80% 43%;
+  --frost: 215 62% 56%;
+  --ok: 174 59% 32%;
+  --app-font-sans: 'DM Sans', ui-sans-serif, sans-serif;
+  --app-font-serif: 'Fraunces', Georgia, serif;
   --app-font-mono: 'JetBrains Mono', ui-monospace, monospace;
   --radius: 0.625rem;
   --shadow-2xs: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0); /*replace with H S L */
@@ -212,7 +213,7 @@
   --elevate-1: rgba(255, 255, 255, 0.04);
   --elevate-2: rgba(255, 255, 255, 0.09);
 
-  --background: 208 45% 8%; --foreground: 195 30% 92%; --border: 207 30% 20%;
+  --background: 216 48% 9%; --foreground: 42 45% 92%; --border: 216 28% 24%;
   --card: 208 42% 11%; --card-foreground: 195 30% 92%; --card-border: 207 30% 20%;
   --sidebar: 208 50% 6%; --sidebar-foreground: 195 30% 88%; --sidebar-border: 207 35% 16%;
   --sidebar-primary: 186 72% 58%; --sidebar-primary-foreground: 207 52% 10%;
@@ -388,35 +389,80 @@
 
 /* Dashboard-only palette: warm paper, clean cards, and a distinct orange action color. */
 .sg-dashboard {
-  --background: 38 42% 94%;
-  --foreground: 25 29% 16%;
-  --border: 34 23% 82%;
-  --card: 42 50% 99%;
-  --card-foreground: 25 29% 16%;
-  --card-border: 34 24% 85%;
-  --popover: 42 50% 99%;
-  --popover-foreground: 25 29% 16%;
-  --popover-border: 34 23% 82%;
-  --primary: 22 82% 45%;
-  --primary-foreground: 42 50% 99%;
-  --secondary: 37 35% 88%;
-  --secondary-foreground: 25 29% 16%;
-  --muted: 37 28% 89%;
-  --muted-foreground: 26 13% 37%;
-  --accent: 36 50% 89%;
-  --accent-foreground: 25 29% 16%;
-  --input: 34 22% 76%;
-  --ring: 22 82% 40%;
-  --thaw: 7 68% 39%;
-  --amber: 32 78% 34%;
-  --watch: 46 70% 32%;
-  --frost: 174 36% 32%;
-  --ok: 158 42% 29%;
+  --background: 39 85% 96%;
+  --foreground: 216 48% 15%;
+  --border: 39 30% 78%;
+  --card: 42 60% 99%;
+  --card-foreground: 216 48% 15%;
+  --card-border: 39 30% 76%;
+  --popover: 42 60% 99%;
+  --popover-foreground: 216 48% 15%;
+  --popover-border: 39 30% 78%;
+  --primary: 174 59% 32%;
+  --primary-foreground: 42 60% 98%;
+  --secondary: 39 47% 86%;
+  --secondary-foreground: 216 48% 15%;
+  --muted: 39 40% 90%;
+  --muted-foreground: 215 18% 42%;
+  --accent: 174 38% 88%;
+  --accent-foreground: 216 48% 15%;
+  --input: 39 24% 72%;
+  --ring: 174 59% 32%;
+  --thaw: 350 61% 48%;
+  --amber: 31 83% 48%;
+  --watch: 43 80% 43%;
+  --frost: 215 62% 56%;
+  --ok: 174 59% 32%;
   min-height: calc(100dvh - 2rem);
   border-radius: 1.25rem;
   background: hsl(var(--background));
   padding: clamp(1rem, 2.4vw, 2rem);
   color: hsl(var(--foreground));
+}
+
+/* Shared operational language: navy structure, teal action, amber framing. */
+.sg-dashboard { background-image: linear-gradient(135deg, hsl(39 90% 97%), hsl(38 74% 93%)); }
+main > .rise, main > .grid > .rise { animation-delay: 40ms; }
+button, a { -webkit-tap-highlight-color: transparent; }
+main h1 { color: hsl(var(--foreground)); }
+main > header { position: relative; }
+main > header h1 { max-width: 19ch; }
+.sg-dashboard .sg-dashboard__secondary { border-color: hsl(var(--amber)); }
+.sg-dashboard .sg-dashboard__stat-row > div { background: hsl(38 58% 91%); }
+@media (min-width: 1024px) {
+  #main { padding-top: 2rem; }
+}
+.sg-landing {
+  --sidebar: 39 85% 96%;
+  --sidebar-foreground: 216 25% 36%;
+  --sidebar-border: 39 30% 76%;
+  --sidebar-accent: 42 60% 99%;
+  --sidebar-accent-foreground: 216 48% 15%;
+  --sidebar-primary: 174 59% 32%;
+  --sidebar-primary-foreground: 42 60% 98%;
+}
+.sg-landing header { border-bottom: 2px solid hsl(31 56% 58%); background: hsl(35 84% 73%); }
+.sg-landing header a:first-child { color: hsl(216 48% 15%); }
+.sg-pagehead { padding: .15rem 0 0; }
+.sg-pagehead h1 { font-size: clamp(2rem, 4vw, 3.35rem); line-height: 1.02; }
+.sg-pagehead > div:first-of-type > div > p:first-child { font-family: var(--app-font-mono); font-size: .65rem; font-weight: 700; letter-spacing: .16em; }
+.sg-filterbar { box-shadow: inset 0 3px 0 hsl(31 70% 60%); }
+.sg-panel { border-radius: .85rem; }
+.sg-incident-list [data-testid^="row-incident-"] { min-height: 94px; }
+.sg-notification-stream > li:first-child { border-top: 0; }
+.sg-team-grid > section, .sg-team-grid .sg-panel { min-width: 0; }
+.sg-job-steps > li { position: relative; padding-bottom: .4rem; }
+.sg-job-steps > li:not(:last-child)::after { position: absolute; left: .82rem; top: 1.9rem; bottom: -.25rem; width: 2px; background: hsl(215 62% 56% / .32); content: ""; }
+.sg-stock-ledger table thead { background: hsl(39 42% 91%); }
+.sg-auth-frame .cl-rootBox { width: 100%; }
+.sg-auth-frame .cl-cardBox { margin-inline: auto; }
+.sg-public-frame { position: relative; }
+.sg-public-frame::after { position: fixed; z-index: 0; pointer-events: none; right: 0; bottom: 0; width: 18rem; height: 18rem; border-radius: 100% 0 0 0; background: hsl(174 59% 32% / .045); content: ""; }
+.sg-public-frame > * { position: relative; z-index: 1; }
+@media (max-width: 767px) {
+  .sg-pagehead h1 { font-size: clamp(1.9rem, 9vw, 2.5rem); }
+  .sg-filterbar { align-items: stretch; }
+  .sg-landing section:first-of-type { padding-top: 2rem; }
 }
 
 .sg-dashboard__urgent [data-testid^='status-severity-'],

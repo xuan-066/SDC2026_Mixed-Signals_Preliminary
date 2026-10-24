@@ -1,3 +1,5 @@
+import { demoHeaders, setServerMode, clearDemoIdentity } from './demo';
+
 export class ApiError extends Error {
   status: number;
   code: string;
@@ -17,14 +19,14 @@ export async function api<T>(path: string, method: Method = 'GET', body?: unknow
     res = await fetch(import.meta.env.BASE_URL.replace(/\/$/, '') + '/v1' + path, {
       method,
       credentials: 'include',
-      headers: { ...(body !== undefined ? { 'Content-Type': 'application/json' } : {}), ...(extraHeaders ?? {}) },
+      headers: { ...(body !== undefined ? { 'Content-Type': 'application/json' } : {}), ...demoHeaders(path), ...(extraHeaders ?? {}) },
       body: body !== undefined ? JSON.stringify(body) : undefined,
     });
   } catch {
     throw new ApiError(0, 'network', navigator.onLine ? 'Could not reach SejukGuard. Check your connection and try again.' : 'You are offline. Changes were not sent.');
   }
   if (!res.ok) {
-    if (res.status === 401 && typeof window !== 'undefined') window.dispatchEvent(new Event('sejukguard-session-expired'));
+    if (res.status === 401 && typeof window !== 'undefined' && !demoHeaders(path)['X-User-Id']) window.dispatchEvent(new Event('sejukguard-session-expired'));
     let code = 'http_' + res.status;
     let message = res.statusText || 'Request failed';
     try {
@@ -42,7 +44,13 @@ export async function api<T>(path: string, method: Method = 'GET', body?: unknow
   }
   if (res.status === 204) return undefined as T;
   const text = await res.text();
-  return (text ? JSON.parse(text) : undefined) as T;
+  const result = (text ? JSON.parse(text) : undefined) as T;
+  const accessMode = (result as { mode?: string } | undefined)?.mode;
+  if (path === '/access' && (accessMode === 'demo' || accessMode === 'normal')) {
+    setServerMode(accessMode);
+    if (accessMode === 'normal') clearDemoIdentity();
+  }
+  return result;
 }
 
 export function errorMessage(e: unknown): string {

@@ -10,7 +10,7 @@ import type { IncidentStatus, JobStatus, ReadingState, Severity } from '@/lib/ty
 
 export function PageHeader({ eyebrow, title, sub, actions, back }: { eyebrow?: string; title: ReactNode; sub?: ReactNode; actions?: ReactNode; back?: { href: string; label: string } }) {
   return (
-    <header className="rise mb-6">
+    <header className="sg-pagehead rise mb-7">
       {back && (
         <Link href={back.href} data-testid="link-back" className="mb-3 inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
           <ChevronLeft className="h-4 w-4" />{back.label}
@@ -24,17 +24,17 @@ export function PageHeader({ eyebrow, title, sub, actions, back }: { eyebrow?: s
         </div>
         {actions && <div className="flex flex-wrap gap-2">{actions}</div>}
       </div>
-      <div className="thermal-strip mt-5 h-[3px] w-24 rounded-full" />
+      <div className="mt-5 flex items-center gap-2"><span className="h-[5px] w-14 rounded-full bg-[#e3a454]" /><span className="h-[5px] w-5 rounded-full bg-primary" /><span className="h-[5px] w-2 rounded-full bg-frost" /></div>
     </header>
   );
 }
 
 export function Panel({ title, action, children, className, pad = true }: { title?: ReactNode; action?: ReactNode; children: ReactNode; className?: string; pad?: boolean }) {
   return (
-    <section className={cn('rise rounded-xl border border-card-border bg-card shadow-[0_1px_0_hsl(var(--border)),0_8px_24px_-18px_hsl(var(--primary)/0.35)]', className)}>
+    <section className={cn('sg-panel rise overflow-hidden rounded-xl border border-card-border bg-card shadow-[0_2px_0_hsl(var(--border)),0_12px_30px_-23px_hsl(var(--foreground)/0.45)]', className)}>
       {(title || action) && (
-        <div className="flex items-center justify-between gap-2 border-b border-border/70 px-4 py-3">
-          <h2 className="text-[15px] font-bold">{title}</h2>
+        <div className="flex items-center justify-between gap-2 border-b border-border/70 bg-[#f4eadb] px-4 py-3">
+          <h2 className="text-[15px] font-bold text-[#1d3047]">{title}</h2>
           {action}
         </div>
       )}

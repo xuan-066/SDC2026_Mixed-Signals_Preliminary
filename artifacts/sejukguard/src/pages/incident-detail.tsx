@@ -54,9 +54,9 @@ export default function IncidentDetail() {
         </Panel>
       )}
 
-      <div className="grid gap-6 lg:grid-cols-[1fr_340px]">
+      <div className="sg-incident-layout grid gap-6 lg:grid-cols-[1.45fr_.72fr]">
         <div className="space-y-6">
-          <Panel title="Response plan">
+          <Panel className="border-t-4 border-t-[#d99a43]" title={<span className="flex items-center gap-2"><span className="grid h-6 w-6 place-items-center rounded-full bg-[#20364d] font-mono text-[10px] text-white">01</span>Response plan</span>}>
             {!d ? <p className="text-sm text-muted-foreground">No plan yet. {i.status === 'NEEDS_INFO' ? 'Identify the unit first.' : 'The situation did not need one.'}</p> : (
               <div className="space-y-4">
                 <div className="grid gap-3 sm:grid-cols-2">
@@ -129,7 +129,7 @@ export default function IncidentDetail() {
               {i.symptom && <p className="mt-2 text-xs text-muted-foreground">Symptom: {humanize(i.symptom)}</p>}
             </Panel>
           )}
-          <Panel title="Timeline">
+            <Panel className="border-l-4 border-l-[#6c91df]" title="Incident timeline">
             {i.timeline.length === 0 ? <p className="text-sm text-muted-foreground">No events.</p> : (
               <ol className="relative space-y-4 border-l border-border pl-4">
                 {i.timeline.map((e, k) => (

@@ -21,9 +21,9 @@ export default function Incidents() {
     .sort((a, b) => +new Date(b.created_at) - +new Date(a.created_at)), [list, f, s]);
   const pg = usePaged(filtered, 15, f + s);
   return (
-    <>
+    <div className="sg-page sg-incidents-page">
       <PageHeader eyebrow="Incidents" title="What went wrong, and what happened next" sub="Declined and unresolved incidents stay visible until someone resolves them." />
-      <div className="mb-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+      <section className="sg-filterbar mb-5 flex flex-col gap-3 rounded-xl border border-[#d8c6ac] bg-[#f5ead8] p-3 md:flex-row md:items-center md:justify-between" aria-label="Incident filters">
         <SearchBox value={s} onChange={setS} placeholder="Search unit, report text" />
         <Chips label="Status" value={f} onChange={setF} options={[
           { value: 'open', label: 'Open', count: list.filter((i) => i.status !== 'RESOLVED').length },
@@ -34,14 +34,14 @@ export default function Incidents() {
           { value: 'RESOLVED', label: 'Resolved', count: count('RESOLVED') },
           { value: 'all', label: 'All', count: list.length },
         ]} />
-      </div>
+      </section>
       {q.isLoading ? <ListSkeleton rows={6} /> : q.error ? <ErrorState error={q.error} onRetry={() => q.refetch()} /> :
         filtered.length === 0 ? <EmptyState icon={ShieldCheck} title={list.length ? 'Nothing matches' : 'No incidents yet'} body={list.length ? 'Try another status or search.' : 'Incidents appear when a reading is out of range or someone reports a fault.'} /> : (
           <>
-            <ul className="overflow-hidden rounded-xl border border-card-border bg-card divide-y divide-border">
+            <ul className="sg-incident-list overflow-hidden rounded-xl border border-card-border bg-card divide-y divide-border">
               {pg.slice.map((i) => (
                 <li key={i.id}>
-                  <Link href={'/incidents/' + i.id} className="grid gap-2 p-4 transition-colors hover:bg-accent/40 sm:grid-cols-[1fr_auto] sm:items-center" data-testid={'row-incident-' + i.id}>
+                  <Link href={'/incidents/' + i.id} className={'grid gap-2 border-l-[5px] p-4 transition-colors hover:bg-accent/40 sm:grid-cols-[1fr_auto] sm:items-center ' + (i.severity === 'CRITICAL' ? 'border-thaw bg-thaw/[.035]' : i.severity === 'WARNING' ? 'border-amber' : 'border-transparent')} data-testid={'row-incident-' + i.id}>
                     <div className="min-w-0">
                       <div className="flex flex-wrap items-center gap-2"><span className="font-bold">{i.asset?.name ?? 'Unit not identified'}</span><SeverityPill s={i.severity} /><IncidentStatusPill s={i.status} /></div>
                       <p className="mt-1 line-clamp-1 text-sm text-muted-foreground">{i.report_text ? '"' + i.report_text + '"' : i.trigger}</p>
@@ -55,6 +55,6 @@ export default function Incidents() {
             <Pager {...pg} />
           </>
         )}
-    </>
+    </div>
   );
 }

@@ -19,11 +19,11 @@ export default function Account() {
   const [err, setErr] = useState('');
   useEffect(() => { if (q.data) setV({ name: q.data.name, phone: q.data.phone ?? '' }); }, [q.data]);
   return (
-    <>
+    <div className="sg-page sg-account-page">
       <PageHeader eyebrow="Account" title="My account" sub="Your name and phone are what your team sees. Email, password and sign-in security are managed below."
         actions={<Button variant="outline" onClick={() => signOut({ redirectUrl: basePath || '/' })} data-testid="button-account-sign-out"><LogOut className="mr-1.5 h-4 w-4" />Sign out</Button>} />
-      <div className="grid gap-6 lg:grid-cols-2">
-        <Panel title="Team profile">
+      <div className="sg-account-layout grid gap-6 lg:grid-cols-[1.1fr_.9fr]">
+        <Panel className="border-t-4 border-t-primary" title="Your team profile">
           {q.isLoading ? <ListSkeleton rows={2} /> : q.error ? <ErrorState error={q.error} onRetry={() => q.refetch()} /> : (
             <form className="space-y-4" onSubmit={(e) => {
               e.preventDefault();
@@ -36,7 +36,7 @@ export default function Account() {
             </form>
           )}
         </Panel>
-        <Panel title="Membership">
+        <Panel className="border-t-4 border-t-[#438fca]" title="Access & membership">
           <dl className="space-y-3 text-sm">
             <div className="flex justify-between"><dt className="text-muted-foreground">Business</dt><dd className="font-semibold">{me.business_name}</dd></div>
             <div className="flex justify-between"><dt className="text-muted-foreground">Role</dt><dd className="font-semibold">{ROLE_LABEL[me.role]}</dd></div>
@@ -46,6 +46,6 @@ export default function Account() {
         </Panel>
       </div>
       <div className="mt-6 overflow-x-auto"><UserProfile routing="hash" /></div>
-    </>
+    </div>
   );
 }
