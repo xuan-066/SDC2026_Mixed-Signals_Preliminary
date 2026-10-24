@@ -16,14 +16,12 @@
 
 ## Links
 
-| Resource          | Link                                           |
-| ----------------- | ---------------------------------------------- |
-| GitHub Repository | TODO           |
-| Live Demo         | TODO: Replit URL   [https://sdc-2026-mixed-signals-preliminary.replit.app ]                           |
-| RunPod Endpoint   | TODO (not used yet — see [How We Use RunPod](#how-we-use-runpod-required)) |
-| Slide Deck        | TODO                                           |
-| Demo Video        | TODO                                           |
-
+| Resource | Link |
+| --- | --- |
+| GitHub Repository | [Glacier Link source code](https://github.com/xuan-066/SDC2026_Mixed-Signals_Preliminary) |
+| Live Demo | [Open Glacier Link](https://sdc-2026-mixed-signals-preliminary.replit.app) |
+| RunPod Endpoint | Not used |
+| Slide Deck | Add your slide deck link here |
 ---
 
 ## Overview
