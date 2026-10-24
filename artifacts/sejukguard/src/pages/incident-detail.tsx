@@ -47,7 +47,7 @@ export default function IncidentDetail() {
               <SelectTrigger className="sm:max-w-xs" data-testid="select-clarify-asset"><SelectValue placeholder="Choose unit" /></SelectTrigger>
               <SelectContent>{(assets.data ?? []).map((a) => <SelectItem key={a.id} value={a.id}>{a.name}</SelectItem>)}</SelectContent>
             </Select>
-            <Button disabled={!pick || clarify.isPending} onClick={() => clarify.mutate({ id: i.id, asset_id: pick })} data-testid="button-clarify">
+            <Button writeAction disabled={!pick || clarify.isPending} onClick={() => clarify.mutate({ id: i.id, asset_id: pick })} data-testid="button-clarify">
               {clarify.isPending && <Loader2 className="mr-1.5 h-4 w-4 animate-spin" />}Confirm unit
             </Button>
           </div>
@@ -85,7 +85,7 @@ export default function IncidentDetail() {
             {canReassess && (
               <div className="mt-4 flex flex-col gap-2 rounded-lg border border-dashed border-primary/40 bg-accent/40 p-3 sm:flex-row sm:items-center sm:justify-between">
                 <p className="text-sm">{i.status === 'DECLINED' ? 'The call-out was rejected and this is still unresolved.' : 'No vendor could be proposed.'} After adding or updating vendors, ask for a fresh recommendation.</p>
-                <Button size="sm" disabled={reassess.isPending} onClick={() => reassess.mutate(i.id)} data-testid="button-reassess">
+                <Button writeAction size="sm" disabled={reassess.isPending} onClick={() => reassess.mutate(i.id)} data-testid="button-reassess">
                   {reassess.isPending ? <Loader2 className="mr-1.5 h-4 w-4 animate-spin" /> : <RefreshCw className="mr-1.5 h-4 w-4" />}Reassess
                 </Button>
               </div>

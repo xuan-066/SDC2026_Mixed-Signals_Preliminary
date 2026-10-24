@@ -34,7 +34,7 @@ export default function Notifications() {
                     <p className="text-sm">{n.body}</p>
                     <p className="mt-1 text-xs text-muted-foreground" title={fmtDT(n.created_at)}>{ago(n.created_at)}{n.incident_id && <> - <Link href={'/incidents/' + n.incident_id} className="font-semibold text-primary" onClick={() => !n.read_at && mark.mutate(n.id)} data-testid={'link-notification-incident-' + n.id}>Open incident</Link></>}</p>
                   </div>
-                  {!n.read_at && <Button size="sm" variant="ghost" disabled={mark.isPending && mark.variables === n.id} onClick={() => mark.mutate(n.id)} data-testid={'button-mark-read-' + n.id}><Check className="mr-1 h-3.5 w-3.5" />Read</Button>}
+                  {!n.read_at && <Button writeAction size="sm" variant="ghost" disabled={mark.isPending && mark.variables === n.id} onClick={() => mark.mutate(n.id)} data-testid={'button-mark-read-' + n.id}><Check className="mr-1 h-3.5 w-3.5" />Read</Button>}
                 </li>
               ))}
             </ul>

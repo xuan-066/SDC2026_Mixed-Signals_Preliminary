@@ -52,6 +52,15 @@ export default function DemoLoginPage() {
         title="Sign in to the demo"
         sub="Sign in to your own demo dashboard and role. Signing in does not reset or edit existing workspace records."
       >
+        {(access.data?.public_demo || access.data?.read_only) && (
+          <p role="status" className="mb-5 rounded-xl border border-primary/30 bg-primary/10 p-3 text-sm font-semibold" data-testid="banner-demo-login-view-only">
+            {access.data.standalone
+              ? 'Standalone HTML demo · Edit sample records in your browser. Changes stay on this browser only, including after refresh. No backend or real account is connected.'
+              : access.data.read_only
+              ? 'View-only demo · Browse sample accounts. Records cannot be changed.'
+              : 'Interactive demo · Try editing sample records. Changes are shared with other visitors and reset when the demo server restarts. No real business data is connected.'}
+          </p>
+        )}
         <Form {...form}>
           <form onSubmit={handleSubmit} className="space-y-4" data-testid="form-demo-login">
             <FormField
@@ -103,9 +112,9 @@ export default function DemoLoginPage() {
           </form>
         </Form>
         <div className="mt-5 border-t border-border pt-4 text-center">
-          <Link href="/sign-in" className="text-sm font-semibold text-primary underline-offset-4 hover:underline" data-testid="link-real-sign-in">
+          {!access.data?.public_demo && !access.data?.read_only && <Link href="/sign-in" className="text-sm font-semibold text-primary underline-offset-4 hover:underline" data-testid="link-real-sign-in">
             Use the real sign-in page
-          </Link>
+          </Link>}
           <p className="mt-2 text-xs text-muted-foreground">
             Demo login only selects an existing seeded demo user with their own role and workspace; it is not real account authentication.
           </p>

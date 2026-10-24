@@ -1,8 +1,12 @@
-modules = ["nodejs-24", "python-3.12"]
+modules = ["nodejs-20", "python-3.12", "web"]
 
 [deployment]
 router = "application"
 deploymentTarget = "autoscale"
+build = ["pnpm", "install", "--frozen-lockfile"]
+
+[packager.features]
+enabledForHosting = false
 
 [deployment.postBuild]
 args = ["pnpm", "store", "prune"]
@@ -56,7 +60,7 @@ timeoutMs = 180000
 
 [nix]
 channel = "stable-25_05"
-packages = ["chromium"]
+packages = ["chromium", "cloudflared"]
 
 [userenv]
 

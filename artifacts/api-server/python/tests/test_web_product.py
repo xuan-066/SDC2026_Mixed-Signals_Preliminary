@@ -33,7 +33,7 @@ def principal(request: Request):
 def normal(monkeypatch, tmp_path):
     # Never use a real provider credential in unit/integration fixtures.
     monkeypatch.setenv("CLERK_SECRET_KEY", "test-placeholder")
-    monkeypatch.setattr("app.main.clerk_issuer", lambda: "https://test.clerk.accounts.dev")
+    monkeypatch.setattr("app.application.clerk_issuer", lambda: "https://test.clerk.accounts.dev")
     monkeypatch.setattr(rbac, "verified_principal", principal)
     app = create_app(Settings(database_url=f"sqlite:///{tmp_path}/product.sqlite", demo_mode=False, run_worker=False))
     app.dependency_overrides[verified_principal] = principal

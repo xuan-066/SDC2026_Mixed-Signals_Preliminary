@@ -1,8 +1,14 @@
-const MODE = 'sejukguard-demo-mode';
-const USER = 'sejukguard-demo-user';
-const SIGNED_OUT = 'sejukguard-demo-signed-out';
+const prefix = import.meta.env.VITE_STANDALONE_DEMO === 'true' ? 'glacier-link-html' : 'sejukguard-demo';
+const MODE = prefix + '-mode';
+const USER = prefix + '-user';
+const SIGNED_OUT = prefix + '-signed-out';
 let serverMode: 'normal' | 'demo' | null = null;
-export const setServerMode = (mode: 'normal' | 'demo') => { serverMode = mode; };
+let viewOnly = false;
+export const isViewOnlyDemo = () => viewOnly;
+export const setServerMode = (mode: 'normal' | 'demo', readOnly = false) => {
+  serverMode = mode;
+  viewOnly = mode === 'demo' && readOnly;
+};
 export const clearDemoIdentity = () => {
   if (typeof localStorage !== 'undefined') {
     localStorage.removeItem(MODE);

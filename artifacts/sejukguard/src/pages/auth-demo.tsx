@@ -1,3 +1,4 @@
+import { brandLogo } from '@/lib/branding';
 import { useState, type FormEvent } from "react";
 import { ArrowRight, Check, Eye, EyeOff, LockKeyhole, ShieldCheck, Snowflake } from "lucide-react";
 import { Link } from "wouter";
@@ -40,7 +41,7 @@ export default function AuthDemoPage() {
             className="inline-flex items-center rounded-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#147c76]"
           >
             <img
-              src={`${import.meta.env.BASE_URL}glacier-link-logo.png`}
+              src={brandLogo}
               alt="Glacier Link"
               className="h-auto w-40 sm:w-48"
               data-testid="img-glacier-logo"

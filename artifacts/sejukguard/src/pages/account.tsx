@@ -1,22 +1,26 @@
 import { useEffect, useState } from 'react';
-import { UserProfile, useClerk, useUser } from '@clerk/react';
+import { UserProfile } from '@clerk/react';
+import { useSessionAuth } from '@/lib/session-auth';
 import { Loader2, LogOut } from 'lucide-react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ErrorState, Field, ListSkeleton, PageHeader, Panel } from '@/components/common';
-import { useProfile, useUpdateProfile } from '@/lib/queries';
+import { useAccess, useProfile, useUpdateProfile } from '@/lib/queries';
 import { useMe } from '@/lib/me';
 import { ROLE_LABEL } from '@/lib/format';
 import { demoEnabled, signOutDemoIdentity } from '@/lib/demo';
+import { useViewOnlyDemo } from '@/lib/view-only';
 
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, '');
 
 export default function Account() {
+  const readOnly = useViewOnlyDemo();
+  const access = useAccess();
+  const sampleDemo = readOnly || access.data?.public_demo === true;
   const { me } = useMe();
-  const { signOut } = useClerk();
-  const { isLoaded: clerkLoaded, isSignedIn } = useUser();
+  const { signOut, isLoaded: clerkLoaded, isSignedIn } = useSessionAuth();
   const queryClient = useQueryClient();
   const [, navigate] = useLocation();
   const q = useProfile();
@@ -63,12 +67,12 @@ export default function Account() {
           <p className="mt-4 text-xs text-muted-foreground">Role changes are made by an owner on the Team page.</p>
         </Panel>
       </div>
-      {clerkLoaded && isSignedIn ? (
+      {!sampleDemo && clerkLoaded && isSignedIn ? (
         <div className="mt-6 overflow-x-auto"><UserProfile routing="hash" /></div>
       ) : (
         <Panel className="mt-6" title="Sign-in & security">
           <p className="text-sm text-muted-foreground">
-            {clerkLoaded ? 'Sign in to manage email, password, and sign-in security.' : 'Checking sign-in security settings…'}
+            {sampleDemo ? 'This public demo uses sample accounts only. You can edit the demo profile above; real account and security changes are disabled.' : clerkLoaded ? 'Sign in to manage email, password, and sign-in security.' : 'Checking sign-in security settings…'}
           </p>
         </Panel>
       )}

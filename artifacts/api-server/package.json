@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "bash ./start-python.sh",
+    "demo": "bash ./start-demo.sh",
     "build": "bash ../../scripts/install-python.sh",
     "start": "bash ./start-python.sh",
     "test": "bash ./test-python.sh",
