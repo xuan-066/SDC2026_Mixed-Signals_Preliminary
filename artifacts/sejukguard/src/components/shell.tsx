@@ -25,25 +25,19 @@ import { toast } from 'sonner';
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, '');
 
 type Item = { href: string; label: string; icon: LucideIcon; perm?: Perm; owner?: boolean; badge?: 'notif' | 'approvals' | 'incidents' };
-const NAV: { group: string; items: Item[] }[] = [
-  { group: 'Floor', items: [
-    { href: '/dashboard', label: 'Dashboard', icon: Gauge },
-    { href: '/report', label: 'Report a fault', icon: Megaphone },
-    { href: '/incidents', label: 'Incidents', icon: ShieldAlert, badge: 'incidents' },
-    { href: '/equipment', label: 'Equipment', icon: Snowflake },
-  ] },
-  { group: 'Response', items: [
-    { href: '/approvals', label: 'Approvals', icon: ClipboardCheck, perm: 'decide_approval', badge: 'approvals' },
-    { href: '/jobs', label: 'Vendor jobs', icon: Wrench, perm: 'manage_jobs' },
-    { href: '/vendors', label: 'Vendors', icon: Truck, perm: 'view_vendors' },
-    { href: '/notifications', label: 'Notifications', icon: Bell, badge: 'notif' },
-  ] },
-  { group: 'Business', items: [
-    { href: '/activity', label: 'Activity', icon: Activity, perm: 'view_audit' },
-    { href: '/team', label: 'Team', icon: Users, owner: true },
-    { href: '/settings', label: 'Settings', icon: Settings, owner: true },
-    { href: '/account', label: 'My account', icon: UserCircle },
-  ] },
+const NAV: Item[] = [
+  { href: '/dashboard', label: 'Dashboard', icon: Gauge },
+  { href: '/report', label: 'Report a fault', icon: Megaphone },
+  { href: '/incidents', label: 'Incidents', icon: ShieldAlert, badge: 'incidents' },
+  { href: '/equipment', label: 'Equipment', icon: Snowflake },
+  { href: '/approvals', label: 'Approvals', icon: ClipboardCheck, perm: 'decide_approval', badge: 'approvals' },
+  { href: '/jobs', label: 'Vendor jobs', icon: Wrench, perm: 'manage_jobs' },
+  { href: '/vendors', label: 'Vendors', icon: Truck, perm: 'view_vendors' },
+  { href: '/notifications', label: 'Notifications', icon: Bell, badge: 'notif' },
+  { href: '/activity', label: 'Activity', icon: Activity, perm: 'view_audit' },
+  { href: '/team', label: 'Team', icon: Users, owner: true },
+  { href: '/settings', label: 'Settings', icon: Settings, owner: true },
+  { href: '/account', label: 'My account', icon: UserCircle },
 ];
 
 function useBadges() {
@@ -62,37 +56,29 @@ function NavList({ onNavigate }: { onNavigate?: () => void }) {
   const { can, isOwner } = useMe();
   const [loc] = useLocation();
   const badges = useBadges();
+  const items = NAV.filter((it) => (!it.perm || can(it.perm)) && (!it.owner || isOwner));
   return (
-    <nav aria-label="Main" className="space-y-6">
-      {NAV.map((g) => {
-        const items = g.items.filter((it) => (!it.perm || can(it.perm)) && (!it.owner || isOwner));
-        if (!items.length) return null;
-        return (
-          <div key={g.group}>
-            <p className="mb-2 px-3 font-mono text-[10px] uppercase tracking-[0.22em] text-sidebar-foreground/45">{g.group}</p>
-            <ul className="space-y-0.5">
-              {items.map((it) => {
-                const active = loc === it.href || loc.startsWith(it.href + '/');
-                const count = it.badge ? badges[it.badge] : 0;
-                return (
-                  <li key={it.href}>
-                    <Link href={it.href} onClick={onNavigate} aria-current={active ? 'page' : undefined} data-testid={'link-nav-' + it.href.slice(1)}
-                      className={cn('group flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
-                        active ? 'bg-sidebar-accent text-sidebar-accent-foreground' : 'text-sidebar-foreground/75 hover:bg-sidebar-accent/60 hover:text-sidebar-accent-foreground')}>
-                      <span className={cn('h-4 w-[3px] rounded-full transition-opacity', active ? 'bg-sidebar-primary opacity-100' : 'opacity-0')} />
-                      <it.icon className="h-4 w-4 shrink-0" />
-                      <span className="flex-1">{it.label}</span>
-                      {count > 0 && (
-                        <span className={cn('min-w-5 rounded-full px-1.5 text-center font-mono text-[11px] font-bold', it.badge === 'incidents' ? 'bg-thaw text-white' : 'bg-sidebar-primary text-sidebar-primary-foreground')}>{count}</span>
-                      )}
-                    </Link>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
-        );
-      })}
+    <nav aria-label="Main">
+      <ul className="space-y-1">
+        {items.map((it) => {
+          const active = loc === it.href || loc.startsWith(it.href + '/');
+          const count = it.badge ? badges[it.badge] : 0;
+          return (
+            <li key={it.href}>
+              <Link href={it.href} onClick={onNavigate} aria-current={active ? 'page' : undefined} data-testid={'link-nav-' + it.href.slice(1)}
+                className={cn('group flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+                  active ? 'bg-sidebar-accent text-sidebar-accent-foreground' : 'text-sidebar-foreground/75 hover:bg-sidebar-accent/60 hover:text-sidebar-accent-foreground')}>
+                <span className={cn('h-4 w-[3px] rounded-full transition-opacity', active ? 'bg-sidebar-primary opacity-100' : 'opacity-0')} />
+                <it.icon className="h-4 w-4 shrink-0" />
+                <span className="flex-1">{it.label}</span>
+                {count > 0 && (
+                  <span className={cn('min-w-5 rounded-full px-1.5 text-center font-mono text-[11px] font-bold', it.badge === 'incidents' ? 'bg-thaw text-white' : 'bg-sidebar-primary text-sidebar-primary-foreground')}>{count}</span>
+                )}
+              </Link>
+            </li>
+          );
+        })}
+      </ul>
     </nav>
   );
 }
