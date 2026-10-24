@@ -7,6 +7,17 @@ from app.main import create_app
 
 
 @pytest.fixture
+def normal_mode_app(monkeypatch):
+    # These tests exercise normal-mode routing, not Clerk authentication.
+    monkeypatch.setattr(
+        "app.application.clerk_issuer",
+        lambda: "https://fixture.clerk.accounts.dev",
+    )
+    monkeypatch.setenv("CLERK_SECRET_KEY", "fixture-only")
+    return create_app(Settings(database_url="sqlite://", demo_mode=False))
+
+
+@pytest.fixture
 def app():
     # Fresh in-memory DB per test; the clock starts at 2026-11-12T13:00:00Z (plan §16.4).
     return create_app(Settings(database_url="sqlite://", demo_mode=True))

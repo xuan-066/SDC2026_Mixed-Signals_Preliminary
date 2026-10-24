@@ -77,7 +77,6 @@ def test_datetimes_come_back_timezone_aware(session, app):
     assert session.get(Reading, "rd_tz").recorded_at == at
 
 
-def test_sim_routes_absent_when_demo_mode_off():
-    app = create_app(Settings(database_url="sqlite://", demo_mode=False))
-    with TestClient(app) as c:
+def test_sim_routes_absent_when_demo_mode_off(normal_mode_app):
+    with TestClient(normal_mode_app) as c:
         assert c.post("/v1/sim/reset").status_code == 404
