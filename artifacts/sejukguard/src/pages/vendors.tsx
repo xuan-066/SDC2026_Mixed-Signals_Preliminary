@@ -50,7 +50,10 @@ export default function Vendors() {
   if (!can('view_vendors')) return <DeniedState />;
   return (
     <div className="sg-page sg-vendors-page">
-      <PageHeader eyebrow="Vendors" title="Who you call" sub="Proposals choose from active vendors by service, warranty, SLA and fee."
+      <PageHeader
+        eyebrow={<span className="text-3xl font-bold normal-case tracking-normal sm:text-4xl">Vendors</span>}
+        title="Who you call"
+        sub={<span className="text-base">Proposals choose from active vendors by service, warranty, SLA and fee.</span>}
         actions={isOwner && <Button onClick={() => { setEdit(undefined); setFormOpen(true); }} data-testid="button-add-vendor"><Plus className="mr-1.5 h-4 w-4" />Add vendor</Button>} />
       <section className="sg-filterbar mb-5 flex flex-col gap-3 rounded-xl border border-[#d8c6ac] bg-[#f5ead8] p-3 md:flex-row md:items-center md:justify-between" aria-label="Vendor directory controls">
         <SearchBox value={s} onChange={setS} placeholder="Search vendors" />
