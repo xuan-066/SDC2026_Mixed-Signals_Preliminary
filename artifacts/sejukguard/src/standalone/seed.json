@@ -1,0 +1,774 @@
+{
+  "version": 1,
+  "users": [
+    {
+      "id": "u_rina",
+      "name": "Rina",
+      "role": "owner",
+      "business_id": "b_seripagi",
+      "business_name": "Seri Pagi Bakery & Café",
+      "permissions": [
+        "submit_reading",
+        "view_operations",
+        "view_money",
+        "view_vendors",
+        "view_messages",
+        "decide_approval",
+        "manage_jobs",
+        "view_audit",
+        "view_metrics",
+        "manage_equipment",
+        "manage_stock",
+        "manage_vendors",
+        "manage_team",
+        "manage_settings"
+      ]
+    },
+    {
+      "id": "u_daniel",
+      "name": "Daniel",
+      "role": "supervisor",
+      "business_id": "b_seripagi",
+      "business_name": "Seri Pagi Bakery & Café",
+      "permissions": [
+        "submit_reading",
+        "view_operations",
+        "view_money",
+        "view_vendors",
+        "view_messages",
+        "decide_approval",
+        "manage_jobs",
+        "manage_stock"
+      ]
+    },
+    {
+      "id": "u_aina",
+      "name": "Aina",
+      "role": "staff",
+      "business_id": "b_seripagi",
+      "business_name": "Seri Pagi Bakery & Café",
+      "permissions": [
+        "submit_reading",
+        "view_operations"
+      ]
+    },
+    {
+      "id": "u_lim",
+      "name": "Lim",
+      "role": "owner",
+      "business_id": "b_bekumaju",
+      "business_name": "Beku Maju Frozen Foods",
+      "permissions": [
+        "submit_reading",
+        "view_operations",
+        "view_money",
+        "view_vendors",
+        "view_messages",
+        "decide_approval",
+        "manage_jobs",
+        "view_audit",
+        "view_metrics",
+        "manage_equipment",
+        "manage_stock",
+        "manage_vendors",
+        "manage_team",
+        "manage_settings"
+      ]
+    }
+  ],
+  "businesses": {
+    "b_seripagi": {
+      "settings": {
+        "supervisor_limit_sen": 15000,
+        "id": "b_seripagi",
+        "name": "Seri Pagi Bakery & Café",
+        "kind": "bakery_cafe"
+      },
+      "assets": [
+        {
+          "id": "a_ch1",
+          "name": "Display Chiller",
+          "type": "chiller",
+          "range_c": [
+            0.0,
+            5.0
+          ],
+          "status": "NORMAL",
+          "latest_temp_c": 3.2,
+          "latest_reading_at": "2026-11-12T13:30:00Z",
+          "active_incident_id": null,
+          "capacity_l": 250.0,
+          "free_l": 160.0,
+          "archived": false,
+          "reading_state": "current",
+          "aliases": [
+            "display chiller",
+            "chiller depan"
+          ],
+          "warranty_until": null,
+          "stock": [
+            {
+              "id": "s_ch1_cakes",
+              "name": "Cheesecake slices",
+              "qty": 24.0,
+              "unit": "slice",
+              "volume_l": 40.0,
+              "unit_cost_rm": "9.00",
+              "value_rm": "216.00"
+            },
+            {
+              "id": "s_ch1_drinks",
+              "name": "Bottled drinks",
+              "qty": 48.0,
+              "unit": "bottle",
+              "volume_l": 50.0,
+              "unit_cost_rm": "2.50",
+              "value_rm": "120.00"
+            }
+          ],
+          "stock_value_rm": "336.00",
+          "readings": [
+            {
+              "id": "rd_cfc4bb7d",
+              "asset_id": "a_ch1",
+              "temp_c": 3.2,
+              "recorded_at": "2026-11-12T13:30:00Z",
+              "source": "sim"
+            }
+          ],
+          "warranty_vendor_id": null
+        },
+        {
+          "id": "a_fz1",
+          "name": "Freezer 1",
+          "type": "freezer",
+          "range_c": [
+            -35.0,
+            -15.0
+          ],
+          "status": "NORMAL",
+          "latest_temp_c": -18.0,
+          "latest_reading_at": "2026-11-12T13:30:00Z",
+          "active_incident_id": null,
+          "capacity_l": 400.0,
+          "free_l": 180.0,
+          "archived": false,
+          "reading_state": "current",
+          "aliases": [
+            "freezer 1",
+            "peti beku 1",
+            "fz1"
+          ],
+          "warranty_until": "2027-06-30",
+          "stock": [
+            {
+              "id": "s_fz1_berries",
+              "name": "Frozen mixed berries",
+              "qty": 30.0,
+              "unit": "kg",
+              "volume_l": 60.0,
+              "unit_cost_rm": "22.00",
+              "value_rm": "660.00"
+            },
+            {
+              "id": "s_fz1_croissant",
+              "name": "Frozen croissant dough",
+              "qty": 40.0,
+              "unit": "pack",
+              "volume_l": 80.0,
+              "unit_cost_rm": "18.00",
+              "value_rm": "720.00"
+            },
+            {
+              "id": "s_fz1_peas",
+              "name": "Frozen peas",
+              "qty": 20.0,
+              "unit": "kg",
+              "volume_l": 30.0,
+              "unit_cost_rm": "6.00",
+              "value_rm": "120.00"
+            },
+            {
+              "id": "s_fz1_prawns",
+              "name": "Frozen prawns",
+              "qty": 15.0,
+              "unit": "kg",
+              "volume_l": 50.0,
+              "unit_cost_rm": "35.00",
+              "value_rm": "525.00"
+            }
+          ],
+          "stock_value_rm": "2025.00",
+          "readings": [
+            {
+              "id": "rd_9a0a54f2",
+              "asset_id": "a_fz1",
+              "temp_c": -18.0,
+              "recorded_at": "2026-11-12T13:30:00Z",
+              "source": "sim"
+            }
+          ],
+          "warranty_vendor_id": "v_brandcare"
+        },
+        {
+          "id": "a_fz2",
+          "name": "Freezer 2",
+          "type": "freezer",
+          "range_c": [
+            -35.0,
+            -15.0
+          ],
+          "status": "CRITICAL",
+          "latest_temp_c": -11.0,
+          "latest_reading_at": "2026-11-12T13:30:00Z",
+          "active_incident_id": "inc_a175cc99",
+          "capacity_l": 300.0,
+          "free_l": 180.0,
+          "archived": false,
+          "reading_state": "current",
+          "aliases": [
+            "freezer 2",
+            "peti beku 2",
+            "fz2"
+          ],
+          "warranty_until": "2026-03-01",
+          "stock": [
+            {
+              "id": "s_fz2_butter",
+              "name": "Butter blocks",
+              "qty": 20.0,
+              "unit": "block",
+              "volume_l": 30.0,
+              "unit_cost_rm": "32.00",
+              "value_rm": "640.00"
+            },
+            {
+              "id": "s_fz2_chicken",
+              "name": "Chicken fillet",
+              "qty": 25.0,
+              "unit": "kg",
+              "volume_l": 30.0,
+              "unit_cost_rm": "14.00",
+              "value_rm": "350.00"
+            },
+            {
+              "id": "s_fz2_icecream",
+              "name": "Ice-cream tubs",
+              "qty": 10.0,
+              "unit": "tub",
+              "volume_l": 30.0,
+              "unit_cost_rm": "41.00",
+              "value_rm": "410.00"
+            },
+            {
+              "id": "s_fz2_pastry",
+              "name": "Puff pastry sheets",
+              "qty": 30.0,
+              "unit": "pack",
+              "volume_l": 30.0,
+              "unit_cost_rm": "15.00",
+              "value_rm": "450.00"
+            }
+          ],
+          "stock_value_rm": "1850.00",
+          "readings": [
+            {
+              "id": "rd_5051a5d9",
+              "asset_id": "a_fz2",
+              "temp_c": -18.0,
+              "recorded_at": "2026-11-12T13:00:00Z",
+              "source": "sim"
+            },
+            {
+              "id": "rd_1b3f28e2",
+              "asset_id": "a_fz2",
+              "temp_c": -13.0,
+              "recorded_at": "2026-11-12T13:15:00Z",
+              "source": "sim"
+            },
+            {
+              "id": "rd_2ce93215",
+              "asset_id": "a_fz2",
+              "temp_c": -11.0,
+              "recorded_at": "2026-11-12T13:30:00Z",
+              "source": "sim"
+            }
+          ],
+          "warranty_vendor_id": null
+        },
+        {
+          "id": "a_ch2",
+          "name": "Kitchen Chiller",
+          "type": "chiller",
+          "range_c": [
+            0.0,
+            5.0
+          ],
+          "status": "NORMAL",
+          "latest_temp_c": 4.1,
+          "latest_reading_at": "2026-11-12T13:30:00Z",
+          "active_incident_id": null,
+          "capacity_l": 300.0,
+          "free_l": 160.0,
+          "archived": false,
+          "reading_state": "current",
+          "aliases": [
+            "kitchen chiller",
+            "chiller dapur"
+          ],
+          "warranty_until": null,
+          "stock": [
+            {
+              "id": "s_ch2_cream",
+              "name": "Whipping cream",
+              "qty": 15.0,
+              "unit": "litre",
+              "volume_l": 30.0,
+              "unit_cost_rm": "16.00",
+              "value_rm": "240.00"
+            },
+            {
+              "id": "s_ch2_eggs",
+              "name": "Eggs (tray of 30)",
+              "qty": 10.0,
+              "unit": "tray",
+              "volume_l": 40.0,
+              "unit_cost_rm": "15.00",
+              "value_rm": "150.00"
+            },
+            {
+              "id": "s_ch2_milk",
+              "name": "Fresh milk",
+              "qty": 20.0,
+              "unit": "litre",
+              "volume_l": 40.0,
+              "unit_cost_rm": "7.00",
+              "value_rm": "140.00"
+            },
+            {
+              "id": "s_ch2_veg",
+              "name": "Fresh vegetables",
+              "qty": 12.0,
+              "unit": "kg",
+              "volume_l": 30.0,
+              "unit_cost_rm": "8.00",
+              "value_rm": "96.00"
+            }
+          ],
+          "stock_value_rm": "626.00",
+          "readings": [
+            {
+              "id": "rd_91672aa9",
+              "asset_id": "a_ch2",
+              "temp_c": 4.1,
+              "recorded_at": "2026-11-12T13:30:00Z",
+              "source": "sim"
+            }
+          ],
+          "warranty_vendor_id": null
+        }
+      ],
+      "incidents": [
+        {
+          "id": "inc_a175cc99",
+          "status": "PENDING_APPROVAL",
+          "severity": "CRITICAL",
+          "trigger": "reading",
+          "asset": {
+            "id": "a_fz2",
+            "name": "Freezer 2",
+            "latest_temp_c": -11.0,
+            "range_c": [
+              -35.0,
+              -15.0
+            ]
+          },
+          "stock_at_risk_rm": "1850.00",
+          "decision": {
+            "backup_unit": {
+              "id": "a_fz1",
+              "name": "Freezer 1",
+              "free_l": 180.0
+            },
+            "vendor": {
+              "id": "v_cooltech",
+              "name": "CoolTech Refrigeration",
+              "callout_rm": "180.00",
+              "sla_hours": 4
+            },
+            "required_role": "owner",
+            "reasons": [
+              "Freezer 2 is at -11.0°C, 4.0°C above its -15.0°C limit → CRITICAL (≥3.0°C)",
+              "RM1,850.00 of stock inside (4 items, 120 L)",
+              "Freezer 1 has 180 L free ≥ 120 L needed → move stock there now",
+              "Warranty expired 2026-03-01 → paid call-out",
+              "CRITICAL → fastest vendor: CoolTech Refrigeration (4 h, RM180.00)",
+              "RM180.00 > RM150.00 supervisor limit → owner approval required"
+            ],
+            "needs_human": null
+          },
+          "approval": {
+            "id": "apr_82472a6a",
+            "status": "PENDING",
+            "required_role": "owner",
+            "amount_rm": "180.00",
+            "can_decide": true,
+            "subject_type": "incident",
+            "subject_id": "inc_a175cc99",
+            "action": "dispatch_vendor",
+            "summary": "CoolTech Refrigeration call-out for Freezer 2 (CRITICAL)",
+            "created_at": "2026-11-12T13:30:00Z",
+            "decided_by": null,
+            "decided_at": null,
+            "note": null
+          },
+          "job": null,
+          "timeline": [
+            {
+              "at": "2026-11-12T13:30:00Z",
+              "actor": "system",
+              "action": "INCIDENT_OPENED",
+              "details": {
+                "asset_id": "a_fz2",
+                "severity": "CRITICAL",
+                "trigger": "reading"
+              }
+            },
+            {
+              "at": "2026-11-12T13:30:00Z",
+              "actor": "system",
+              "action": "MESSAGE_SENT",
+              "details": {
+                "to_type": "user",
+                "to": "u_aina",
+                "incident_id": "inc_a175cc99"
+              }
+            },
+            {
+              "at": "2026-11-12T13:30:00Z",
+              "actor": "system",
+              "action": "APPROVAL_REQUESTED",
+              "details": {
+                "subject_type": "incident",
+                "subject_id": "inc_a175cc99",
+                "amount_sen": 18000,
+                "required_role": "owner"
+              }
+            },
+            {
+              "at": "2026-11-12T13:30:00Z",
+              "actor": "system",
+              "action": "MESSAGE_SENT",
+              "details": {
+                "to_type": "user",
+                "to": "u_rina",
+                "incident_id": "inc_a175cc99"
+              }
+            }
+          ],
+          "created_at": "2026-11-12T13:30:00Z",
+          "resolved_at": null,
+          "reporter_id": null,
+          "report_text": null,
+          "symptom": null
+        }
+      ],
+      "vendors": [
+        {
+          "id": "v_brandcare",
+          "name": "BrandCare Warranty Centre",
+          "services": [
+            "freezer"
+          ],
+          "callout_rm": "0.00",
+          "sla_hours": 24,
+          "warranty_only": true,
+          "phone": "demo-0203",
+          "archived": false
+        },
+        {
+          "id": "v_cooltech",
+          "name": "CoolTech Refrigeration",
+          "services": [
+            "freezer",
+            "chiller"
+          ],
+          "callout_rm": "180.00",
+          "sla_hours": 4,
+          "warranty_only": false,
+          "phone": "demo-0201",
+          "archived": false
+        },
+        {
+          "id": "v_sejukjaya",
+          "name": "Sejuk Jaya Services",
+          "services": [
+            "freezer",
+            "chiller"
+          ],
+          "callout_rm": "120.00",
+          "sla_hours": 8,
+          "warranty_only": false,
+          "phone": "demo-0202",
+          "archived": false
+        }
+      ],
+      "jobs": [],
+      "audit": [
+        {
+          "id": 1,
+          "at": "2026-11-12T13:30:00Z",
+          "actor_id": "system",
+          "action": "INCIDENT_OPENED",
+          "entity_type": "incident",
+          "entity_id": "inc_a175cc99",
+          "details": {
+            "asset_id": "a_fz2",
+            "severity": "CRITICAL",
+            "trigger": "reading"
+          }
+        },
+        {
+          "id": 2,
+          "at": "2026-11-12T13:30:00Z",
+          "actor_id": "system",
+          "action": "MESSAGE_SENT",
+          "entity_type": "message",
+          "entity_id": "msg_ea231477",
+          "details": {
+            "to_type": "user",
+            "to": "u_aina",
+            "incident_id": "inc_a175cc99"
+          }
+        },
+        {
+          "id": 3,
+          "at": "2026-11-12T13:30:00Z",
+          "actor_id": "system",
+          "action": "APPROVAL_REQUESTED",
+          "entity_type": "approval",
+          "entity_id": "apr_82472a6a",
+          "details": {
+            "subject_type": "incident",
+            "subject_id": "inc_a175cc99",
+            "amount_sen": 18000,
+            "required_role": "owner"
+          }
+        },
+        {
+          "id": 4,
+          "at": "2026-11-12T13:30:00Z",
+          "actor_id": "system",
+          "action": "MESSAGE_SENT",
+          "entity_type": "message",
+          "entity_id": "msg_e829c7dd",
+          "details": {
+            "to_type": "user",
+            "to": "u_rina",
+            "incident_id": "inc_a175cc99"
+          }
+        }
+      ],
+      "messages": [
+        {
+          "id": "msg_ea231477",
+          "to_type": "user",
+          "to_id": "u_aina",
+          "channel": "whatsapp_mock",
+          "body": "Freezer 2 is CRITICAL. Move all stock to Freezer 1 now, and keep the Freezer 2 door shut.",
+          "incident_id": "inc_a175cc99",
+          "created_at": "2026-11-12T13:30:00Z"
+        },
+        {
+          "id": "msg_e829c7dd",
+          "to_type": "user",
+          "to_id": "u_rina",
+          "channel": "whatsapp_mock",
+          "body": "Approval needed: CoolTech Refrigeration call-out RM180.00 for Freezer 2 (CRITICAL). RM1,850.00 of stock at risk. Approval apr_82472a6a.",
+          "incident_id": "inc_a175cc99",
+          "created_at": "2026-11-12T13:30:00Z"
+        }
+      ],
+      "team": [
+        {
+          "id": "u_aina",
+          "name": "Aina",
+          "role": "staff",
+          "active": true,
+          "email": null
+        },
+        {
+          "id": "u_daniel",
+          "name": "Daniel",
+          "role": "supervisor",
+          "active": true,
+          "email": null
+        },
+        {
+          "id": "u_rina",
+          "name": "Rina",
+          "role": "owner",
+          "active": true,
+          "email": null
+        }
+      ],
+      "invitations": []
+    },
+    "b_bekumaju": {
+      "settings": {
+        "supervisor_limit_sen": 15000,
+        "id": "b_bekumaju",
+        "name": "Beku Maju Frozen Foods",
+        "kind": "frozen_food"
+      },
+      "assets": [
+        {
+          "id": "a_bm_fz1",
+          "name": "Freezer A",
+          "type": "freezer",
+          "range_c": [
+            -35.0,
+            -15.0
+          ],
+          "status": "NORMAL",
+          "latest_temp_c": -18.0,
+          "latest_reading_at": "2026-11-12T13:30:00Z",
+          "active_incident_id": null,
+          "capacity_l": 500.0,
+          "free_l": 400.0,
+          "archived": false,
+          "reading_state": "current",
+          "aliases": [
+            "freezer a"
+          ],
+          "warranty_until": null,
+          "stock": [
+            {
+              "id": "s_bm_fz1_nuggets",
+              "name": "Chicken nuggets",
+              "qty": 50.0,
+              "unit": "pack",
+              "volume_l": 100.0,
+              "unit_cost_rm": "12.00",
+              "value_rm": "600.00"
+            }
+          ],
+          "stock_value_rm": "600.00",
+          "readings": [
+            {
+              "id": "rd_89b190ef",
+              "asset_id": "a_bm_fz1",
+              "temp_c": -18.0,
+              "recorded_at": "2026-11-12T13:30:00Z",
+              "source": "sim"
+            }
+          ],
+          "warranty_vendor_id": null
+        },
+        {
+          "id": "a_bm_fz2",
+          "name": "Freezer B",
+          "type": "freezer",
+          "range_c": [
+            -35.0,
+            -15.0
+          ],
+          "status": "NORMAL",
+          "latest_temp_c": -19.0,
+          "latest_reading_at": "2026-11-12T13:30:00Z",
+          "active_incident_id": null,
+          "capacity_l": 500.0,
+          "free_l": 420.0,
+          "archived": false,
+          "reading_state": "current",
+          "aliases": [
+            "freezer b"
+          ],
+          "warranty_until": null,
+          "stock": [
+            {
+              "id": "s_bm_fz2_fishball",
+              "name": "Fish balls",
+              "qty": 40.0,
+              "unit": "pack",
+              "volume_l": 80.0,
+              "unit_cost_rm": "9.00",
+              "value_rm": "360.00"
+            }
+          ],
+          "stock_value_rm": "360.00",
+          "readings": [
+            {
+              "id": "rd_1bbc4a40",
+              "asset_id": "a_bm_fz2",
+              "temp_c": -19.0,
+              "recorded_at": "2026-11-12T13:30:00Z",
+              "source": "sim"
+            }
+          ],
+          "warranty_vendor_id": null
+        }
+      ],
+      "incidents": [],
+      "vendors": [],
+      "jobs": [],
+      "audit": [],
+      "messages": [],
+      "team": [
+        {
+          "id": "u_lim",
+          "name": "Lim",
+          "role": "owner",
+          "active": true,
+          "email": null
+        }
+      ],
+      "invitations": []
+    }
+  },
+  "profiles": {
+    "u_rina": {
+      "name": "Rina",
+      "phone": "demo-0001"
+    },
+    "u_daniel": {
+      "name": "Daniel",
+      "phone": "demo-0002"
+    },
+    "u_aina": {
+      "name": "Aina",
+      "phone": "demo-0003"
+    },
+    "u_lim": {
+      "name": "Lim",
+      "phone": "demo-0101"
+    }
+  },
+  "notifications": {
+    "u_rina": [
+      {
+        "id": "notification_e52fd983",
+        "body": "Approval needed: CoolTech Refrigeration call-out RM180.00 for Freezer 2 (CRITICAL). RM1,850.00 of stock at risk. Approval apr_82472a6a.",
+        "incident_id": "inc_a175cc99",
+        "created_at": "2026-11-12T13:30:00+00:00",
+        "read_at": null,
+        "delivery": "in_app"
+      }
+    ],
+    "u_daniel": [],
+    "u_aina": [
+      {
+        "id": "notification_1f68a45a",
+        "body": "Freezer 2 is CRITICAL. Move all stock to Freezer 1 now, and keep the Freezer 2 door shut.",
+        "incident_id": "inc_a175cc99",
+        "created_at": "2026-11-12T13:30:00+00:00",
+        "read_at": null,
+        "delivery": "in_app"
+      }
+    ],
+    "u_lim": []
+  },
+  "tokens": {},
+  "transfers": {},
+  "seed_time": "2026-11-12T13:30:00+00:00"
+}
