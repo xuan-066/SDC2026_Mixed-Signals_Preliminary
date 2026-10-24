@@ -21,7 +21,7 @@
 | GitHub Repository | [Glacier Link source code](https://github.com/xuan-066/SDC2026_Mixed-Signals_Preliminary) |
 | Live Demo | [Open Glacier Link](https://sdc-2026-mixed-signals-preliminary.replit.app) |
 | RunPod Endpoint | Not used |
-| Slide Deck | (https://canva.link/c7neg4hy8icgaaq )|
+| Slide Deck | [Open Slide Deck](https://canva.link/c7neg4hy8icgaaq )|
 ---
 
 ## Demo Login
