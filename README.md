@@ -22,6 +22,7 @@
 | Live Demo | [Open Glacier Link](https://sdc-2026-mixed-signals-preliminary.replit.app) |
 | RunPod Endpoint | Not used |
 | Slide Deck | [Open Slide Deck](https://canva.link/c7neg4hy8icgaaq )|
+| Demo Video | [Open Demo Video]()|
 ---
 
 ## Demo Login
@@ -211,7 +212,8 @@ TODO — RunPod is not used in the current build. Describe the planned use here 
 
 - [x] Team name, domain (Domain 1 / Domain 2) and SDG track filled in
 - [x] Slide deck link added
-- [ ] Demo video link added
+- [x] Slide deck link added
+- [x] Demo video link added
 - [x] Replit used, with proof of use in `submission/`
 - [x] RunPod used, with proof of use in `submission/`
 - [x] Preliminary submission completed (`SDC2026_MixedSignals_Preliminary.pdf`) *confirm the pdf name 
