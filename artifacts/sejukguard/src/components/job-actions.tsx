@@ -34,7 +34,7 @@ export function JobActions({ job }: { job: Job }) {
           <Field label="ETA" htmlFor="eta"><Input id="eta" type="datetime-local" value={eta} onChange={(e) => setEta(e.target.value)} data-testid="input-job-eta" /></Field>
           <DialogFooter>
             <Button variant="ghost" onClick={() => setOpen(false)} disabled={confirm.isPending}>Cancel</Button>
-            <Button disabled={confirm.isPending} data-testid="button-save-confirmation"
+            <Button writeAction disabled={confirm.isPending} data-testid="button-save-confirmation"
               onClick={() => confirm.mutate({ id: job.id, eta: eta ? new Date(eta).toISOString() : undefined }, { onSuccess: () => setOpen(false) })}>
               {confirm.isPending && <Loader2 className="mr-1.5 h-4 w-4 animate-spin" />}Save
             </Button>

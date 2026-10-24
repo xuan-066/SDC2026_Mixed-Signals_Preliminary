@@ -12,7 +12,7 @@ export function ConfirmButton({ trigger, title, body, confirmLabel, onConfirm, d
   const [busy, setBusy] = useState(false);
   return (
     <>
-      <Button variant={variant} size={size} disabled={disabled} onClick={() => setOpen(true)} data-testid={testid}>{trigger}</Button>
+      <Button writeAction variant={variant} size={size} disabled={disabled} onClick={() => setOpen(true)} data-testid={testid}>{trigger}</Button>
       <AlertDialog open={open} onOpenChange={(o) => !busy && setOpen(o)}>
         <AlertDialogContent>
           <AlertDialogHeader>

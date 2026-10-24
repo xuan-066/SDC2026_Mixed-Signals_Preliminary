@@ -1,7 +1,8 @@
 import { useState, type ReactNode } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { Link, useLocation } from 'wouter';
-import { useClerk } from '@clerk/react';
+import { useSessionAuth } from '@/lib/session-auth';
+import { brandLogo } from '@/lib/branding';
 import {
   Activity, Bell, ChevronDown, CircleHelp, ClipboardCheck, Gauge, LogIn, LogOut, Menu, Megaphone, RotateCcw, Settings, ShieldAlert, Snowflake, Truck, UserCircle, Users, Wrench, WifiOff, type LucideIcon,
 } from 'lucide-react';
@@ -14,6 +15,7 @@ import {
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
 import { useMe } from '@/lib/me';
+import { useViewOnlyDemo } from '@/lib/view-only';
 import { useNotifications, useApprovals, useIncidents, useAccess } from '@/lib/queries';
 import { useOnline } from '@/lib/paging';
 import { ROLE_LABEL } from '@/lib/format';
@@ -86,14 +88,15 @@ function NavList({ onNavigate }: { onNavigate?: () => void }) {
 function Brand() {
   return (
     <Link href="/dashboard" className="flex items-center gap-2.5" data-testid="link-home">
-      <img src={basePath + '/glacier-link-logo.png'} alt="Glacier Link" className="h-auto w-40 shrink-0 sm:w-56" />
+      <img src={brandLogo} alt="Glacier Link" className="h-auto w-40 shrink-0 sm:w-56" />
     </Link>
   );
 }
 
 function ProfileMenu({ onNavigate }: { onNavigate?: () => void }) {
+  const readOnly = useViewOnlyDemo();
   const { me, isOwner } = useMe();
-  const { signOut } = useClerk();
+  const { signOut } = useSessionAuth();
   const access = useAccess();
   const qc = useQueryClient();
   const [, navigate] = useLocation();
@@ -189,7 +192,7 @@ function ProfileMenu({ onNavigate }: { onNavigate?: () => void }) {
               </DropdownMenuSubContent>
             </DropdownMenuSub>
           )}
-          {isDemo && (
+          {isDemo && !readOnly && (
             <DropdownMenuItem onSelect={resetDemo} disabled={resetBusy} className="cursor-pointer text-[#eaf1f2] focus:bg-[#1c3b4a] focus:text-white">
               <RotateCcw className="h-4 w-4" />{resetBusy ? 'Resetting demo…' : 'Reset demo'}
             </DropdownMenuItem>
@@ -223,11 +226,13 @@ function ProfileMenu({ onNavigate }: { onNavigate?: () => void }) {
 }
 
 export function AppShell({ children }: { children: ReactNode }) {
+  const readOnly = useViewOnlyDemo();
+  const access = useAccess();
   const [navOpen, setNavOpen] = useState(false);
   const online = useOnline();
   return (
     <div className="min-h-[100dvh]">
-      <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:left-2 focus:top-2 focus:z-50 focus:rounded focus:bg-card focus:px-3 focus:py-2">Skip to content</a>
+      <a href="#main" onClick={(event) => { event.preventDefault(); document.getElementById('main')?.focus(); }} className="sr-only focus:not-sr-only focus:fixed focus:left-2 focus:top-2 focus:z-50 focus:rounded focus:bg-card focus:px-3 focus:py-2">Skip to content</a>
       <div className="min-w-0">
         <header className="sticky top-0 z-30 border-b-2 border-[#d99546] bg-[#f4bd78] text-[#1d3047] shadow-[0_3px_0_hsl(31_56%_48%/.08)]">
           <div className="mx-auto flex max-w-[1440px] items-center justify-between gap-2 px-3 py-3 sm:gap-3 sm:px-6">
@@ -249,12 +254,24 @@ export function AppShell({ children }: { children: ReactNode }) {
             </div>
           </SheetContent>
         </Sheet>
-        {!online && (
+        {!online && !access.data?.standalone && (
           <div role="status" className="sticky top-0 z-20 flex items-center gap-2 bg-amber px-4 py-2 text-sm font-semibold text-white" data-testid="banner-offline">
             <WifiOff className="h-4 w-4" />You are offline. Showing last loaded data; actions will not send until you reconnect.
           </div>
         )}
-        <main id="main" className="mx-auto w-full max-w-[1440px] px-4 pb-14 pt-6 sm:px-6 lg:px-10 lg:pt-8">{children}</main>
+        {readOnly && (
+          <div role="status" className="border-b border-primary/25 bg-primary/10 px-4 py-3 text-center text-sm text-foreground" data-testid="banner-view-only">
+            <strong>View-only demo</strong> · Fictional sample data. You can explore pages and forms, but saving, approvals, transfers and resets are disabled.
+          </div>
+        )}
+        {access.data?.public_demo && !readOnly && (
+          <div role="status" className="border-b border-primary/25 bg-primary/10 px-4 py-3 text-center text-sm text-foreground" data-testid="banner-interactive-demo">
+            <strong>{access.data.standalone ? 'Standalone HTML demo' : 'Interactive demo'}</strong> · {access.data.standalone
+              ? 'Edits are saved only in this browser, not shared with other visitors. No backend, real messages or invitations. Use Reset demo to start again.'
+              : 'You can edit sample records. Changes are shared with other visitors and reset on server restart. Real business data is not connected.'}
+          </div>
+        )}
+        <main id="main" tabIndex={-1} className="mx-auto w-full max-w-[1440px] px-4 pb-14 pt-6 sm:px-6 lg:px-10 lg:pt-8">{children}</main>
       </div>
     </div>
   );

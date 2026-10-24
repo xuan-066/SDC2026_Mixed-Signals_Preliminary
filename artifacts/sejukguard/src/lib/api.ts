@@ -1,4 +1,4 @@
-import { demoHeaders, setServerMode, clearDemoIdentity } from './demo';
+import { demoHeaders, setServerMode, clearDemoIdentity, isViewOnlyDemo } from './demo';
 
 export class ApiError extends Error {
   status: number;
@@ -14,6 +14,9 @@ type Method = 'GET' | 'POST' | 'PUT' | 'DELETE';
 
 /** Same-origin call to the Python API. Auth rides on Clerk's __session cookie; no tokens here. */
 export async function api<T>(path: string, method: Method = 'GET', body?: unknown, extraHeaders?: Record<string, string>): Promise<T> {
+  if (method !== 'GET' && isViewOnlyDemo()) {
+    throw new ApiError(403, 'DEMO_READ_ONLY', 'This is a view-only demo. Saving, approvals, transfers and resets are disabled.');
+  }
   let res: Response;
   try {
     res = await fetch(import.meta.env.BASE_URL.replace(/\/$/, '') + '/v1' + path, {
@@ -47,7 +50,7 @@ export async function api<T>(path: string, method: Method = 'GET', body?: unknow
   const result = (text ? JSON.parse(text) : undefined) as T;
   const accessMode = (result as { mode?: string } | undefined)?.mode;
   if (path === '/access' && (accessMode === 'demo' || accessMode === 'normal')) {
-    setServerMode(accessMode);
+    setServerMode(accessMode, (result as { read_only?: boolean }).read_only === true);
     if (accessMode === 'normal') clearDemoIdentity();
   }
   return result;
