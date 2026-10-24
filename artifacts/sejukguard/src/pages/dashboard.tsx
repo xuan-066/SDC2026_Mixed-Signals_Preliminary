@@ -22,74 +22,90 @@ export default function Dashboard() {
   const openJobs = (jobs.data ?? []).filter((j) => j.status !== 'DONE');
   const hour = new Date().getHours();
   const greet = hour < 12 ? 'Selamat pagi' : hour < 19 ? 'Selamat petang' : 'Selamat malam';
-
   const priority = open[0];
+  const critical = priority?.severity === 'CRITICAL';
 
   return (
-    <div className="sg-dashboard space-y-6">
+    <div className="sg-dashboard space-y-7">
       <PageHeader eyebrow={me.business_name} title={greet + ', ' + me.name.split(' ')[0]}
         sub={open.length ? open.length + ' open incident' + (open.length > 1 ? 's' : '') + ' need attention.' : 'No open incidents right now.'}
         actions={<Link href="/report" className="inline-flex h-11 items-center gap-2 rounded-xl bg-primary px-5 text-sm font-bold text-primary-foreground shadow-sm transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" data-testid="link-dashboard-report"><Megaphone className="h-4 w-4" />Report a fault</Link>} />
 
       {incidents.data && priority && (
-        <Panel className={cn('overflow-hidden border-2', priority.severity === 'CRITICAL' ? 'border-thaw/70' : 'border-amber/60')} pad={false}>
-          <div className={cn('sg-dashboard__urgent grid lg:grid-cols-[minmax(0,1.25fr)_minmax(280px,.75fr)]', priority.severity === 'CRITICAL' ? 'bg-[#672d26] text-[#fff8ee]' : 'bg-[#503b24] text-[#fff8ee]')}>
-            <div className="p-5 sm:p-7">
+        <section className={cn('sg-dashboard__incident rise overflow-hidden rounded-2xl border', critical ? 'sg-dashboard__incident--critical' : 'sg-dashboard__incident--watch')} aria-labelledby="priority-incident-title">
+          <div className="sg-dashboard__incident-top">
+            <div className="sg-dashboard__incident-main">
               <div className="flex flex-wrap items-center gap-2">
-                <span className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.14em]">
-                  <AlertOctagon className="h-3.5 w-3.5" />Priority incident
-                </span>
+                <span className="sg-dashboard__priority-label"><AlertOctagon className="h-4 w-4" />Immediate attention</span>
                 <SeverityPill s={priority.severity} />
                 <IncidentStatusPill s={priority.status} />
               </div>
-              <h2 className="mt-5 font-display text-2xl font-extrabold leading-tight sm:text-3xl">{priority.asset?.name ?? 'Unit not identified yet'}</h2>
-              <p className="mt-2 max-w-2xl text-sm leading-relaxed text-white/80">{priority.report_text || priority.trigger}</p>
-              <p className="mt-3 text-xs text-white/65">Opened {ago(priority.created_at)}</p>
-
-              <div className="mt-6 grid grid-cols-2 gap-3 sm:max-w-lg">
-                <div className="rounded-xl border border-white/20 bg-white/10 p-4">
-                  <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-white/70">Latest temperature</p>
-                  <Temp t={priority.asset?.latest_temp_c} className="mt-1 block font-mono text-3xl font-extrabold tabular-nums sm:text-4xl" />
-                  {priority.asset && <p className="mt-1 text-xs text-white/70">Safe range {priority.asset.range_c[0].toFixed(1)}°C to {priority.asset.range_c[1].toFixed(1)}°C</p>}
+              <div className="mt-5 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+                <div className="min-w-0">
+                  <p className="sg-dashboard__eyebrow">Highest severity active incident</p>
+                  <h2 id="priority-incident-title" className="mt-1 font-display text-3xl font-extrabold leading-tight sm:text-4xl">{priority.asset?.name ?? 'Unit not identified yet'}</h2>
+                  <p className="mt-2 max-w-2xl text-sm leading-relaxed text-white/80">{priority.report_text || priority.trigger}</p>
+                  <p className="mt-3 text-xs text-white/65">Opened {ago(priority.created_at)}</p>
                 </div>
-                <div className="rounded-xl border border-white/20 bg-white/10 p-4">
-                  <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-white/70">Stock at risk</p>
-                  <Money v={priority.stock_at_risk_rm} className="mt-1 block text-2xl font-extrabold text-[#fff8ee] sm:text-3xl" />
-                  <p className="mt-1 text-xs text-white/70">Risk estimate, not stock moved</p>
+                <Link href={'/incidents/' + priority.id} className="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-lg bg-[#fff4e5] px-4 text-sm font-bold text-[#45251d] transition-colors hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#652e25]" data-testid={'link-incident-' + priority.id}>
+                  Open incident <ArrowUpRight className="h-4 w-4" />
+                </Link>
+              </div>
+
+              <div className="sg-dashboard__risk-strip mt-6">
+                <div className="sg-dashboard__risk-value sg-dashboard__risk-temp">
+                  <p className="sg-dashboard__risk-label">Current temperature</p>
+                  <Temp t={priority.asset?.latest_temp_c} className="mt-1 block font-mono text-4xl font-extrabold leading-none tabular-nums sm:text-5xl" />
+                  {priority.asset && <p className="mt-2 text-xs text-white/70">Safe range {priority.asset.range_c[0].toFixed(1)}°C to {priority.asset.range_c[1].toFixed(1)}°C</p>}
+                </div>
+                <div className="sg-dashboard__risk-value">
+                  <p className="sg-dashboard__risk-label">Stock at risk</p>
+                  <Money v={priority.stock_at_risk_rm} className="mt-1 block text-3xl font-extrabold leading-none text-[#fff8ee] sm:text-4xl" />
+                  <p className="mt-2 text-xs text-white/70">Risk estimate, not stock moved</p>
                 </div>
               </div>
-              <Link href={'/incidents/' + priority.id} className="mt-5 inline-flex min-h-11 items-center gap-2 rounded-lg bg-[#fff8ee] px-4 text-sm font-bold text-[#38251f] transition-colors hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#672d26]" data-testid={'link-incident-' + priority.id}>
-                Open incident record <ArrowUpRight className="h-4 w-4" />
-              </Link>
             </div>
-
-            <div className="border-t border-white/15 bg-black/10 p-5 sm:p-7 lg:border-l lg:border-t-0">
-              <p className="font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-white/65">Response snapshot</p>
-              <div className="mt-4 rounded-xl border border-white/20 bg-white/10 p-4">
-                <p className="text-xs font-bold uppercase tracking-wide text-white/70">Backup unit</p>
-                {priority.decision?.backup_unit
-                  ? <><p className="mt-1 text-lg font-bold">{priority.decision.backup_unit.name}</p><p className="text-sm text-white/80">{priority.decision.backup_unit.free_l.toFixed(1)} L free when planned</p></>
-                  : <p className="mt-1 text-sm font-semibold">No backup unit proposed</p>}
-                <p className="mt-2 text-xs leading-relaxed text-white/65">Recommendation only. No stock transfer is recorded here.</p>
+            <div className="sg-dashboard__response">
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <p className="sg-dashboard__eyebrow">Recommended response</p>
+                  <h3 className="mt-1 font-display text-xl font-bold">Decision snapshot</h3>
+                </div>
+                <span className="sg-dashboard__response-index">01</span>
               </div>
-              <div className="mt-3 rounded-xl border border-white/20 bg-white/10 p-4">
-                <p className="text-xs font-bold uppercase tracking-wide text-white/70">Approval</p>
-                {priority.approval
-                  ? <><p className="mt-1 font-bold">{humanize(priority.approval.status.toLowerCase())}</p><p className="mt-1 text-sm text-white/80">Required: {ROLE_LABEL[priority.approval.required_role]}</p></>
-                  : <><p className="mt-1 font-bold">No approval request recorded</p>{priority.decision?.required_role && <p className="mt-1 text-sm text-white/80">Approval role: {ROLE_LABEL[priority.decision.required_role]}</p>}</>}
+              <div className="sg-dashboard__response-body">
+                <div className="sg-dashboard__decision-row">
+                  <span className="sg-dashboard__decision-label">Backup unit</span>
+                  {priority.decision?.backup_unit
+                    ? <><p className="mt-1 text-lg font-bold">{priority.decision.backup_unit.name}</p><p className="text-sm text-muted-foreground">{priority.decision.backup_unit.free_l.toFixed(1)} L free when planned</p></>
+                    : <p className="mt-1 text-sm font-semibold">No backup unit proposed</p>}
+                  {priority.decision?.reasons?.length ? <ul className="mt-2 list-inside list-disc space-y-1 text-xs text-muted-foreground">{priority.decision.reasons.map((reason, index) => <li key={index}>{reason}</li>)}</ul> : null}
+                </div>
+                <div className="sg-dashboard__decision-row">
+                  <span className="sg-dashboard__decision-label">Approval state</span>
+                  {priority.approval
+                    ? <><p className="mt-1 text-lg font-bold">{humanize(priority.approval.status.toLowerCase())}</p><p className="text-sm text-muted-foreground">Required: {ROLE_LABEL[priority.approval.required_role]}</p></>
+                    : <><p className="mt-1 text-base font-bold">No approval request recorded</p>{priority.decision?.required_role && <p className="text-sm text-muted-foreground">Approval role: {ROLE_LABEL[priority.decision.required_role]}</p>}</>}
+                  {priority.decision?.needs_human && <p className="mt-2 rounded-lg bg-[#f6e6d2] px-3 py-2 text-xs font-semibold text-[#633820]">{priority.decision.needs_human}</p>}
+                </div>
               </div>
+              <p className="sg-dashboard__risk-note">Recommendation only. It is not proof that stock has been transferred.</p>
             </div>
           </div>
-          <div className="bg-card px-5 py-5 sm:px-7">
+
+          <div className="sg-dashboard__timeline">
             <div className="flex flex-wrap items-baseline justify-between gap-2">
-              <h3 className="text-sm font-bold">Incident timeline</h3>
+              <div>
+                <p className="sg-dashboard__eyebrow">Incident record</p>
+                <h3 className="mt-1 text-base font-bold">Event timeline</h3>
+              </div>
               <span className="text-xs text-muted-foreground">{priority.timeline.length} recorded {priority.timeline.length === 1 ? 'event' : 'events'}</span>
             </div>
-            {priority.timeline.length === 0 ? <p className="mt-3 text-sm text-muted-foreground">No events recorded yet.</p> : (
-              <ol className="mt-4 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+            {priority.timeline.length === 0 ? <p className="mt-4 text-sm text-muted-foreground">No events recorded yet.</p> : (
+              <ol className="sg-dashboard__timeline-list mt-4">
                 {priority.timeline.map((event, index) => (
-                  <li key={index} className="relative border-l-2 border-primary/30 pl-3">
-                    <span className="absolute -left-[5px] top-1 h-2 w-2 rounded-full bg-primary" />
+                  <li key={index} className="sg-dashboard__timeline-event">
+                    <span className="sg-dashboard__timeline-dot" />
                     <p className="text-sm font-semibold">{humanize(event.action)}</p>
                     <p className="mt-1 text-xs text-muted-foreground">{fmtDT(event.at)} · {event.actor}</p>
                   </li>
@@ -97,21 +113,30 @@ export default function Dashboard() {
               </ol>
             )}
           </div>
-        </Panel>
+        </section>
       )}
 
-      <div className="mb-6 grid grid-cols-2 gap-3 lg:grid-cols-4">
-        <Stat label="Open incidents" value={incidents.data ? open.length : '--'} tone={open.length ? 'thaw' : 'ok'} />
-        <Stat label="Units monitored" value={assets.data ? units.length : '--'} />
-        <Stat label="Stale or missing" value={assets.data ? stale : '--'} tone={stale ? 'amber' : 'ok'} hint="No reading in 60 min" />
-        {can('decide_approval') ? <Stat label="Awaiting you" value={approvals.data ? mine.length : '--'} tone={mine.length ? 'amber' : undefined} hint="Approvals you can decide" />
-          : <Stat label="Your role" value={<span className="text-2xl capitalize">{me.role}</span>} />}
-      </div>
+      <section className="sg-dashboard__secondary" aria-label="Operations overview">
+        <div className="mb-3 flex items-center justify-between gap-3">
+          <div>
+            <p className="sg-dashboard__section-kicker">Overview</p>
+            <h2 className="font-display text-xl font-bold">The wider operation</h2>
+          </div>
+          <span className="hidden text-xs text-muted-foreground sm:inline">Secondary operational signals</span>
+        </div>
+        <div className="sg-dashboard__stat-row">
+          <Stat label="Open incidents" value={incidents.data ? open.length : '--'} tone={open.length ? 'thaw' : 'ok'} />
+          <Stat label="Units monitored" value={assets.data ? units.length : '--'} />
+          <Stat label="Stale or missing" value={assets.data ? stale : '--'} tone={stale ? 'amber' : 'ok'} hint="No reading in 60 min" />
+          {can('decide_approval') ? <Stat label="Awaiting you" value={approvals.data ? mine.length : '--'} tone={mine.length ? 'amber' : undefined} hint="Approvals you can decide" />
+            : <Stat label="Your role" value={<span className="text-2xl capitalize">{me.role}</span>} />}
+        </div>
+      </section>
 
       <div className="grid gap-6 lg:grid-cols-[1.35fr_1fr]">
-        <Panel title="Open incidents" action={<Link href="/incidents" className="text-xs font-semibold text-primary" data-testid="link-all-incidents">All incidents</Link>} pad={false}>
+        <Panel title="Other open incidents" action={<Link href="/incidents" className="text-xs font-semibold text-primary" data-testid="link-all-incidents">All incidents</Link>} pad={false}>
           {incidents.isLoading ? <div className="p-4"><ListSkeleton rows={3} /></div> : incidents.error ? <div className="p-4"><ErrorState error={incidents.error} onRetry={() => incidents.refetch()} /></div> :
-            open.length === 0 ? <div className="p-4"><EmptyState icon={ShieldCheck} title="All quiet" body="Nothing is out of range and no faults are open." /></div> : (
+            open.length === 0 ? <div className="p-4"><EmptyState icon={ShieldCheck} title="All quiet" body="Nothing is out of range and no faults are open." /></div> : open.slice(priority ? 1 : 0, 6).length === 0 ? <div className="p-4 text-sm text-muted-foreground">No other open incidents.</div> : (
               <ul className="divide-y divide-border">
                 {open.slice(priority ? 1 : 0, 6).map((i) => (
                   <li key={i.id}>

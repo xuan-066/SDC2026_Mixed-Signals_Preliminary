@@ -1,2 +1,3 @@
 - [Python HTTPS trust](python-https-trust.md) — use the system trust store for external HTTPS; bundled certificate roots can reject valid connections in this environment.
 - [Role hierarchy](role-hierarchy.md) — owner has maximum privileges, manager medium privileges, and worker limited privileges.
+- [Dashboard focus order](dashboard-focus-order.md) — SejukGuard dashboard redesigns must change the scan hierarchy, not just the palette; critical incidents need clear first-glance contrast.
