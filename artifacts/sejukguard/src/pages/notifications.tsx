@@ -17,7 +17,7 @@ export default function Notifications() {
   const pg = usePaged(filtered, 15, f);
   return (
     <div className="sg-page sg-notifications-page">
-      <PageHeader eyebrow="Notifications" title="For you" sub="In-app notices only. SejukGuard does not send SMS or WhatsApp from this release." />
+      <PageHeader eyebrow="Notifications" title="For you" sub="In-app notices only. Glacier Link does not send SMS or WhatsApp from this release." />
       <section className="sg-filterbar mb-5 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-[#d8c6ac] bg-[#f5ead8] p-3" aria-label="Notification controls"><p className="font-mono text-[10px] font-bold uppercase tracking-[.14em] text-muted-foreground">Inbox view</p><Chips label="Show" value={f} onChange={setF} options={[{ value: 'unread', label: 'Unread', count: list.filter((n) => !n.read_at).length }, { value: 'all', label: 'All', count: list.length }]} /></section>
       {q.isLoading ? <ListSkeleton /> : q.error ? <ErrorState error={q.error} onRetry={() => q.refetch()} /> :
         filtered.length === 0 ? <EmptyState icon={Bell} title={f === 'unread' ? 'All caught up' : 'No notifications'} /> : (

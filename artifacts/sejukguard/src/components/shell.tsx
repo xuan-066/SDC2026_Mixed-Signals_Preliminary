@@ -95,8 +95,7 @@ function NavList({ onNavigate }: { onNavigate?: () => void }) {
 function Brand() {
   return (
     <Link href="/dashboard" className="flex items-center gap-2.5" data-testid="link-home">
-      <img src={basePath + '/logo.svg'} alt="" className="h-8 w-8" />
-      <span className="font-display text-lg font-extrabold tracking-tight text-[#1d3047]">Sejuk<span className="text-primary">Guard</span></span>
+      <img src={basePath + '/glacier-link-logo.png'} alt="Glacier Link" className="h-auto w-40 shrink-0 sm:w-48" />
     </Link>
   );
 }

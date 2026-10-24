@@ -478,10 +478,10 @@ main > header h1 { max-width: 19ch; }
 }
 .sg-dashboard__incident--critical {
   --incident-ink: #fff6eb;
-  --incident-muted: rgb(255 246 235 / .72);
+  --incident-muted: rgb(255 246 235 / .88);
   --incident-line: rgb(255 246 235 / .2);
-  border-color: #9e392c;
-  background: #662b23;
+  border-color: #c45f55;
+  background: #94443a;
   color: var(--incident-ink);
 }
 .sg-dashboard__incident--watch {
@@ -573,7 +573,7 @@ main > header h1 { max-width: 19ch; }
 }
 .sg-dashboard__response {
   border-left: 1px solid var(--incident-line);
-  background: rgb(35 17 12 / .17);
+  background: rgb(255 247 233 / .1);
   padding: clamp(1.1rem, 2.6vw, 1.75rem);
 }
 .sg-dashboard__response-index {
@@ -603,12 +603,19 @@ main > header h1 { max-width: 19ch; }
   border-top: 1px solid #e9d3bb;
 }
 .sg-dashboard__decision-label {
-  color: #82553a;
+  color: #6e3b2d;
   font-family: var(--app-font-mono);
-  font-size: .63rem;
+  font-size: .8rem;
   font-weight: 800;
   letter-spacing: .12em;
   text-transform: uppercase;
+}
+.sg-dashboard__pending-pill [data-testid='status-incident'] {
+  border-color: #ffe6a8;
+  background: #ffe6a8;
+  color: #5c3512;
+  font-size: .8rem;
+  font-weight: 900;
 }
 .sg-dashboard__risk-note {
   margin-top: .8rem;

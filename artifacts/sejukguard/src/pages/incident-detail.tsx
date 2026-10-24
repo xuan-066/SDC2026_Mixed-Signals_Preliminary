@@ -41,7 +41,7 @@ export default function IncidentDetail() {
 
       {i.status === 'NEEDS_INFO' && (
         <Panel className="mb-6 border-watch/40" title={<span className="flex items-center gap-2"><HelpCircle className="h-4 w-4 text-watch" />Which unit is this about?</span>}>
-          <p className="mb-3 text-sm text-muted-foreground">The report did not clearly name a unit. Pick it so SejukGuard can plan the response.</p>
+          <p className="mb-3 text-sm text-muted-foreground">The report did not clearly name a unit. Pick it so Glacier Link can plan the response.</p>
           <div className="flex flex-col gap-2 sm:flex-row">
             <Select value={pick} onValueChange={setPick}>
               <SelectTrigger className="sm:max-w-xs" data-testid="select-clarify-asset"><SelectValue placeholder="Choose unit" /></SelectTrigger>

@@ -23,7 +23,7 @@ export async function api<T>(path: string, method: Method = 'GET', body?: unknow
       body: body !== undefined ? JSON.stringify(body) : undefined,
     });
   } catch {
-    throw new ApiError(0, 'network', navigator.onLine ? 'Could not reach SejukGuard. Check your connection and try again.' : 'You are offline. Changes were not sent.');
+    throw new ApiError(0, 'network', navigator.onLine ? 'Could not reach Glacier Link. Check your connection and try again.' : 'You are offline. Changes were not sent.');
   }
   if (!res.ok) {
     if (res.status === 401 && typeof window !== 'undefined' && !demoHeaders(path)['X-User-Id']) window.dispatchEvent(new Event('sejukguard-session-expired'));

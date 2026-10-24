@@ -12,8 +12,7 @@ export default function Landing() {
     <div className="sg-landing min-h-[100dvh] bg-sidebar text-sidebar-foreground">
       <header className="mx-auto flex max-w-6xl items-center justify-between px-5 py-5">
         <div className="flex items-center gap-2.5">
-          <img src={basePath + '/logo.svg'} alt="" className="h-9 w-9" />
-          <span className="font-display text-xl font-extrabold text-sidebar-accent-foreground">Sejuk<span className="text-sidebar-primary">Guard</span></span>
+          <img src={basePath + '/glacier-link-logo.png'} alt="Glacier Link" className="h-auto w-40" />
         </div>
         <nav className="flex items-center gap-2">
           {a?.authenticated ? (
@@ -34,7 +33,7 @@ export default function Landing() {
             Freezer tak sejuk?<br /><span className="text-[hsl(var(--thaw))]">Act in minutes,</span><br />not after the ice melts.
           </h1>
           <p className="mt-6 max-w-xl text-lg text-sidebar-foreground/80">
-            SejukGuard turns a staff message or a warm reading into one clear plan: where to move the stock, which technician to call, and who has to approve the cost.
+            Glacier Link turns a staff message or a warm reading into one clear plan: where to move the stock, which technician to call, and who has to approve the cost.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Link href="/sign-up" className="inline-flex items-center gap-2 rounded-xl bg-sidebar-primary px-6 py-3.5 font-bold text-sidebar-primary-foreground transition-transform hover:-translate-y-0.5" data-testid="link-hero-sign-up">
@@ -87,7 +86,7 @@ export default function Landing() {
             );
           })}
         </div>
-        <footer className="mx-auto max-w-6xl px-5 pb-10 pt-6 text-xs text-muted-foreground">SejukGuard. Built for kopitiams, bakeries, caterers and cloud kitchens.</footer>
+        <footer className="mx-auto max-w-6xl px-5 pb-10 pt-6 text-xs text-muted-foreground">Glacier Link. Built for kopitiams, bakeries, caterers and cloud kitchens.</footer>
       </section>
     </div>
   );

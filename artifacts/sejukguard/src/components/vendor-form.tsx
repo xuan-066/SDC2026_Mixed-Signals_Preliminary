@@ -51,7 +51,7 @@ export function VendorFormDialog({ open, onOpenChange, vendor }: { open: boolean
       <DialogContent className="max-h-[90dvh] overflow-y-auto sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>{vendor ? 'Edit ' + vendor.name : 'Add vendor'}</DialogTitle>
-          <DialogDescription>SejukGuard proposes vendors by service, SLA and call-out fee. Fees above the supervisor limit need an owner.</DialogDescription>
+          <DialogDescription>Glacier Link proposes vendors by service, SLA and call-out fee. Fees above the supervisor limit need an owner.</DialogDescription>
         </DialogHeader>
         <form className="grid gap-4 sm:grid-cols-2" onSubmit={(e) => { e.preventDefault(); submit(); }}>
           <div className="sm:col-span-2"><Field label="Company name" htmlFor="v-n" error={errs.name}><Input id="v-n" value={v.name} onChange={(e) => setV({ ...v, name: e.target.value })} data-testid="input-vendor-name" /></Field></div>

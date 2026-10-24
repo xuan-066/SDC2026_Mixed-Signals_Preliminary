@@ -23,7 +23,7 @@ export default function Invite() {
   if (!a.authenticated)
     return (
       <PublicFrame>
-        <PublicCard title="You have been invited to a SejukGuard team" sub="Sign in or create an account with the email address the invitation was sent to. You will come back here to accept.">
+        <PublicCard title="You have been invited to a Glacier Link team" sub="Sign in or create an account with the email address the invitation was sent to. You will come back here to accept.">
           <div className="flex flex-col gap-2 sm:flex-row">
             <Link href={'/sign-up?redirect_url=' + back} className="inline-flex h-10 flex-1 items-center justify-center rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground" data-testid="link-invite-sign-up">Create account</Link>
             <Link href={'/sign-in?redirect_url=' + back} className="inline-flex h-10 flex-1 items-center justify-center rounded-md border border-border px-4 text-sm font-semibold" data-testid="link-invite-sign-in">Sign in</Link>

@@ -62,7 +62,7 @@ const clerkAppearance = {
   options: {
     logoPlacement: 'inside' as const,
     logoLinkUrl: basePath || '/',
-    logoImageUrl: `${window.location.origin}${basePath}/logo.svg`,
+    logoImageUrl: `${window.location.origin}${basePath}/glacier-link-logo.png`,
   },
   variables: {
     colorPrimary: 'hsl(191 84% 25%)',
@@ -92,7 +92,7 @@ const clerkAppearance = {
     formFieldSuccessText: 'text-ok',
     alertText: 'text-foreground',
     logoBox: 'justify-center',
-    logoImage: 'h-10 w-10',
+    logoImage: 'h-auto w-44 sm:w-48',
     socialButtonsBlockButton: 'border border-border bg-card',
     formButtonPrimary: 'bg-primary text-primary-foreground hover:bg-primary/90',
     formFieldInput: 'border border-input bg-card text-foreground',
@@ -109,8 +109,7 @@ function AuthFrame({ children }: { children: React.ReactNode }) {
   return (
     <div className="sg-auth-frame min-h-[100dvh] bg-background">
       <header className="border-b-2 border-[#d99546] bg-[#f4bd78] px-5 py-4"><a href={basePath || '/'} className="mx-auto flex max-w-6xl items-center gap-2.5">
-        <img src={`${window.location.origin}${basePath}/logo.svg`} alt="" className="h-8 w-8" />
-        <span className="font-display text-lg font-extrabold text-[#1d3047]">Sejuk<span className="text-primary">Guard</span></span>
+        <img src={`${window.location.origin}${basePath}/glacier-link-logo.png`} alt="Glacier Link" className="h-auto w-44 sm:w-48" />
       </a></header>
       <div className="mx-auto grid min-h-[calc(100dvh-65px)] max-w-6xl items-center gap-8 px-4 py-8 lg:grid-cols-[1fr_440px] lg:px-8">
         <section className="hidden max-w-xl lg:block"><p className="font-mono text-xs font-bold uppercase tracking-[.18em] text-primary">Cold-chain accountability</p><h1 className="mt-3 font-display text-5xl font-extrabold leading-[1.02] text-[#1d3047]">Keep the cold.<br /><span className="text-primary">Protect the stock.</span></h1><p className="mt-5 max-w-md text-base leading-relaxed text-muted-foreground">A clearer response from first reading to approved repair, built for the people running Malaysian kitchens.</p><div className="mt-8 flex gap-2"><span className="h-2 w-14 rounded-full bg-[#e3a454]" /><span className="h-2 w-8 rounded-full bg-primary" /><span className="h-2 w-3 rounded-full bg-frost" /></div></section>
@@ -261,7 +260,7 @@ function ClerkProviderWithRoutes() {
       signInUrl={`${basePath}/sign-in`}
       signUpUrl={`${basePath}/sign-up`}
       localization={{
-        signIn: { start: { title: 'Welcome back', subtitle: 'Sign in to your kitchen on SejukGuard' } },
+        signIn: { start: { title: 'Welcome back', subtitle: 'Sign in to your kitchen on Glacier Link' } },
         signUp: { start: { title: 'Create your account', subtitle: 'Then set up your business or accept an invite' } },
       }}
       routerPush={(to) => setLocation(stripBase(to))}
@@ -281,7 +280,7 @@ function MissingConfig() {
     <div className="flex min-h-[100dvh] items-center justify-center p-6">
       <div className="max-w-md rounded-2xl border border-thaw/40 bg-card p-6" role="alert" data-testid="state-missing-config">
         <h1 className="text-2xl font-extrabold">Sign-in is not configured</h1>
-        <p className="mt-2 text-sm text-muted-foreground">SejukGuard could not find its authentication key for this host. An administrator needs to set the Clerk publishable key; no business data is shown until then.</p>
+        <p className="mt-2 text-sm text-muted-foreground">Glacier Link could not find its authentication key for this host. An administrator needs to set the Clerk publishable key; no business data is shown until then.</p>
       </div>
     </div>
   );

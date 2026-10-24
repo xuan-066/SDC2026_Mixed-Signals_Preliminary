@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { Link } from 'wouter';
 import { AlertOctagon, ArrowUpRight, ClipboardCheck, Megaphone, ShieldCheck, Snowflake } from 'lucide-react';
 import { EmptyState, ErrorState, IncidentStatusPill, ListSkeleton, Money, PageHeader, Panel, ReadingAge, SeverityPill, Stat, Temp, ThermoBar } from '@/components/common';
@@ -7,7 +8,19 @@ import { useMe } from '@/lib/me';
 import { ROLE_LABEL, SEVERITY, ago, fmtDT, fmtTime, humanize, isOpenIncident } from '@/lib/format';
 import { cn } from '@/lib/utils';
 
+const malaysiaHour = () => Number(new Intl.DateTimeFormat('en-MY', {
+  timeZone: 'Asia/Kuala_Lumpur',
+  hour: '2-digit',
+  hourCycle: 'h23',
+}).format(new Date()));
+
 export default function Dashboard() {
+  const [hour, setHour] = useState(malaysiaHour);
+  useEffect(() => {
+    const timer = window.setInterval(() => setHour(malaysiaHour()), 60_000);
+    return () => window.clearInterval(timer);
+  }, []);
+
   const { me, can } = useMe();
   const assets = useAssets();
   const incidents = useIncidents();
@@ -20,18 +33,18 @@ export default function Dashboard() {
   const stale = units.filter((a) => a.reading_state === 'stale' || a.reading_state === 'missing' || !a.latest_reading_at).length;
   const mine = (approvals.data ?? []).filter((a) => a.can_decide);
   const openJobs = (jobs.data ?? []).filter((j) => j.status !== 'DONE');
-  const hour = new Date().getHours();
-  const greet = hour < 12 ? 'Selamat pagi' : hour < 19 ? 'Selamat petang' : 'Selamat malam';
+  const greet = hour < 12 ? 'Good Morning' : hour < 18 ? 'Good Afternoon' : 'Good Evening';
   const priority = open[0];
   const critical = priority?.severity === 'CRITICAL';
 
   return (
     <div className="sg-dashboard space-y-7">
       <PageHeader eyebrow={me.business_name} title={greet + ', ' + me.name.split(' ')[0]}
-        sub={open.length ? open.length + ' open incident' + (open.length > 1 ? 's' : '') + ' need attention.' : 'No open incidents right now.'}
+        sub={<span data-testid="dashboard-incident-summary" className={open.length ? 'text-base font-extrabold text-[#b42335] sm:text-lg' : 'text-sm text-muted-foreground'}>
+          {open.length ? `${open.length} open incident${open.length > 1 ? 's' : ''} ${open.length === 1 ? 'needs' : 'need'} attention` : 'No open incidents right now.'}
+        </span>}
         actions={<Link href="/report" className="inline-flex h-11 items-center gap-2 rounded-xl bg-primary px-5 text-sm font-bold text-primary-foreground shadow-sm transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" data-testid="link-dashboard-report"><Megaphone className="h-4 w-4" />Report a fault</Link>} />
-      <div className="mb-5 flex flex-wrap items-center justify-between gap-3 border-y border-[#d8c6ac] py-3 text-xs" data-testid="dashboard-scanline">
-        <p className="font-mono font-bold uppercase tracking-[.14em] text-[#596677]">Shift scan <span className="ml-2 font-sans font-medium normal-case tracking-normal text-foreground">{priority ? 'Response required' : 'All monitored units within view'}</span></p>
+      <div className="mb-5 flex flex-wrap items-center justify-end gap-3 border-y border-[#d8c6ac] py-3 text-xs" data-testid="dashboard-scanline">
         <div className="flex flex-wrap gap-x-5 gap-y-1 text-muted-foreground"><span><b className="text-foreground">{units.length}</b> units</span><span><b className={open.length ? 'text-thaw' : 'text-ok'}>{open.length}</b> open incidents</span><span>Viewing as <b className="capitalize text-foreground">{me.role}</b></span></div>
       </div>
 
@@ -42,7 +55,9 @@ export default function Dashboard() {
               <div className="flex flex-wrap items-center gap-2">
                 <span className="sg-dashboard__priority-label"><AlertOctagon className="h-4 w-4" />Immediate attention</span>
                 <SeverityPill s={priority.severity} />
-                <IncidentStatusPill s={priority.status} />
+                <span className={priority.status === 'PENDING_APPROVAL' ? 'sg-dashboard__pending-pill' : undefined}>
+                  <IncidentStatusPill s={priority.status} />
+                </span>
               </div>
               <div className="mt-5 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
                 <div className="min-w-0">
@@ -88,7 +103,7 @@ export default function Dashboard() {
                 <div className="sg-dashboard__decision-row">
                   <span className="sg-dashboard__decision-label">Approval state</span>
                   {priority.approval
-                    ? <><p className="mt-1 text-lg font-bold">{humanize(priority.approval.status.toLowerCase())}</p><p className="text-sm text-muted-foreground">Required: {ROLE_LABEL[priority.approval.required_role]}</p></>
+                    ? <><p className={cn('mt-1 font-extrabold', priority.approval.status === 'PENDING' ? 'text-2xl text-[#a52e43]' : 'text-xl')}>{humanize(priority.approval.status.toLowerCase())}</p><p className="text-sm text-muted-foreground">Required: {ROLE_LABEL[priority.approval.required_role]}</p></>
                     : <><p className="mt-1 text-base font-bold">No approval request recorded</p>{priority.decision?.required_role && <p className="text-sm text-muted-foreground">Approval role: {ROLE_LABEL[priority.decision.required_role]}</p>}</>}
                   {priority.decision?.needs_human && <p className="mt-2 rounded-lg bg-[#f6e6d2] px-3 py-2 text-xs font-semibold text-[#633820]">{priority.decision.needs_human}</p>}
                 </div>
